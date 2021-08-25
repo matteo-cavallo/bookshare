@@ -8,8 +8,8 @@ type TabsScreens = {
 }
 
 export const TabsNavigator: FC = () => {
-
     const Tabs = createBottomTabNavigator<TabsScreens>()
+
     return (
         <Tabs.Navigator screenOptions={tabsNavigatorOptions}>
             <Tabs.Screen name={"Home"} component={HomeScreen} options={homeScreenOptions}/>

@@ -12,7 +12,10 @@ export const TextInputComponent: FC<TextInputProps> = (props) => {
 
     const style = StyleSheet.create({
         container: {
-          padding: theme.spacing.S,
+          padding: theme.spacing.LG,
+            backgroundColor: "#e2e2e2",
+            borderRadius: theme.spacing.LG,
+            marginBottom: theme.spacing.MD
         },
         textInput: {
             fontSize: theme.fonts.BODY.fontSize,
@@ -22,7 +25,7 @@ export const TextInputComponent: FC<TextInputProps> = (props) => {
 
     return (
         <View style={style.container}>
-            <TextInput style={[props.style, style.textInput]} {...props} />
+            <TextInput {...props} style={[props.style, style.textInput]} />
         </View>
     )
 }

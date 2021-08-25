@@ -7,5 +7,12 @@ export const Fonts = StyleSheet.create({
     LARGE_TITLE: {
         fontSize: 34,
         fontWeight: 'bold'
+    },
+    CAPTION: {
+        fontSize: 12
+    },
+    HEADLINE: {
+        fontSize: 17,
+        fontWeight: 'bold'
     }
 })

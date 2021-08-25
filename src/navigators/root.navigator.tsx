@@ -37,7 +37,7 @@ export const RootNavigator: FC = () => {
                     </RootStack.Group>
             }
 
-            <RootStack.Group screenOptions={{stackPresentation: "modal", title: "Login"}}>
+            <RootStack.Group screenOptions={{stackPresentation: "modal", title: "Login", headerShown: true}}>
                 <RootStack.Screen name={"LoginModal"} component={LoginScreen}/>
             </RootStack.Group>
 

@@ -22,5 +22,5 @@ export const TextComponent: FC<TextProps> = props => {
         },
     })
 
-    return <Text style={[theme.fonts.BODY,style.text,props.style]} {...props}>{props.children}</Text>
+    return <Text {...props} style={[theme.fonts.BODY, style.text, props.style]}>{props.children}</Text>
 }

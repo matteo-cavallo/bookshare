@@ -18,9 +18,9 @@ export const HomeScreen: FC = () => {
 
     return (
         <Center style={{padding: 16}}>
+            <TextComponent style={theme.fonts.LARGE_TITLE}>Matteo</TextComponent>
             <TextComponent style={theme.fonts.LARGE_TITLE}>{user?.uid || "NO USER"}</TextComponent>
-            <TextComponent>Home</TextComponent>
-            <Button title={"Open login modal"} onPress={() => navigation.navigate("LoginModal")} />
+            <Button title={"Login"} onPress={() => navigation.navigate("LoginModal")} />
             <Button title={"Logout"} onPress={() => logout()} />
         </Center>
     )

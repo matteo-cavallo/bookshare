@@ -38,6 +38,7 @@ export const ThemeProvider: FC = ({children}) => {
 
     return (
         <ThemeContext.Provider value={{theme}}>
+            <StatusBar barStyle={colorScheme === 'light' ? 'dark-content' :'light-content'}/>
             {children}
         </ThemeContext.Provider>
     )

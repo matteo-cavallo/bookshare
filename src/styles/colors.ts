@@ -1,7 +1,7 @@
 export const LightColors = {
     // TYPO
     PRIMARY: "#0a0a0a",
-    SECONDARY: "#a4a4a4",
+    SECONDARY: "rgba(60, 60, 67, 0.6)",
     WHITE: "#ffffff",
     BLACK: "#000000",
 
@@ -10,6 +10,7 @@ export const LightColors = {
     ACCENT_DISABLED: "#61be50",
 
     // GRAYSCALE
+    FILL_TERTIARY: "rgba(118, 118, 128, 0.12)",
 
     // BACKGROUND
     BACKGROUND: "#FFFFFF"
@@ -20,6 +21,10 @@ export const DarkColors = {
 
     // TYPO
     PRIMARY: "#FFFFFF",
+    SECONDARY: "rgba(235, 235, 245, 0.6)",
+
+    //GRAYSCALE
+    FILL_TERTIARY: "#3A3A3C",
 
     // BACKGROUND
     BACKGROUND: "#000000"
