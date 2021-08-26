@@ -1,8 +1,9 @@
 import React, {createContext, FC, useEffect, useState} from 'react';
 import firebase from 'firebase';
-import {FirebaseAuth} from '../firebase/firebase.config';
+import {FBAuth} from '../firebase/firebase.config';
 import Auth = firebase.auth.Auth;
 import {Alert} from 'react-native';
+import GoogleAuthProvider = firebase.auth.GoogleAuthProvider;
 
 type AuthProps = {
     loading: boolean;
@@ -21,7 +22,7 @@ export const AuthContext = createContext<AuthProps>({
 })
 
 function logout() {
-    FirebaseAuth.signOut()
+    FBAuth.signOut()
         .then(() => {
             console.log("User is logged out.")
         })
@@ -38,7 +39,7 @@ export const AuthProvider: FC = ({children}) => {
     useEffect(() => {
 
         // This function listens to all changes of the user authentication.
-        return FirebaseAuth.onAuthStateChanged((user) => {
+        return FBAuth.onAuthStateChanged((user) => {
             console.log("useAuthentication - User: ", user?.uid || "null")
             if (user) {
                 // User is signed in
@@ -63,7 +64,7 @@ export const AuthProvider: FC = ({children}) => {
         // Grab current user from context
         // It should be ALWAYS present at this point
         // If it is null there is an important BUG to fix
-        const user = FirebaseAuth.currentUser
+        const user = FBAuth.currentUser
 
         if (user !== null) {
             user.linkWithCredential(credential)
@@ -102,7 +103,7 @@ export const AuthProvider: FC = ({children}) => {
      */
     function loginWithEmail(email: string, password: string, completion: (result: boolean) => void) {
         //setLoading(true)
-        FirebaseAuth.signInWithEmailAndPassword(email, password)
+        FBAuth.signInWithEmailAndPassword(email, password)
             .then((userCredential) => {
                 //setLoading(false)
                 completion(true)
@@ -117,7 +118,7 @@ export const AuthProvider: FC = ({children}) => {
 
     function loginAnonymously() {
         setLoading(true)
-        FirebaseAuth.signInAnonymously()
+        FBAuth.signInAnonymously()
             .then(() => {
                 // User logged
                 setLoading(false)
