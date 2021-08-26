@@ -37,5 +37,6 @@ const homeScreenOptions: BottomTabNavigationOptions = {
 }
 
 const profileScreenOptions: BottomTabNavigationOptions = {
+    headerShown: false,
     tabBarIcon: props => <Ionicons name={"person"} size={props.size} color={props.color}/>
 }
