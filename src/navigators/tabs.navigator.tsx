@@ -4,6 +4,7 @@ import {HomeScreen} from '../screens/tabs/home/home.screen';
 import {Ionicons} from '@expo/vector-icons';
 import {ProfileScreen} from '../screens/tabs/profile/profile.screen';
 import {withAuthentication} from '../highOrderComponents/withAuthentication';
+import {ProfileNavigator} from './profile.navigator';
 
 type TabsScreens = {
     Home: undefined,
@@ -22,7 +23,7 @@ export const TabsNavigator: FC = () => {
 
             {/* Private tabs*/}
             <Tabs.Group>
-                <Tabs.Screen name={"Profile"} component={withAuthentication(ProfileScreen)} options={profileScreenOptions}/>
+                <Tabs.Screen name={"Profile"} component={withAuthentication(ProfileNavigator)} options={profileScreenOptions}/>
             </Tabs.Group>
         </Tabs.Navigator>
     )

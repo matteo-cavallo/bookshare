@@ -1,9 +1,7 @@
 import React, {createContext, FC, useEffect, useState} from 'react';
 import firebase from 'firebase';
 import {FBAuth} from '../firebase/firebase.config';
-import Auth = firebase.auth.Auth;
 import {Alert} from 'react-native';
-import GoogleAuthProvider = firebase.auth.GoogleAuthProvider;
 
 type AuthProps = {
     loading: boolean;
