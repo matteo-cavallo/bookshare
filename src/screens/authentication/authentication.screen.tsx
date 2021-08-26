@@ -17,16 +17,18 @@ import {useNavigation} from '@react-navigation/native';
 import {TextInputComponent} from '../../components/textInput.component';
 import {ThemeContext} from '../../providers/theme.provider';
 import {ButtonComponent} from '../../components/button.component';
-import {NativeStackNavigationOptions, NativeStackNavigationProp} from 'react-native-screens/native-stack';
+import {
+    NativeStackNavigationOptions,
+    NativeStackNavigationProp,
+    NativeStackScreenProps
+} from 'react-native-screens/native-stack';
+import {AuthenticationNavigatorScreens} from '../../navigators/authentication.navigator';
 
-export const LoginScreen: FC = () => {
+type Props = NativeStackScreenProps<AuthenticationNavigatorScreens,"LandingPage" >
+export const AuthenticationScreen: FC<Props> = ({navigation}) => {
 
-    const navigation = useNavigation()
     const {theme} = useContext(ThemeContext)
     const colorScheme = useColorScheme()
-
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
 
     useEffect(() => {
         navigation.setOptions({
@@ -67,7 +69,6 @@ export const LoginScreen: FC = () => {
             width: '100%'
         },
         bottomButtons: {
-            marginTop: theme.spacing.MD,
             flexDirection: "row",
             width: '100%'
         }
@@ -89,8 +90,11 @@ export const LoginScreen: FC = () => {
                 >Login con Apple</ButtonComponent>
             </View>
             <View style={styles.bottomButtons}>
-                <ButtonComponent style={{flexGrow: 1, marginEnd: 8}} textStyle={{color: theme.colors.SECONDARY}}>Login</ButtonComponent>
-                <ButtonComponent style={{flexGrow: 1, marginEnd: 8}} textStyle={{color: theme.colors.SECONDARY}}>Registrati con Email</ButtonComponent>
+                <ButtonComponent
+                    style={{flexGrow: 1, marginEnd: 8}}
+                    onPress={() => navigation.navigate("LoginEmail")}
+                >Login</ButtonComponent>
+                <ButtonComponent style={{flexGrow: 1, marginEnd: 8}} onPress={() => navigation.navigate("SignUpEmail")}>Registrati con Email</ButtonComponent>
             </View>
         </View>
     )

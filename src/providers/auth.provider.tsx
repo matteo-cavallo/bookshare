@@ -1,17 +1,23 @@
 import React, {createContext, FC, useEffect, useState} from 'react';
 import firebase from 'firebase';
 import {FirebaseAuth} from '../firebase/firebase.config';
+import Auth = firebase.auth.Auth;
+import {Alert} from 'react-native';
 
 type AuthProps = {
     loading: boolean;
     user: firebase.User | null;
     logout: () => void;
+    loginWithEmail: (email: string, password: string, completion: (success: boolean) => void) => void;
+    signUpWithEmail: (email: string, password: string, completion: (success: boolean) => void) => void;
 }
 
 export const AuthContext = createContext<AuthProps>({
     loading: true,
     user: null,
-    logout
+    logout,
+    loginWithEmail: _ => {},
+    signUpWithEmail: _ => {}
 })
 
 function logout() {
@@ -21,10 +27,14 @@ function logout() {
         })
 }
 
+
 export const AuthProvider: FC = ({children}) => {
     const [user, setUser] = useState<firebase.User | null>(null)
     const [loading, setLoading] = useState(true)
 
+    /**
+     * Current User changes listener
+     */
     useEffect(() => {
 
         // This function listens to all changes of the user authentication.
@@ -40,7 +50,70 @@ export const AuthProvider: FC = ({children}) => {
                 loginAnonymously()
             }
         });
-    },[])
+    }, [])
+
+
+    /**
+     * Function used to link an anonymous account with a new provided user
+     * @param credential
+     * @param cb
+     */
+    function linkWithCredential(credential: firebase.auth.AuthCredential, cb: (result: boolean) => void) {
+
+        // Grab current user from context
+        // It should be ALWAYS present at this point
+        // If it is null there is an important BUG to fix
+        const user = FirebaseAuth.currentUser
+
+        if (user !== null) {
+            user.linkWithCredential(credential)
+                .then((newUser) => {
+                    console.log("Anonymous account successfully upgraded", newUser);
+                    cb(true)
+                })
+                .catch((error) => {
+                console.log("Error upgrading anonymous account", error.message);
+                Alert.alert("Problema con la registrazione", error.message)
+                cb(false)
+            });
+        } else {
+            Alert.alert("Problema con la registrazione", "Prova ad effettuare la registrazione nuovamente..")
+            console.log("auth.provider.tsx : BUG with linkWithCredential function")
+        }
+    }
+
+    /**
+     * Sign Up Function
+     * @param email
+     * @param password
+     * @param completion
+     */
+    function signUpWithEmail(email: string, password:string, completion: (result: boolean) => void){
+        // Should link anonymous user with new Email provider
+        const credential = firebase.auth.EmailAuthProvider.credential(email, password);
+        linkWithCredential(credential, completion)
+    }
+
+    /**
+     * Login with Email and Password
+     * @param email
+     * @param password
+     * @param completion
+     */
+    function loginWithEmail(email: string, password: string, completion: (result: boolean) => void) {
+        //setLoading(true)
+        FirebaseAuth.signInWithEmailAndPassword(email, password)
+            .then((userCredential) => {
+                //setLoading(false)
+                completion(true)
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                Alert.alert("Errore con il login", errorMessage)
+                completion(false)
+            });
+    }
 
     function loginAnonymously() {
         setLoading(true)
@@ -60,7 +133,9 @@ export const AuthProvider: FC = ({children}) => {
         <AuthContext.Provider value={{
             loading,
             user,
-            logout
+            logout,
+            signUpWithEmail,
+            loginWithEmail
         }}>
             {children}
         </AuthContext.Provider>

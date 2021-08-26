@@ -20,10 +20,12 @@ export const ButtonComponent: FC<Props> = (props) => {
 
     const styles = StyleSheet.create({
         container: {
-            padding: theme.spacing.MD,
-            backgroundColor: theme.colors.FILL_TERTIARY,
+            padding: theme.spacing.LG,
+            backgroundColor: theme.colors.ACCENT,
             borderRadius: theme.spacing.MD,
-            marginBottom: theme.spacing.MD
+            marginBottom: theme.spacing.MD,
+            alignItems: "center",
+            justifyContent: "center"
         },
         text: {
             color: "#FFFFFF",

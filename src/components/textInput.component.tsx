@@ -13,7 +13,7 @@ export const TextInputComponent: FC<TextInputProps> = (props) => {
     const style = StyleSheet.create({
         container: {
           padding: theme.spacing.LG,
-            backgroundColor: "#e2e2e2",
+            backgroundColor: theme.colors.FILL_TERTIARY,
             borderRadius: theme.spacing.LG,
             marginBottom: theme.spacing.MD
         },
