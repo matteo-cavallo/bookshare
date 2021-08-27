@@ -5,11 +5,15 @@ import {Ionicons} from '@expo/vector-icons';
 import {ProfileScreen} from '../screens/tabs/profile/profile.screen';
 import {withAuthentication} from '../highOrderComponents/withAuthentication';
 import {ProfileNavigator} from './profile.navigator';
+import {Center} from '../components/center.component';
+import {PostBookScreen} from '../screens/tabs/postBook/postBook.screen';
 
-type TabsScreens = {
+export type TabsScreens = {
     Home: undefined,
-    Profile: undefined
+    Profile: undefined;
+    PostBook: undefined;
 }
+
 
 export const TabsNavigator: FC = () => {
     const Tabs = createBottomTabNavigator<TabsScreens>()
@@ -23,6 +27,7 @@ export const TabsNavigator: FC = () => {
 
             {/* Private tabs*/}
             <Tabs.Group>
+                <Tabs.Screen name={"PostBook"} component={withAuthentication(PostBookScreen)} options={sellBookOptions}/>
                 <Tabs.Screen name={"Profile"} component={withAuthentication(ProfileNavigator)} options={profileScreenOptions}/>
             </Tabs.Group>
         </Tabs.Navigator>
@@ -40,4 +45,8 @@ const homeScreenOptions: BottomTabNavigationOptions = {
 const profileScreenOptions: BottomTabNavigationOptions = {
     headerShown: false,
     tabBarIcon: props => <Ionicons name={"person"} size={props.size} color={props.color}/>
+}
+
+const sellBookOptions: BottomTabNavigationOptions = {
+    tabBarIcon: props => <Ionicons name={"add-circle-outline"} size={props.size + 8} color={props.color}/>
 }

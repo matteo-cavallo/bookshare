@@ -1,5 +1,8 @@
-import firebase from 'firebase';
+import firebase from 'firebase/app';
 import 'firebase/auth'
+import 'firebase/firestore'
+import {ReactReduxFirebaseConfig, ReactReduxFirebaseProviderProps} from 'react-redux-firebase';
+import {createFirestoreInstance} from 'redux-firestore';
 
 const firebaseConfig = {
     apiKey: "AIzaSyBh0Gd7tzj820Wpvi33DcmuFzVpN8Nc4Bo",
@@ -15,4 +18,15 @@ firebase.initializeApp(firebaseConfig);
 export const FBAuth = firebase.auth()
 export const FBFirestore = firebase.firestore()
 
-export const firestore = firebase.firestore
+
+// React Redux Firebase Configurations
+const config: Partial<ReactReduxFirebaseConfig> = {
+    userProfile: 'users',
+    useFirestoreForProfile: true,
+}
+
+export const ReactReduxFirebaseProps = {
+    firebase,
+    config: config,
+    createFirestoreInstance
+}

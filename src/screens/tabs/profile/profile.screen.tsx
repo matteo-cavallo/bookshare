@@ -10,27 +10,26 @@ import {AuthContext} from '../../../providers/auth.provider';
 import {Ionicons} from '@expo/vector-icons';
 import {DarkColors, LightColors} from '../../../styles/colors';
 import {UserActions} from '../../../store/user/user.actions';
-import {UserSelectors} from '../../../store/user/user.selectors';
+import {RootState} from '../../../store/store.config';
+import {useFirebase} from 'react-redux-firebase';
 
 export const ProfileScreen: FC = () => {
 
     const navigation = useNavigation()
+
     const dispatch = useDispatch()
 
     // Context
     const {theme} = useContext(ThemeContext)
-    const {user, logout} = useContext(AuthContext)
+    const auth = useSelector((state: RootState) => state.firebase.auth)
 
-    // Selectors
-    const userModel = useSelector(UserSelectors.getUser)
-    const fullName = useSelector(UserSelectors.getFullName)
-    const isLoading = useSelector(UserSelectors.isLoading)
+    const firebase = useFirebase()
 
-    // Effects
-    useEffect(() => {
-        // Fetch User
-        dispatch(UserActions.fetchUser())
-    },[])
+    function handleLogout(){
+        firebase.logout().then(() => {
+            console.log("User logged out.")
+        })
+    }
 
     const styles = StyleSheet.create({
         header: {
@@ -51,14 +50,6 @@ export const ProfileScreen: FC = () => {
         }
     })
 
-    if(isLoading){
-        return (
-            <Center>
-                <ActivityIndicator />
-            </Center>
-        )
-    }
-
     return (
         <ScrollView>
             <View>
@@ -69,15 +60,12 @@ export const ProfileScreen: FC = () => {
                             <Ionicons name={"person"} size={40} color={DarkColors.SECONDARY}/>
                             </Center>
                         </View>
-                        <TextComponent style={theme.fonts.HEADLINE}>{user?.email}</TextComponent>
-                        {
-                            fullName && <TextComponent style={theme.fonts.HEADLINE}>{fullName}</TextComponent>
-                        }
+                        <TextComponent style={theme.fonts.HEADLINE}>{auth.email || "No email"}</TextComponent>
                     </View>
                 </SafeAreaView>
                 <View style={styles.body}>
                     <Button title={"Login"} onPress={() => navigation.navigate("LoginModal")}/>
-                    <Button title={"Logout"} onPress={() => logout()} color={"red"}/>
+                    <Button title={"Logout"} onPress={handleLogout} color={"red"}/>
                 </View>
             </View>
         </ScrollView>

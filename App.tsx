@@ -6,20 +6,23 @@ import {RootNavigator} from './src/navigators/root.navigator';
 import {useColorScheme} from 'react-native';
 import {Provider as ReduxProvider} from 'react-redux';
 import {store} from './src/store/store.config';
+import { ReactReduxFirebaseProvider} from 'react-redux-firebase'
+import { ReactReduxFirebaseProps} from './src/firebase/firebase.config';
+
 
 export default function App() {
 
     const colorScheme = useColorScheme()
 
     return (
-        <ThemeProvider>
-            <AuthProvider>
-                <ReduxProvider store={store}>
-                    <NavigationContainer theme={colorScheme === 'light' ? DefaultTheme : DarkTheme}>
+        <ReduxProvider store={store}>
+            <ReactReduxFirebaseProvider {...ReactReduxFirebaseProps} dispatch={store.dispatch}>
+                <NavigationContainer theme={colorScheme === 'light' ? DefaultTheme : DarkTheme}>
+                    <ThemeProvider>
                         <RootNavigator/>
-                    </NavigationContainer>
-                </ReduxProvider>
-            </AuthProvider>
-        </ThemeProvider>
+                    </ThemeProvider>
+                </NavigationContainer>
+            </ReactReduxFirebaseProvider>
+        </ReduxProvider>
     );
 }

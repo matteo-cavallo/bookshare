@@ -1,7 +1,6 @@
 import {createAsyncThunk} from '@reduxjs/toolkit';
 import {FBAuth, FBFirestore} from '../../firebase/firebase.config';
 import {UserModel} from '../../model/user.model';
-import {UserService} from '../../services/user.service';
 
 const prefix = 'user/'
 
@@ -14,7 +13,7 @@ const createUser = createAsyncThunk(prefix + "createUser", (async (arg, {dispatc
     }
 
     const docRef = FBFirestore.collection("users").doc(user.uid)
-    await docRef.withConverter(UserService.converter)
+    await docRef
         .set({
             email: user.email || "",
             firstName: "Nome",
@@ -26,7 +25,7 @@ const createUser = createAsyncThunk(prefix + "createUser", (async (arg, {dispatc
         .catch(() => {
             console.log("Error creating user")
         })
-    dispatch(fetchUser())
+    dispatch(fetchUser)
 }))
 
 const fetchUser = createAsyncThunk<UserModel>(prefix + 'fetchUser', async (arg, {dispatch}) => {
@@ -37,21 +36,8 @@ const fetchUser = createAsyncThunk<UserModel>(prefix + 'fetchUser', async (arg, 
         throw Error("User not found.")
     }
 
-    const docRef = FBFirestore.collection("users").doc(user.uid)
-    const doc = await docRef.withConverter(UserService.converter).get()
-
-    if(doc.exists){
-        // User already exists
-        const userData = doc.data()
-        if(userData !== undefined){
-            return userData
-        } else {
-            throw Error("Document exists but it is badly formatted")
-        }
-    } else {
-        // User must be created
-        dispatch(createUser())
-        throw Error("Creating the user.")
+    return {
+        email: "email"
     }
 })
 

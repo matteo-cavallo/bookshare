@@ -14,5 +14,9 @@ export const Fonts = StyleSheet.create({
     HEADLINE: {
         fontSize: 17,
         fontWeight: 'bold'
+    },
+    SECTION_HEADER: {
+        fontSize: 13,
+        fontWeight: 'bold',
     }
 })

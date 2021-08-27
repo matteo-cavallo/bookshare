@@ -7,12 +7,15 @@ import {TextComponent} from '../components/text.component';
 import {AuthenticationScreen} from '../screens/authentication/authentication.screen';
 import {ButtonComponent} from '../components/button.component';
 import {ThemeContext} from '../providers/theme.provider';
+import {useSelector} from 'react-redux';
+import {RootState} from '../store/store.config';
+import {useSplashScreen} from '../hooks/useSplashScreen.hook';
 
-export const withAuthentication = (WrappedComponent: ComponentType) => {
+export const withAuthentication = (WrappedComponent: ComponentType<any>) => {
 
-    const {user} = useContext(AuthContext)
+    const auth = useSelector((state: RootState) => state.firebase.auth)
+
     const rootNavigation = useNavigation()
-
     const {theme} = useContext(ThemeContext)
 
     function handleSubmit() {
@@ -32,7 +35,7 @@ export const withAuthentication = (WrappedComponent: ComponentType) => {
         )
     }
 
-    if (!user || user.isAnonymous) {
+    if (!auth || auth.isAnonymous || auth.isEmpty) {
         return Component
     } else {
         return WrappedComponent

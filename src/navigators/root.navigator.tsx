@@ -1,12 +1,10 @@
-import React, {FC, useContext, useEffect} from 'react';
+import React, {FC, useContext, useEffect, useState} from 'react';
 import {createNativeStackNavigator} from 'react-native-screens/native-stack';
 import {SplashScreen} from '../screens/splashscreen/splashscreen.screen';
 import {TabsNavigator} from './tabs.navigator';
-import {AuthContext} from '../providers/auth.provider';
-import {AuthenticationScreen} from '../screens/authentication/authentication.screen';
-import {useSelector} from 'react-redux';
-import {UISelector} from '../store/uiStore/uistore.selectors';
 import {AuthenticationNavigator} from './authentication.navigator';
+import {useSplashScreen} from '../hooks/useSplashScreen.hook';
+import {HomeScreen} from '../screens/tabs/home/home.screen';
 
 type RootStackScreens = {
     SplashScreen: undefined;
@@ -22,8 +20,9 @@ declare global {
 }
 export const RootNavigator: FC = () => {
 
-    const {loading} = useContext(AuthContext)
     const RootStack = createNativeStackNavigator<RootStackScreens>()
+
+    const {loading} = useSplashScreen()
 
     return (
         <RootStack.Navigator initialRouteName={'SplashScreen'}>
@@ -41,7 +40,6 @@ export const RootNavigator: FC = () => {
             <RootStack.Group screenOptions={{stackPresentation: "modal", title: "Login", headerShown: false}}>
                 <RootStack.Screen name={"LoginModal"} component={AuthenticationNavigator}/>
             </RootStack.Group>
-
         </RootStack.Navigator>
     )
 }

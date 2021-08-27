@@ -2,7 +2,7 @@ import {createReducer} from '@reduxjs/toolkit';
 import {UIActions} from './uistore.actions';
 import {useNavigation} from '@react-navigation/native';
 
-type UIStoreState = {
+export type UIStoreState = {
     showLoginModal: boolean;
 }
 

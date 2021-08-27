@@ -13,8 +13,8 @@ type AuthProps = {
 
 export const AuthContext = createContext<AuthProps>({
     loading: true,
-    user: null,
     logout,
+    user: null,
     loginWithEmail: _ => {},
     signUpWithEmail: _ => {}
 })
@@ -129,7 +129,7 @@ export const AuthProvider: FC = ({children}) => {
     }
 
     return (
-        <AuthContext.Provider value={{
+         <AuthContext.Provider value={{
             loading,
             user,
             logout,
