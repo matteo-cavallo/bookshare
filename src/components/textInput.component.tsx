@@ -3,8 +3,8 @@ import {StyleSheet, TextInput, TextInputProps, View} from 'react-native';
 import {ThemeContext} from '../providers/theme.provider';
 
 interface TextInputComponentProps extends TextInputProps {
-    leadingItem?: FC
-
+    endItem?: FC,
+    startItem?: FC
 }
 
 export const TextInputComponent: FC<TextInputComponentProps> = (props) => {
@@ -24,14 +24,27 @@ export const TextInputComponent: FC<TextInputComponentProps> = (props) => {
             flex:1,
             fontSize: theme.fonts.BODY.fontSize,
             color: theme.colors.PRIMARY,
-
+        },
+        endItem:{
+            alignItems: 'center',
+            justifyContent: 'center'
+        },
+        startItem:{
+            marginRight: theme.spacing.MD,
+            alignItems: 'center',
+            justifyContent: 'center'
         }
     })
 
     return (
         <View style={style.container}>
+            {props.startItem && <View style={style.startItem}>
+                {props.startItem}
+            </View>}
             <TextInput {...props} style={[props.style, style.textInput]} />
-            {props.leadingItem}
+            <View style={style.endItem}>
+                {props.endItem}
+            </View>
         </View>
     )
 }
