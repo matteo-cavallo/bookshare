@@ -6,6 +6,7 @@ import {AuthenticationNavigator} from './authentication.navigator';
 import {useSplashScreen} from '../hooks/useSplashScreen.hook';
 import {HomeScreen} from '../screens/tabs/home/home.screen';
 import {PostBookScreen} from '../screens/tabs/postBook/postBook.screen';
+import {LightColors} from '../styles/colors';
 
 type RootStackScreens = {
     SplashScreen: undefined;
@@ -40,7 +41,8 @@ export const RootNavigator: FC = () => {
             }
 
             <RootStack.Screen name={"NewBookModal"} component={PostBookScreen} options={{
-                stackPresentation: 'modal'
+                stackPresentation: 'fullScreenModal',
+                headerTintColor: LightColors.ACCENT,
             }} />
 
             <RootStack.Group screenOptions={{stackPresentation: "modal", title: "Login", headerShown: false}}>
