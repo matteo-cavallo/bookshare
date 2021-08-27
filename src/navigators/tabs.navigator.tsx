@@ -42,7 +42,7 @@ export const TabsNavigator: FC = () => {
 
 const tabsNavigatorOptions: BottomTabNavigationOptions = {
     headerShown: true,
-    tabBarActiveTintColor: LightColors.ACCENT
+    tabBarActiveTintColor: LightColors.ACCENT,
 }
 
 const homeScreenOptions: BottomTabNavigationOptions = {

@@ -43,6 +43,7 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
     useLayoutEffect(() => {
         navigation.setOptions({
             headerTitle: "Post a book",
+            headerLeft: props => <Button title={"Annulla"} onPress={navigation.goBack} color={props.tintColor} />,
             headerRight: props => <Button title={"Pubblica"} disabled onPress={() => null} color={props.tintColor}/>
         })
     }, [])
