@@ -2,7 +2,7 @@ import React, {FC, useContext, useLayoutEffect, useState} from 'react';
 import {
     Button,
     Keyboard,
-    Modal,
+    Modal, SafeAreaView,
     ScrollView,
     StyleSheet,
     TouchableOpacity,
@@ -82,7 +82,7 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
     })
 
     return (
-        <View style={{flex: 1}}>
+        <SafeAreaView>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <ScrollView>
                     <View style={styles.container}>
@@ -205,6 +205,6 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
                 <Button title={"Annulla Scansione"} onPress={()=> setIsbnModal(false)}/>
                 <IsbnScanner setIsbnModal={setIsbnModal} onIsbnScanned={setIsbn} />
             </Modal>
-        </View>
+        </SafeAreaView>
     )
 }
