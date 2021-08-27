@@ -111,9 +111,13 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
                             <TextComponent
                                 style={[styles.sectionHeader, theme.fonts.SECTION_HEADER]}>IDENTIFICATIVO</TextComponent>
                             <TextInputComponent
+                                value={isbn}
                                 placeholder={"ISBN"}
-                                onChangeText={setIsbn}/>
-                            <Ionicons name={"qr-code-outline"} size={25} onPress={()=>setIsbnModal(true)}/>
+                                onChangeText={setIsbn}
+                                leadingItem={
+                                    <Ionicons name={"qr-code-outline"} color={theme.colors.ACCENT} size={25} onPress={()=>setIsbnModal(true)}/>
+                                }
+                            />
                             <TextComponent
                                 style={[theme.fonts.CAPTION, styles.inputFooter]}>Solitamente di 10 o 13 cifre. E
                                 il codice che identifica
@@ -142,9 +146,6 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
                         </View>
 
                         <View style={styles.section}>
-
-                        </View>
-                        <View style={styles.section}>
                             <ButtonComponent>Pubblica</ButtonComponent>
                             <TextComponent style={[styles.inputFooter, theme.fonts.CAPTION]}>Al momento della
                                 pubblicazione tutti gli annunci sono sottoposto a un rapido controllo standard per
@@ -155,8 +156,8 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
                 </ScrollView>
             </TouchableWithoutFeedback>
             <Modal presentationStyle={"pageSheet"} visible={isbnModal} >
-                <Button title={"Chiudi"} onPress={()=> setIsbnModal(false)}/>
-                <IsbnScanner />
+                <Button title={"Annulla Scansione"} onPress={()=> setIsbnModal(false)}/>
+                <IsbnScanner setIsbnModal={setIsbnModal} onIsbnScanned={setIsbn} />
             </Modal>
         </View>
     )

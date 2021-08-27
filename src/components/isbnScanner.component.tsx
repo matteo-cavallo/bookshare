@@ -1,15 +1,20 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {Button, Text, View, StyleSheet} from 'react-native'
+import React, {FC, useContext, useEffect, useState} from 'react';
+import {Button, Text, View, StyleSheet, Alert} from 'react-native'
 import {BarCodeScanner, PermissionStatus} from "expo-barcode-scanner";
 import {Ionicons} from "@expo/vector-icons";
 import {ThemeContext} from "../providers/theme.provider";
 import {TextComponent} from "./text.component";
 import {Center} from "./center.component";
 
-const IsbnScanner = () => {
+type IsbnScannerProps = {
+    setIsbnModal : (value:boolean)=>void
+    onIsbnScanned : (isbn:string)=>void
+}
+
+
+const IsbnScanner:FC<IsbnScannerProps> = ({setIsbnModal,onIsbnScanned}) => {
     const [hasPermission, setHasPermission] = useState<boolean>(false);
     const [scanned, setScanned] = useState(false);
-    const [text,setText] = useState("Not scanned");
 
     const {theme} = useContext(ThemeContext)
 
@@ -26,39 +31,30 @@ const IsbnScanner = () => {
 
     const handleBarCodeScanned = ({ type, data }) => {
         setScanned(true);
-        setText(data)
-        alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+        Alert.alert('Isbn Scansionato',`${data}`,[
+            {text:"Ok",onPress:()=>{
+                    onIsbnScanned(data)
+                    setIsbnModal(false)
+                }},
+            {text:"Annulla", onPress:()=>{
+                    setScanned(false)
+                }}
+        ])
     };
-
-    const styles = StyleSheet.create({
-        container: {
-            flex: 1,
-            flexDirection: 'column',
-            justifyContent: 'center',
-        },
-        scanner: {
-            flex:1,
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: 100,
-            overflow: 'hidden',
-            borderRadius: theme.spacing.LG
-        }
-    });
 
     if (hasPermission === null) {
         return (
-            <View style={styles.container}>
+            <Center>
                 <Text>Requesting for camera permission</Text>
-            </View>
+            </Center>
         )
     }
 
     if (!hasPermission) {
         return (
-            <View style={styles.container}>
+            <Center>
                 <Text>No access to camera</Text>
-            </View>
+            </Center>
         )
     }
 
@@ -68,12 +64,11 @@ const IsbnScanner = () => {
                 onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
                 style={StyleSheet.absoluteFillObject}
             />
-            <TextComponent>{text}</TextComponent>
-            {scanned && <Button title={'Tap to Scan Again'} onPress={() => setScanned(false)} />}
         </Center>
 
     );
 };
 
+//{scanned && <Button title={'Tap to Scan Again'} onPress={() => } />}
 
 export default IsbnScanner;
