@@ -1,27 +1,20 @@
-import React, {FC, useContext, useEffect, useLayoutEffect, useState} from 'react';
+import React, {FC, useContext, useLayoutEffect, useState} from 'react';
 import {
     Button,
     Keyboard,
-    KeyboardAvoidingView,
     Modal,
-    PickerIOS, Platform,
     ScrollView,
     StyleSheet,
-    Text,
     TouchableOpacity,
     TouchableWithoutFeedback,
     View,
 } from 'react-native';
-import RNPickerSelect from 'react-native-picker-select';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import {Center} from '../../../components/center.component';
 import {TextComponent} from '../../../components/text.component';
 import {TextInputComponent} from '../../../components/textInput.component';
 import {ThemeContext} from '../../../providers/theme.provider';
 import {NativeStackScreenProps} from 'react-native-screens/native-stack';
-import {AuthenticationNavigatorScreens} from '../../../navigators/authentication.navigator';
 import {TabsScreens} from '../../../navigators/tabs.navigator';
-import {Picker} from '@react-native-picker/picker';
 import {ButtonComponent} from '../../../components/button.component';
 import {Ionicons} from '@expo/vector-icons';
 import IsbnScanner from "../../../components/isbnScanner.component";
@@ -86,10 +79,6 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
             color: theme.colors.SECONDARY
         }
     })
-
-
-
-
 
     return (
         <View style={{flex: 1}}>
@@ -186,6 +175,7 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
                                                 startItem={<Ionicons name={"locate-outline"} size={theme.spacing.XL} color={theme.colors.SECONDARY} />}
                             />
                         </View>
+
                         {/*TODO: implementare keyboard avoidance*/}
                         <View style={styles.section}>
                             <TextComponent
@@ -206,6 +196,7 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
                                 assicurarci che rispettino le nostre Normative sulle vendite prima di diventare visibili
                                 agli altri. Beni diversi dai libri non sono consentiti.</TextComponent>
                         </View>
+
                     </View>
                 </ScrollView>
             </TouchableWithoutFeedback>
