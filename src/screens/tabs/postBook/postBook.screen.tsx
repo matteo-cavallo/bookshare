@@ -1,5 +1,15 @@
 import React, {FC, useContext, useEffect, useLayoutEffect, useState} from 'react';
-import {Button, Modal, ScrollView, StyleSheet, View} from 'react-native';
+import {
+    Button,
+    Keyboard,
+    KeyboardAvoidingView,
+    Modal,
+    PickerIOS, Platform,
+    ScrollView,
+    StyleSheet, TouchableOpacity,
+    TouchableWithoutFeedback,
+    View
+} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Center} from '../../../components/center.component';
 import {TextComponent} from '../../../components/text.component';
@@ -9,6 +19,8 @@ import {NativeStackScreenProps} from 'react-native-screens/native-stack';
 import {AuthenticationNavigatorScreens} from '../../../navigators/authentication.navigator';
 import {TabsScreens} from '../../../navigators/tabs.navigator';
 import {Picker} from '@react-native-picker/picker';
+import {ButtonComponent} from '../../../components/button.component';
+import {Ionicons} from '@expo/vector-icons';
 
 
 type Props = NativeStackScreenProps<TabsScreens, "PostBook">
@@ -17,13 +29,19 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
 
     const {theme} = useContext(ThemeContext)
 
+    const [isbn, setIsbn] = useState("")
+    const [title, setTitle] = useState("")
+    const [author, setAuthor] = useState("")
+    const [description, setDescription] = useState("")
+
     const [selectedPrice, setSelectedPrice] = useState(0.00)
     const [selectedCondition, setSelectedCondition] = useState(0)
+
 
     useLayoutEffect(() => {
         navigation.setOptions({
             headerTitle: "Post a book",
-            headerRight: props => <Button title={"Pubblica"} onPress={() => null} color={props.tintColor}/>
+            headerRight: props => <Button title={"Pubblica"} disabled onPress={() => null} color={props.tintColor}/>
         })
     }, [])
 
@@ -32,8 +50,7 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
             flex: 1,
             padding: theme.spacing.LG
         },
-        title: {
-        },
+        title: {},
         section: {
             marginTop: theme.spacing.MD
         },
@@ -43,45 +60,92 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
         },
         inputFooter: {
             color: theme.colors.SECONDARY
+        },
+        imageContainer: {
+            borderRadius: theme.spacing.LG,
+            borderColor: theme.colors.FILL_TERTIARY,
+            borderWidth: 1,
+            padding: theme.spacing.LG,
+            minHeight: 120
+        },
+        buttonImages: {
+            color: theme.colors.ACCENT,
+            marginLeft: theme.spacing.S
+        },
+        imagesDescription: {
+            marginTop: theme.spacing.MD,
+            color: theme.colors.SECONDARY
         }
     })
 
     return (
         <View style={{flex: 1}}>
-            <ScrollView>
-                <View style={styles.container}>
-                    <TextComponent style={[theme.fonts.LARGE_TITLE, styles.title]}>Posta un libro</TextComponent>
-                    <View style={styles.section}>
-                        <TextComponent
-                            style={[styles.sectionHeader, theme.fonts.SECTION_HEADER]}>IDENTIFICATIVO</TextComponent>
-                        <TextInputComponent placeholder={"ISBN"}/>
-                        <TextComponent style={[theme.fonts.CAPTION, styles.inputFooter]}>Solitamente di 10 o 13 cifre. E
-                            il codice che identifica
-                            ogni libro. Scrivilo oppure scansionalo premendo sul QRCode.</TextComponent>
-                    </View>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <ScrollView>
+                    <View style={styles.container}>
+                        <TextComponent style={[theme.fonts.LARGE_TITLE, styles.title]}>Posta un
+                            libro</TextComponent>
+                        <View style={styles.section}>
+                            <TouchableOpacity style={[styles.imageContainer]}
+                                              onPress={() => alert("Carica foto")}>
+                                    <Center>
+                                        <View style={{flexDirection: "row", alignItems: "center"}}>
+                                        <Ionicons name={"image"} color={theme.colors.ACCENT} size={24}/>
+                                            <TextComponent style={[theme.fonts.HEADLINE, styles.buttonImages]}>Carica le
+                                                foto</TextComponent>
+                                        </View>
+                                        <TextComponent style={[theme.fonts.CAPTION, styles.imagesDescription]}>Aggiungi
+                                            fino a 5 foto.
+                                            Avrai più possibità di vendere</TextComponent>
+                                    </Center>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={styles.section}>
+                            <TextComponent
+                                style={[styles.sectionHeader, theme.fonts.SECTION_HEADER]}>IDENTIFICATIVO</TextComponent>
+                            <TextInputComponent
+                                placeholder={"ISBN"}
+                                onChangeText={setIsbn}/>
+                            <TextComponent
+                                style={[theme.fonts.CAPTION, styles.inputFooter]}>Solitamente di 10 o 13 cifre. E
+                                il codice che identifica
+                                ogni libro. Scrivilo oppure scansionalo premendo sul QRCode.</TextComponent>
+                        </View>
 
-                    <View style={styles.section}>
-                        <TextComponent
-                            style={[styles.sectionHeader, theme.fonts.SECTION_HEADER]}>DETTAGLI</TextComponent>
-                        <TextInputComponent placeholder={"Titolo"}/>
-                        <TextInputComponent placeholder={"Autore"}/>
-                        <TextInputComponent placeholder={"Descrizione"}/>
-                        <TextComponent style={[theme.fonts.CAPTION, styles.inputFooter]}>Descrivi il libro e le sue condizioni. Una descrizione
-                            accurata ti da più possibilità di vendere.</TextComponent>
-                    </View>
+                        <View style={styles.section}>
+                            <TextComponent
+                                style={[styles.sectionHeader, theme.fonts.SECTION_HEADER]}>DETTAGLI</TextComponent>
+                            <TextInputComponent placeholder={"Titolo"}
+                                                onChangeText={setTitle}
+                                                value={title}
+                            />
+                            <TextInputComponent placeholder={"Autore"}
+                                                onChangeText={setAuthor}
+                                                value={author}
+                            />
+                            <TextInputComponent placeholder={"Descrizione"}
+                                                onChangeText={setDescription}
+                                                value={description}
+                            />
+                            <TextComponent
+                                style={[theme.fonts.CAPTION, styles.inputFooter]}>Descrivi il libro e le sue
+                                condizioni. Una descrizione
+                                accurata ti da più possibilità di vendere.</TextComponent>
+                        </View>
 
-                    <View style={styles.section}>
-                        <Picker selectedValue={selectedCondition} onValueChange={((itemValue, itemIndex) => {
-                            setSelectedCondition(itemValue)
-                            console.log(itemValue)
-                        })}>
-                            <Picker.Item label={"Nuovo"} value={0}/>
-                            <Picker.Item label={"Usato come nuovo"} value={1}/>
-                            <Picker.Item label={"Usato"} value={2}/>
-                        </Picker>
+                        <View style={styles.section}>
+
+                        </View>
+                        <View style={styles.section}>
+                            <ButtonComponent>Pubblica</ButtonComponent>
+                            <TextComponent style={[styles.inputFooter, theme.fonts.CAPTION]}>Al momento della
+                                pubblicazione tutti gli annunci sono sottoposto a un rapido controllo standard per
+                                assicurarci che rispettino le nostre Normative sulle vendite prima di diventare visibili
+                                agli altri. Beni diversi dai libri non sono consentiti.</TextComponent>
+                        </View>
                     </View>
-                </View>
-            </ScrollView>
+                </ScrollView>
+            </TouchableWithoutFeedback>
         </View>
     )
 }
