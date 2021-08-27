@@ -5,11 +5,13 @@ import {TabsNavigator} from './tabs.navigator';
 import {AuthenticationNavigator} from './authentication.navigator';
 import {useSplashScreen} from '../hooks/useSplashScreen.hook';
 import {HomeScreen} from '../screens/tabs/home/home.screen';
+import {PostBookScreen} from '../screens/tabs/postBook/postBook.screen';
 
 type RootStackScreens = {
     SplashScreen: undefined;
     TabsNavigator: undefined;
     LoginModal: undefined;
+    NewBookModal: undefined;
 }
 
 declare global {
@@ -36,6 +38,10 @@ export const RootNavigator: FC = () => {
                         <RootStack.Screen name={"TabsNavigator"} component={TabsNavigator}/>
                     </RootStack.Group>
             }
+
+            <RootStack.Screen name={"NewBookModal"} component={PostBookScreen} options={{
+                stackPresentation: 'modal'
+            }} />
 
             <RootStack.Group screenOptions={{stackPresentation: "modal", title: "Login", headerShown: false}}>
                 <RootStack.Screen name={"LoginModal"} component={AuthenticationNavigator}/>

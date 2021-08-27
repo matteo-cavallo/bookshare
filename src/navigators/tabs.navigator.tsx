@@ -7,6 +7,10 @@ import {withAuthentication} from '../highOrderComponents/withAuthentication';
 import {ProfileNavigator} from './profile.navigator';
 import {Center} from '../components/center.component';
 import {PostBookScreen} from '../screens/tabs/postBook/postBook.screen';
+import {Button, Pressable, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {TextInputComponent} from '../components/textInput.component';
+import {LightColors} from '../styles/colors';
+import {useNavigation} from '@react-navigation/native';
 
 export type TabsScreens = {
     Home: undefined,
@@ -27,15 +31,18 @@ export const TabsNavigator: FC = () => {
 
             {/* Private tabs*/}
             <Tabs.Group>
-                <Tabs.Screen name={"PostBook"} component={withAuthentication(PostBookScreen)} options={sellBookOptions}/>
-                <Tabs.Screen name={"Profile"} component={withAuthentication(ProfileNavigator)} options={profileScreenOptions}/>
+                <Tabs.Screen name={"PostBook"} component={withAuthentication(PostBookScreen)}
+                             options={sellBookOptions}/>
+                <Tabs.Screen name={"Profile"} component={withAuthentication(ProfileNavigator)}
+                             options={profileScreenOptions}/>
             </Tabs.Group>
         </Tabs.Navigator>
     )
 }
 
 const tabsNavigatorOptions: BottomTabNavigationOptions = {
-    headerShown: true
+    headerShown: true,
+    tabBarActiveTintColor: LightColors.ACCENT
 }
 
 const homeScreenOptions: BottomTabNavigationOptions = {
@@ -48,5 +55,20 @@ const profileScreenOptions: BottomTabNavigationOptions = {
 }
 
 const sellBookOptions: BottomTabNavigationOptions = {
+    tabBarButton: props => {
+
+        const navigation = useNavigation()
+
+        return (
+            <TouchableOpacity {...props} onPress={() => navigation.navigate("NewBookModal")}>
+                <View style={{backgroundColor: LightColors.ACCENT, width: 64, height: 64, borderRadius: 25, transform: [{translateY: 0}]}}>
+                    <Center>
+                        <Ionicons name={"add"}  color={"#FFFFFF"} size={28}/>
+                    </Center>
+                </View>
+            </TouchableOpacity>
+        )
+    }
+    ,
     tabBarIcon: props => <Ionicons name={"add-circle-outline"} size={props.size + 8} color={props.color}/>
 }
