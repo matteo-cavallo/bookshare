@@ -21,6 +21,7 @@ import {TabsScreens} from '../../../navigators/tabs.navigator';
 import {Picker} from '@react-native-picker/picker';
 import {ButtonComponent} from '../../../components/button.component';
 import {Ionicons} from '@expo/vector-icons';
+import IsbnScanner from "../../../components/isbnScanner.component";
 
 
 type Props = NativeStackScreenProps<TabsScreens, "PostBook">
@@ -37,6 +38,8 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
     const [selectedPrice, setSelectedPrice] = useState(0.00)
     const [selectedCondition, setSelectedCondition] = useState(0)
 
+
+    const [isbnModal, setIsbnModal] = useState(false)
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -78,6 +81,10 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
         }
     })
 
+
+
+
+
     return (
         <View style={{flex: 1}}>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -106,6 +113,7 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
                             <TextInputComponent
                                 placeholder={"ISBN"}
                                 onChangeText={setIsbn}/>
+                            <Ionicons name={"qr-code-outline"} size={25} onPress={()=>setIsbnModal(true)}/>
                             <TextComponent
                                 style={[theme.fonts.CAPTION, styles.inputFooter]}>Solitamente di 10 o 13 cifre. E
                                 il codice che identifica
@@ -146,6 +154,10 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
                     </View>
                 </ScrollView>
             </TouchableWithoutFeedback>
+            <Modal presentationStyle={"pageSheet"} visible={isbnModal} >
+                <Button title={"Chiudi"} onPress={()=> setIsbnModal(false)}/>
+                <IsbnScanner />
+            </Modal>
         </View>
     )
 }

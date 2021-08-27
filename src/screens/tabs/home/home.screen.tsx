@@ -31,8 +31,6 @@ export const HomeScreen: FC = () => {
             <TextComponent style={theme.fonts.BODY}>{auth.uid || "Nessun nome"}</TextComponent>
             <TextComponent style={theme.fonts.BODY}>{auth.isAnonymous ? "Anonimo" : "Non Anonimo"}</TextComponent>
             <Button title={"Login"} onPress={() => navigation.navigate("LoginModal")} />
-
-            <Ionicons name={"qr-code"} onPress={()=>{navigation.navigate("")}} />
         </Center>
     )
 }

@@ -4,6 +4,7 @@ import {BarCodeScanner, PermissionStatus} from "expo-barcode-scanner";
 import {Ionicons} from "@expo/vector-icons";
 import {ThemeContext} from "../providers/theme.provider";
 import {TextComponent} from "./text.component";
+import {Center} from "./center.component";
 
 const IsbnScanner = () => {
     const [hasPermission, setHasPermission] = useState<boolean>(false);
@@ -36,10 +37,10 @@ const IsbnScanner = () => {
             justifyContent: 'center',
         },
         scanner: {
+            flex:1,
             alignItems: 'center',
             justifyContent: 'center',
-            height: 300,
-            width: 300,
+            width: 100,
             overflow: 'hidden',
             borderRadius: theme.spacing.LG
         }
@@ -62,16 +63,15 @@ const IsbnScanner = () => {
     }
 
     return (
-        <View style={styles.container}>
-            <View style={styles.scanner}>
-                <BarCodeScanner
-                    onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-                    style={StyleSheet.absoluteFillObject}
-                />
-            </View>
+        <Center>
+            <BarCodeScanner
+                onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+                style={StyleSheet.absoluteFillObject}
+            />
             <TextComponent>{text}</TextComponent>
             {scanned && <Button title={'Tap to Scan Again'} onPress={() => setScanned(false)} />}
-        </View>
+        </Center>
+
     );
 };
 
