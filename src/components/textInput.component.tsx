@@ -3,8 +3,8 @@ import {StyleSheet, Text, TextInput, TextInputProps, View} from 'react-native';
 import {ThemeContext} from '../providers/theme.provider';
 
 interface TextInputComponentProps extends TextInputProps {
-    endItem?: FC,
-    startItem?: FC
+    endItem?: JSX.Element,
+    startItem?: JSX.Element
 }
 
 export const TextInputComponent: FC<TextInputComponentProps> = (props) => {
