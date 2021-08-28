@@ -11,9 +11,10 @@ import {Button, Pressable, StyleSheet, Text, TouchableOpacity, View} from 'react
 import {TextInputComponent} from '../components/textInput.component';
 import {LightColors} from '../styles/colors';
 import {useNavigation} from '@react-navigation/native';
+import {HomeNavigator} from './home/home.navigator';
 
 export type TabsScreens = {
-    Home: undefined,
+    HomeNavigator: undefined,
     Profile: undefined;
     PostBook: undefined;
 }
@@ -26,7 +27,7 @@ export const TabsNavigator: FC = () => {
         <Tabs.Navigator screenOptions={tabsNavigatorOptions}>
             {/* Public tabs */}
             <Tabs.Group>
-                <Tabs.Screen name={"Home"} component={HomeScreen} options={homeScreenOptions}/>
+                <Tabs.Screen name={"HomeNavigator"} component={HomeNavigator} options={homeScreenOptions}/>
             </Tabs.Group>
 
             {/* Private tabs*/}
@@ -47,6 +48,7 @@ const tabsNavigatorOptions: BottomTabNavigationOptions = {
 
 const homeScreenOptions: BottomTabNavigationOptions = {
     headerShown: false,
+    title: "Home",
     tabBarIcon: props => <Ionicons name={"home"} size={props.size} color={props.color}/>
 }
 

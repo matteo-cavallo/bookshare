@@ -4,6 +4,7 @@ import firebase from 'firebase';
 import FieldValue = firebase.firestore.FieldValue;
 
 export interface BookPost {
+    uid?: string;
     userId: string;
     bookId: string;
 

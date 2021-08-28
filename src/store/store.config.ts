@@ -5,9 +5,11 @@ import {FirestoreReducer, firestoreReducer} from 'redux-firestore';
 import {postBookReducer, PostBookState} from './postBook/postBook.reducer';
 import thunk from 'redux-thunk';
 import {UserModel} from '../model/user.model';
+import {BookPost} from '../model/bookPost.model';
 
 interface Schema {
-    books: GoogleAPIBookVolume
+    books: GoogleAPIBookVolume,
+    bookPosts: BookPost
 }
 
 interface Store {

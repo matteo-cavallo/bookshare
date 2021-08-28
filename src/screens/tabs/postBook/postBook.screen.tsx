@@ -69,12 +69,7 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
         setCanPublish(true)
     }
 
-    useEffect(() => {
-        console.log(conditions)
-    }, [conditions])
-
     function handlePublishBook() {
-
         Alert.alert("Confermi?", "Il tuo libro sarà visibile a tutti pubblicamente.", [
             {onPress: publishBook, text: "OK"},
             {text: "Annulla", style: "destructive"}
@@ -105,8 +100,6 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
             const bookDocPath = firestore.collection("books").doc(bookId)
             await firestore.set<GoogleAPIBookVolume>(bookDocPath.path, book)
 
-
-
             const postBook: BookPost = {
                 bookId: bookId,
                 userId: userId,
@@ -122,8 +115,6 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
                 creationDate: new Date(),
                 lastEdit: new Date(),
             }
-            console.log("Saved with id: ", bookId)
-            console.log("Date", postBook.lastEdit)
 
             // Saving Post Book
             const postRef = firestore.collection("bookPosts")
