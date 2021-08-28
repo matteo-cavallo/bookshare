@@ -15,24 +15,25 @@ export const TextInputComponent: FC<TextInputComponentProps> = (props) => {
         container: {
             flex:1,
             flexDirection: "row",
-            padding: theme.spacing.LG,
             backgroundColor: theme.colors.FILL_TERTIARY,
             borderRadius: theme.spacing.LG,
-            marginBottom: theme.spacing.MD
+            marginBottom: theme.spacing.MD,
         },
         textInput: {
             flex:1,
             fontSize: theme.fonts.BODY.fontSize,
             color: theme.colors.PRIMARY,
+            padding: theme.spacing.LG,
         },
         endItem:{
             alignItems: 'center',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            marginHorizontal: theme.spacing.MD
         },
         startItem:{
-            marginRight: theme.spacing.MD,
+            marginLeft: theme.spacing.MD,
             alignItems: 'center',
-            justifyContent: 'center'
+            justifyContent: 'center',
         }
     })
 
@@ -42,9 +43,11 @@ export const TextInputComponent: FC<TextInputComponentProps> = (props) => {
                 {props.startItem}
             </View>}
             <TextInput {...props} style={[props.style, style.textInput]} />
-            <View style={style.endItem}>
-                {props.endItem}
-            </View>
+            {
+             props.endItem &&   <View style={style.endItem}>
+                    {props.endItem}
+                </View>
+            }
         </View>
     )
 }

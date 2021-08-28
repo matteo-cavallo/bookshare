@@ -1,12 +1,18 @@
-import {BookModel} from "./book.model";
-import {UserModel} from "./user.model";
 
-//TODO: da controllare
-export interface BookPostModel {
-    user: UserModel,
-    book: BookModel,
-    status: string,
-    price: string;
-    position: string;
+// Listed Book
+export interface BookPost {
+    userId: string;
+    bookId: string;
+
+    description: string;
+    price: number;
+    condition: string;
+    position: Position;
     phone: string;
+}
+
+interface Position {
+    city: string;
+    latitude: number;
+    longitude: number;
 }

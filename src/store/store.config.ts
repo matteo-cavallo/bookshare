@@ -1,27 +1,19 @@
-import {combineReducers, configureStore, createStore} from '@reduxjs/toolkit';
+import {applyMiddleware, combineReducers, configureStore, createStore, Reducer} from '@reduxjs/toolkit';
 import {UIReducer, UIStoreState} from './uiStore/uistore.reducer';
 import {FirebaseReducer, firebaseReducer} from 'react-redux-firebase';
 import {FirestoreReducer, firestoreReducer} from 'redux-firestore';
-
-interface Profile {
-    name: string;
-    email: string;
-    lastName: string;
-}
-
-
-export interface Book {
-    name: string;
-    code: string;
-}
+import {postBookReducer, PostBookState} from './postBook/postBook.reducer';
+import thunk from 'redux-thunk';
+import {UserModel} from '../model/user.model';
 
 interface Schema {
-    books: Book
+    books: GoogleAPIBookVolume
 }
 
 interface Store {
-    firebase: FirebaseReducer.Reducer<Profile, Schema>;
+    firebase: FirebaseReducer.Reducer<UserModel, Schema>
     firestore: FirestoreReducer.Reducer<Schema>
+    postBook: PostBookState
 }
 
 const rootReducer = combineReducers<Store>({
@@ -30,8 +22,9 @@ const rootReducer = combineReducers<Store>({
         firestore: firestoreReducer,
 
         // Other reducers
+    postBook: postBookReducer
 })
 
-export const store = createStore(rootReducer)
+export const store = createStore(rootReducer, applyMiddleware(thunk))
 
 export type RootState = ReturnType<typeof rootReducer>

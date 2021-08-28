@@ -15,6 +15,7 @@
     "@react-navigation/native": "^6.0.2",
     "@reduxjs/toolkit": "^1.6.1",
     "@types/react-redux": "^7.1.18",
+    "@types/uuid": "^8.3.1",
     "expo": "~42.0.1",
     "expo-barcode-scanner": "~10.2.2",
     "expo-status-bar": "~1.0.4",
@@ -23,6 +24,7 @@
     "react-dom": "16.13.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz",
     "react-native-gesture-handler": "~1.10.2",
+    "react-native-get-random-values": "^1.7.0",
     "react-native-picker-select": "^8.0.4",
     "react-native-reanimated": "~2.2.0",
     "react-native-safe-area-context": "3.2.0",
@@ -31,7 +33,9 @@
     "react-redux": "^7.2.4",
     "react-redux-firebase": "^3.10.0",
     "redux": "^4.1.1",
-    "redux-firestore": "^0.15.0"
+    "redux-firestore": "^0.15.0",
+    "redux-thunk": "^2.3.0",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",

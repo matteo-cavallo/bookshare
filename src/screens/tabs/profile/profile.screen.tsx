@@ -16,20 +16,25 @@ import {useFirebase} from 'react-redux-firebase';
 export const ProfileScreen: FC = () => {
 
     const navigation = useNavigation()
-
     const dispatch = useDispatch()
+    const firebase = useFirebase()
 
     // Context
     const {theme} = useContext(ThemeContext)
     const auth = useSelector((state: RootState) => state.firebase.auth)
 
-    const firebase = useFirebase()
+
+    const books = useSelector((state: RootState)=> state.firebase.profile.listedBooks)
 
     function handleLogout(){
         firebase.logout().then(() => {
             console.log("User logged out.")
         })
     }
+
+    useEffect(() => {
+        console.log(books)
+    },[])
 
     const styles = StyleSheet.create({
         header: {
@@ -61,6 +66,7 @@ export const ProfileScreen: FC = () => {
                             </Center>
                         </View>
                         <TextComponent style={theme.fonts.HEADLINE}>{auth.email || "No email"}</TextComponent>
+                        <TextComponent>{books.length} libri</TextComponent>
                     </View>
                 </SafeAreaView>
                 <View style={styles.body}>
