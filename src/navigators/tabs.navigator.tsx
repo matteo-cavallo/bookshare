@@ -46,6 +46,7 @@ const tabsNavigatorOptions: BottomTabNavigationOptions = {
 }
 
 const homeScreenOptions: BottomTabNavigationOptions = {
+    headerShown: false,
     tabBarIcon: props => <Ionicons name={"home"} size={props.size} color={props.color}/>
 }
 

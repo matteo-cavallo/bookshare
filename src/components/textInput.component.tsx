@@ -1,5 +1,5 @@
 import React, {FC, useContext} from 'react';
-import {StyleSheet, TextInput, TextInputProps, View} from 'react-native';
+import {StyleSheet, Text, TextInput, TextInputProps, View} from 'react-native';
 import {ThemeContext} from '../providers/theme.provider';
 
 interface TextInputComponentProps extends TextInputProps {
@@ -13,7 +13,6 @@ export const TextInputComponent: FC<TextInputComponentProps> = (props) => {
 
     const style = StyleSheet.create({
         container: {
-            flex:1,
             flexDirection: "row",
             backgroundColor: theme.colors.FILL_TERTIARY,
             borderRadius: theme.spacing.LG,

@@ -65,7 +65,7 @@ export const LoginEmailScreen: FC<Props> = ({navigation}) => {
                               keyboardVerticalOffset={100}>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <View style={styles.container}>
-                    <View>
+                    <View >
                         <TextComponent style={[theme.fonts.LARGE_TITLE, styles.title]}>Entra in
                             Bookshare</TextComponent>
                         <TextInputComponent

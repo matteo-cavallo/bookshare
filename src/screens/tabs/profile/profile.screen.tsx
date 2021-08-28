@@ -66,7 +66,7 @@ export const ProfileScreen: FC = () => {
                             </Center>
                         </View>
                         <TextComponent style={theme.fonts.HEADLINE}>{auth.email || "No email"}</TextComponent>
-                        <TextComponent>{books.length} libri</TextComponent>
+                        <TextComponent>{books && books.length} libri</TextComponent>
                     </View>
                 </SafeAreaView>
                 <View style={styles.body}>
