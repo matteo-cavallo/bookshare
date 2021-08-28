@@ -1,4 +1,4 @@
-import React, {FC, useContext, useLayoutEffect, useState} from 'react';
+import React, {FC, useContext, useEffect, useLayoutEffect, useState} from 'react';
 import {
     Button,
     Keyboard,
@@ -19,14 +19,31 @@ import {ButtonComponent} from '../../../components/button.component';
 import {Ionicons} from '@expo/vector-icons';
 import IsbnScanner from "../../../components/isbnScanner.component";
 import {PickerSelector} from "../../../components/pickerSelector.component";
-
+import {BookPost} from '../../../model/bookPost.model';
+import 'react-native-get-random-values';
+import {v4 as uuid} from 'uuid'
+import {useFirebase, useFirestore} from 'react-redux-firebase';
+import {useDispatch, useSelector} from 'react-redux';
+import {RootState} from '../../../store/store.config';
+import {PostBookActions} from '../../../store/postBook/postBook.actions';
+import {FBFirestore} from '../../../firebase/firebase.config';
+import {UserModel} from '../../../model/user.model';
 
 type Props = NativeStackScreenProps<TabsScreens, "PostBook">
 
 export const PostBookScreen: FC<Props> = ({navigation}) => {
 
+    const firebase = useFirebase()
+    const firestore = useFirestore()
+    const dispatch = useDispatch()
+
+    const auth = useSelector((state: RootState) => state.firebase.auth)
+
     const {theme} = useContext(ThemeContext)
 
+    const [canPublish, setCanPublish] = useState(true)
+
+    // Form Data
     const [isbn, setIsbn] = useState("")
     const [title, setTitle] = useState("")
     const [author, setAuthor] = useState("")
@@ -44,9 +61,75 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
         navigation.setOptions({
             headerTitle: "Post a book",
             headerLeft: props => <Button title={"Annulla"} onPress={navigation.goBack} color={props.tintColor} />,
-            headerRight: props => <Button title={"Pubblica"} disabled onPress={() => null} color={props.tintColor}/>
+            //headerRight: props => <Button title={"Pubblica"} disabled={!canPublish} onPress={() => handlePublishBook()} color={props.tintColor}/>
         })
     }, [])
+
+
+    function checkFormData(){
+        setCanPublish(true)
+    }
+
+    useEffect(() => {
+        console.log(conditions)
+    },[conditions])
+
+    const handlePublishBook = async () => {
+        // If check is valid
+
+        const bookId = uuid() // Google Book else UUID
+        const userId = auth.uid
+
+        // Book creation
+        const book: GoogleAPIBookVolume = {
+            id: bookId,
+            volumeInfo: {
+                title: title,
+                authors: author.split(",") || []
+            }
+        }
+
+        try {
+            // Saving book
+            const bookDocPath = firestore.collection("books").doc(bookId)
+            await firestore.set<GoogleAPIBookVolume>(bookDocPath.path,book)
+
+            const postBook = {
+                bookId: bookId,
+                userId:  userId,
+                condition: conditions,
+                price: Number(selectedPrice),
+                description: description,
+                position: {
+                    city: "Rome",
+                    latitude: 41.9027835,
+                    longitude: 12.4963655
+                },
+                phone: phone
+            }
+            console.log("Saved with id: ", bookId)
+
+            // Saving Post Book
+            const postRef = firestore.collection("bookPosts")
+            const post = await firestore.add<BookPost>(postRef.path, postBook)
+
+            console.log("Saved post with id: ", post.id)
+
+            const profileDocRef = firestore.collection("users").doc(userId)
+            // User ref
+            firestore.get<UserModel>(profileDocRef.path).then(u => {
+                const newListedBooks = u.data()?.listedBooks || []
+                newListedBooks.push(post.id)
+
+                firestore.update<UserModel>(profileDocRef.path, {
+                    listedBooks: newListedBooks
+                })
+            })
+
+        } catch (e){
+            console.log("Error saving book: ", e)
+        }
+    }
 
     const styles = StyleSheet.create({
         container: {
@@ -191,7 +274,7 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
                         </View>
 
                         <View style={styles.section}>
-                            <ButtonComponent>Pubblica</ButtonComponent>
+                            <ButtonComponent onPress={handlePublishBook}>Pubblica</ButtonComponent>
                             <TextComponent style={[styles.inputFooter, theme.fonts.CAPTION]}>Al momento della
                                 pubblicazione tutti gli annunci sono sottoposto a un rapido controllo standard per
                                 assicurarci che rispettino le nostre Normative sulle vendite prima di diventare visibili
