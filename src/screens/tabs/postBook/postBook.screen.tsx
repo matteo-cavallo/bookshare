@@ -170,7 +170,7 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
                         <View style={styles.section}>
                             <TextComponent
                                 style={[styles.sectionHeader, theme.fonts.SECTION_HEADER]}>Posizione</TextComponent>
-                            <TextInputComponent placeholder={"Posizione"}
+                            <TextInputComponent placeholder={"Luogo"}
                                                 onChangeText={setPosition}
                                                 value={position}
                                                 startItem={<Ionicons name={"locate-outline"} size={theme.spacing.XL} color={theme.colors.SECONDARY} />}
