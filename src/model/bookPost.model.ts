@@ -1,5 +1,8 @@
 
 // Listed Book
+import firebase from 'firebase';
+import FieldValue = firebase.firestore.FieldValue;
+
 export interface BookPost {
     userId: string;
     bookId: string;
@@ -9,6 +12,8 @@ export interface BookPost {
     condition: string;
     position: Position;
     phone: string;
+    creationDate: Date;
+    lastEdit: Date;
 }
 
 interface Position {

@@ -1,8 +1,9 @@
 import React, {FC, useContext, useEffect, useLayoutEffect, useState} from 'react';
 import {
+    Alert,
     Button,
-    Keyboard,
-    Modal, SafeAreaView,
+    Keyboard, Modal,
+    SafeAreaView,
     ScrollView,
     StyleSheet,
     TouchableOpacity,
@@ -25,15 +26,12 @@ import {v4 as uuid} from 'uuid'
 import {useFirebase, useFirestore} from 'react-redux-firebase';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../../store/store.config';
-import {PostBookActions} from '../../../store/postBook/postBook.actions';
-import {FBFirestore} from '../../../firebase/firebase.config';
 import {UserModel} from '../../../model/user.model';
 
 type Props = NativeStackScreenProps<TabsScreens, "PostBook">
 
 export const PostBookScreen: FC<Props> = ({navigation}) => {
 
-    const firebase = useFirebase()
     const firestore = useFirestore()
     const dispatch = useDispatch()
 
@@ -42,6 +40,7 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
     const {theme} = useContext(ThemeContext)
 
     const [canPublish, setCanPublish] = useState(true)
+    const [isLoading, setIsLoading] = useState(false)
 
     // Form Data
     const [isbn, setIsbn] = useState("")
@@ -52,29 +51,41 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
     const [conditions, setConditions] = useState("")
     const [selectedPrice, setSelectedPrice] = useState("")
 
-    const [position,setPosition] = useState("")
-    const [phone,setPhone] = useState("")
+    const [position, setPosition] = useState("")
+    const [phone, setPhone] = useState("")
 
     const [isbnModal, setIsbnModal] = useState(false)
 
     useLayoutEffect(() => {
         navigation.setOptions({
             headerTitle: "Post a book",
-            headerLeft: props => <Button title={"Annulla"} onPress={navigation.goBack} color={props.tintColor} />,
+            headerLeft: props => <Button title={"Annulla"} onPress={navigation.goBack} color={props.tintColor}/>,
             //headerRight: props => <Button title={"Pubblica"} disabled={!canPublish} onPress={() => handlePublishBook()} color={props.tintColor}/>
         })
     }, [])
 
 
-    function checkFormData(){
+    function checkFormData() {
         setCanPublish(true)
     }
 
     useEffect(() => {
         console.log(conditions)
-    },[conditions])
+    }, [conditions])
 
-    const handlePublishBook = async () => {
+    function handlePublishBook() {
+
+        Alert.alert("Confermi?", "Il tuo libro sarà visibile a tutti pubblicamente.", [
+            {onPress: publishBook, text: "OK"},
+            {text: "Annulla", style: "destructive"}
+        ])
+    }
+
+    /**
+     *  THis function handles submit of book
+     */
+    const publishBook = async () => {
+        setIsLoading(true)
         // If check is valid
 
         const bookId = uuid() // Google Book else UUID
@@ -92,11 +103,13 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
         try {
             // Saving book
             const bookDocPath = firestore.collection("books").doc(bookId)
-            await firestore.set<GoogleAPIBookVolume>(bookDocPath.path,book)
+            await firestore.set<GoogleAPIBookVolume>(bookDocPath.path, book)
 
-            const postBook = {
+
+
+            const postBook: BookPost = {
                 bookId: bookId,
-                userId:  userId,
+                userId: userId,
                 condition: conditions,
                 price: Number(selectedPrice),
                 description: description,
@@ -105,9 +118,12 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
                     latitude: 41.9027835,
                     longitude: 12.4963655
                 },
-                phone: phone
+                phone: phone,
+                creationDate: new Date(),
+                lastEdit: new Date(),
             }
             console.log("Saved with id: ", bookId)
+            console.log("Date", postBook.lastEdit)
 
             // Saving Post Book
             const postRef = firestore.collection("bookPosts")
@@ -126,8 +142,12 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
                 })
             })
 
-        } catch (e){
+        } catch (e) {
             console.log("Error saving book: ", e)
+            Alert.alert("Attenzione", "C'è stato un problema con la richiesta. Provare più tardi.")
+        } finally {
+            setIsLoading(false)
+            navigation.goBack()
         }
     }
 
@@ -174,16 +194,16 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
                         <View style={styles.section}>
                             <TouchableOpacity style={[styles.imageContainer]}
                                               onPress={() => alert("Carica foto")}>
-                                    <Center>
-                                        <View style={{flexDirection: "row", alignItems: "center"}}>
+                                <Center>
+                                    <View style={{flexDirection: "row", alignItems: "center"}}>
                                         <Ionicons name={"image"} color={theme.colors.ACCENT} size={24}/>
-                                            <TextComponent style={[theme.fonts.HEADLINE, styles.buttonImages]}>Carica le
-                                                foto</TextComponent>
-                                        </View>
-                                        <TextComponent style={[theme.fonts.CAPTION, styles.imagesDescription]}>Aggiungi
-                                            fino a 5 foto.
-                                            Avrai più possibità di vendere</TextComponent>
-                                    </Center>
+                                        <TextComponent style={[theme.fonts.HEADLINE, styles.buttonImages]}>Carica le
+                                            foto</TextComponent>
+                                    </View>
+                                    <TextComponent style={[theme.fonts.CAPTION, styles.imagesDescription]}>Aggiungi
+                                        fino a 5 foto.
+                                        Avrai più possibità di vendere</TextComponent>
+                                </Center>
                             </TouchableOpacity>
                         </View>
                         <View style={styles.section}>
@@ -194,7 +214,8 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
                                 placeholder={"ISBN"}
                                 onChangeText={setIsbn}
                                 endItem={
-                                    <Ionicons name={"qr-code-outline"} color={theme.colors.ACCENT} size={25} onPress={()=>setIsbnModal(true)}/>
+                                    <Ionicons name={"qr-code-outline"} color={theme.colors.ACCENT} size={25}
+                                              onPress={() => setIsbnModal(true)}/>
                                 }
                             />
                             <TextComponent
@@ -209,17 +230,22 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
                             <TextInputComponent placeholder={"Titolo"}
                                                 onChangeText={setTitle}
                                                 value={title}
-                                                startItem={<Ionicons name={"book-outline"} size={theme.spacing.XL} color={theme.colors.SECONDARY} />}
+                                                startItem={<Ionicons name={"book-outline"} size={theme.spacing.XL}
+                                                                     color={theme.colors.SECONDARY}/>}
                             />
                             <TextInputComponent placeholder={"Autore"}
                                                 onChangeText={setAuthor}
                                                 value={author}
-                                                startItem={<Ionicons name={"person-circle-outline"} size={theme.spacing.XL} color={theme.colors.SECONDARY} />}
+                                                startItem={<Ionicons name={"person-circle-outline"}
+                                                                     size={theme.spacing.XL}
+                                                                     color={theme.colors.SECONDARY}/>}
                             />
                             <TextInputComponent placeholder={"Descrizione"}
                                                 onChangeText={setDescription}
                                                 value={description}
-                                                startItem={<Ionicons name={"help-circle-outline"} size={theme.spacing.XL} color={theme.colors.SECONDARY} />}
+                                                startItem={<Ionicons name={"help-circle-outline"}
+                                                                     size={theme.spacing.XL}
+                                                                     color={theme.colors.SECONDARY}/>}
                             />
                             <TextComponent
                                 style={[theme.fonts.CAPTION, styles.inputFooter]}>Descrivi il libro e le sue
@@ -234,13 +260,18 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
                             <TextInputComponent placeholder={"Prezzo"}
                                                 keyboardType={"decimal-pad"}
                                                 onChangeText={setSelectedPrice}
-                                                value={ selectedPrice}
-                                                endItem={<Ionicons name={"logo-euro"} size={theme.spacing.LG} color={theme.colors.SECONDARY}/>}
-                                                    />
+                                                value={selectedPrice}
+                                                endItem={<Ionicons name={"logo-euro"} size={theme.spacing.LG}
+                                                                   color={theme.colors.SECONDARY}/>}
+                            />
                             {/*TODO: Abbellire in caso come da figma*/}
                             <PickerSelector
                                 onValueChange={(value) => setConditions(value)}
-                                placeholder={{label:"Seleziona lo stato di usura",value:"",inputLabel:"Condizione"}}
+                                placeholder={{
+                                    label: "Seleziona lo stato di usura",
+                                    value: "",
+                                    inputLabel: "Condizione"
+                                }}
                                 items={[
                                     {label: 'Nuovo', value: 'nuovo'},
                                     {label: 'Usato come nuovo', value: 'usato_come_nuovo'},
@@ -256,7 +287,8 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
                             <TextInputComponent placeholder={"Posizione"}
                                                 onChangeText={setPosition}
                                                 value={position}
-                                                startItem={<Ionicons name={"locate-outline"} size={theme.spacing.XL} color={theme.colors.SECONDARY} />}
+                                                startItem={<Ionicons name={"locate-outline"} size={theme.spacing.XL}
+                                                                     color={theme.colors.SECONDARY}/>}
                             />
                         </View>
 
@@ -268,13 +300,14 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
                                                 keyboardType={"phone-pad"}
                                                 onChangeText={setPhone}
                                                 value={phone}
-                                                startItem={<Ionicons name={"call-outline"} size={theme.spacing.XL} color={theme.colors.SECONDARY} />}
+                                                startItem={<Ionicons name={"call-outline"} size={theme.spacing.XL}
+                                                                     color={theme.colors.SECONDARY}/>}
 
                             />
                         </View>
 
                         <View style={styles.section}>
-                            <ButtonComponent onPress={handlePublishBook}>Pubblica</ButtonComponent>
+                            <ButtonComponent onPress={handlePublishBook} loading={isLoading}>Pubblica</ButtonComponent>
                             <TextComponent style={[styles.inputFooter, theme.fonts.CAPTION]}>Al momento della
                                 pubblicazione tutti gli annunci sono sottoposto a un rapido controllo standard per
                                 assicurarci che rispettino le nostre Normative sulle vendite prima di diventare visibili
@@ -284,9 +317,14 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
                     </View>
                 </ScrollView>
             </TouchableWithoutFeedback>
-            <Modal presentationStyle={"pageSheet"} visible={isbnModal} >
-                <Button title={"Annulla Scansione"} onPress={()=> setIsbnModal(false)}/>
-                <IsbnScanner setIsbnModal={setIsbnModal} onIsbnScanned={setIsbn} />
+
+            <Modal presentationStyle={"pageSheet"}  visible={isbnModal} animationType={"slide"} >
+                <View style={{flex: 1}}>
+                    <IsbnScanner setIsbnModal={setIsbnModal} onIsbnScanned={setIsbn}/>
+                    <SafeAreaView>
+                        <Button title={"Annulla Scansione"} onPress={() => setIsbnModal(false)}/>
+                    </SafeAreaView>
+                </View>
             </Modal>
         </SafeAreaView>
     )

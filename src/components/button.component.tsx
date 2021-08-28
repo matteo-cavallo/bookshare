@@ -1,8 +1,9 @@
 import React, {FC, useContext} from 'react';
 import {
+    ActivityIndicator,
     ButtonProps,
     StyleProp,
-    StyleSheet,
+    StyleSheet, Text,
     TextProps, TextStyle,
     TouchableOpacity,
     TouchableOpacityProps,
@@ -13,6 +14,7 @@ import {ThemeContext} from '../providers/theme.provider';
 
 interface Props extends TouchableOpacityProps {
     textStyle?: StyleProp<TextStyle>
+    loading?: boolean
 }
 export const ButtonComponent: FC<Props> = (props) => {
 
@@ -36,7 +38,12 @@ export const ButtonComponent: FC<Props> = (props) => {
 
     return (
         <TouchableOpacity {...props} style={[styles.container, props.style]}>
-            <TextComponent style={[styles.text, props.textStyle]}>{props.children}</TextComponent>
+
+            {
+                props.loading
+                    ? <ActivityIndicator color={"#FFFFFF"}/>
+                    : <TextComponent style={[styles.text, props.textStyle]}>{props.children}</TextComponent>
+            }
         </TouchableOpacity>
     )
 }
