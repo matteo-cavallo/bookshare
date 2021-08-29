@@ -40,7 +40,6 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
     const googleBookData = useAppSelector(state => state.newBook.googleBook)
     const isLoading = useAppSelector(state => state.newBook.isLoading)
 
-
     // UI
     const [canPublish, setCanPublish] = useState(false)
     const [isbnModal, setIsbnModal] = useState(false)
@@ -90,7 +89,30 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
     }
 
     function publishBook() {
+        const newBook: BookPost = {
+            bookId: googleBookData?.id || null,
+            title: title,
+            description: description,
+            price: Number(selectedPrice) || 0,
+            condition: conditions,
+            phone: phone,
+            position: {
+                city: "Rome",
+                latitude: 41,
+                longitude: 12
+            },
+            active: true
+        }
 
+        // Dispatching action to upload the new book
+        dispatch(PostNewBookActions.postNewBook(newBook))
+            .unwrap()
+            .then(result => {
+                console.log("Book posted successfully.")
+            })
+            .catch(e => {
+                console.log("Book hasn't been posted.", e.message)
+            })
     }
 
 

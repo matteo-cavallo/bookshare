@@ -1,10 +1,10 @@
 
 export interface UserModel {
-    uid: string;
+    uid?: string;
     email: string;
 
     firstName?: string;
     lastName?: string;
 
-    listedBooks: string[]
+    postedBooks: string[]
 }

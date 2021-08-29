@@ -1,6 +1,5 @@
-// API Key: AIzaSyBmj0aMbhhXWz2pvkD_GNCGByDZrEo33vA
-
 import axios from 'axios';
+
 
 /**
  *  GET THE BOOK BY ISBN
@@ -18,7 +17,6 @@ import axios from 'axios';
  *
  */
 
-const API_KEY = "AIzaSyBmj0aMbhhXWz2pvkD_GNCGByDZrEo33vA"
 
 interface SearchResult {
     kind: "string"

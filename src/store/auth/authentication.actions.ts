@@ -1,5 +1,6 @@
 import {createAction, createAsyncThunk} from '@reduxjs/toolkit';
-import {FBAuth, FirebaseUser, UserCredential} from '../../firebase/firebase.config';
+import {FBAuth, FBFirestore, FirebaseUser, userConverter, UserCredential} from '../../firebase/firebase.config';
+import {FBCollections} from '../../firebase/collections';
 
 const prefix = "authentication/"
 
@@ -27,7 +28,7 @@ type LoginWithEmailArgs = {
 }
 const loginWithEmail = createAsyncThunk<UserCredential, LoginWithEmailArgs>(LOGIN_EMAIL, async arg => {
     const {email, password} = arg
-    return await FBAuth.signInWithEmailAndPassword(email,password)
+    return await FBAuth.signInWithEmailAndPassword(email, password)
 })
 
 /**
@@ -37,9 +38,26 @@ type SignUpWithEmailArgs = {
     email: string
     password: string
 }
-const signUpWithEmailAndPassword = createAsyncThunk<UserCredential, SignUpWithEmailArgs>(SIGNUP_EMAIL, async arg => {
+const signUpWithEmailAndPassword = createAsyncThunk<void, SignUpWithEmailArgs>(SIGNUP_EMAIL, async arg => {
     const {email, password} = arg
-    return await FBAuth.createUserWithEmailAndPassword(email, password)
+
+    try {
+        // Registration
+        const user = await FBAuth.createUserWithEmailAndPassword(email, password)
+
+        // Creating account
+        const userDocRef = FBFirestore.collection(FBCollections.users)
+            .doc(user.user?.uid)
+            .withConverter(userConverter)
+        await userDocRef
+            .set({
+                email: user.user?.email || "",
+                postedBooks: [],
+            })
+        console.log("Account created. Id: ", user.user?.uid)
+    } catch (e) {
+        throw Error(e.message)
+    }
 })
 
 /**

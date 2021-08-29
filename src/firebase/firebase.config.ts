@@ -2,6 +2,8 @@
 import firebase from 'firebase';
 import 'firebase/auth'
 import 'firebase/firestore'
+import FirestoreDataConverter = firebase.firestore.FirestoreDataConverter;
+import {UserModel} from '../model/user.model';
 
 
 export type FirebaseUser = firebase.User
@@ -21,3 +23,13 @@ firebase.initializeApp(firebaseConfig);
 
 export const FBAuth = firebase.auth()
 export const FBFirestore = firebase.firestore()
+
+
+export const userConverter: FirestoreDataConverter<UserModel> = {
+    fromFirestore(snapshot: firebase.firestore.QueryDocumentSnapshot, options: firebase.firestore.SnapshotOptions): UserModel {
+        return snapshot.data() as UserModel
+    },
+    toFirestore(modelObject: UserModel): firebase.firestore.DocumentData {
+        return modelObject
+    }
+}
