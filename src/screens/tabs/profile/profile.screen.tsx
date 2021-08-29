@@ -6,35 +6,27 @@ import {useDispatch, useSelector} from 'react-redux';
 import {UIActions} from '../../../store/uiStore/uistore.actions';
 import {useNavigation} from '@react-navigation/native'
 import {ThemeContext} from '../../../providers/theme.provider';
-import {AuthContext} from '../../../providers/auth.provider';
+import {AuthContext} from '../../../providers/authentication.provider';
 import {Ionicons} from '@expo/vector-icons';
 import {DarkColors, LightColors} from '../../../styles/colors';
-import {UserActions} from '../../../store/user/user.actions';
-import {RootState} from '../../../store/store.config';
-import {useFirebase} from 'react-redux-firebase';
+import {RootState, useAppSelector} from '../../../store/store.config';
+import {FBAuth} from '../../../firebase/firebase.config';
 
 export const ProfileScreen: FC = () => {
 
     const navigation = useNavigation()
-    const dispatch = useDispatch()
-    const firebase = useFirebase()
 
     // Context
     const {theme} = useContext(ThemeContext)
-    const auth = useSelector((state: RootState) => state.firebase.auth)
 
-
-    const books = useSelector((state: RootState)=> state.firebase.profile.listedBooks)
+    // Selectors
+    const auth = useAppSelector(state => state.auth.user)
 
     function handleLogout(){
-        firebase.logout().then(() => {
-            console.log("User logged out.")
+        FBAuth.signOut().then(() => {
+            console.log("User is signed out.")
         })
     }
-
-    useEffect(() => {
-        console.log(books)
-    },[])
 
     const styles = StyleSheet.create({
         header: {
@@ -65,8 +57,7 @@ export const ProfileScreen: FC = () => {
                             <Ionicons name={"person"} size={40} color={DarkColors.SECONDARY}/>
                             </Center>
                         </View>
-                        <TextComponent style={theme.fonts.HEADLINE}>{auth.email || "No email"}</TextComponent>
-                        <TextComponent>{books && books.length} libri</TextComponent>
+                        <TextComponent style={theme.fonts.HEADLINE}>{auth?.email || "No email"}</TextComponent>
                     </View>
                 </SafeAreaView>
                 <View style={styles.body}>

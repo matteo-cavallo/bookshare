@@ -1,29 +1,28 @@
 import {createReducer} from '@reduxjs/toolkit';
 import {BookPost} from '../../model/bookPost.model';
-import {PostBookScreen} from '../../screens/tabs/postBook/postBook.screen';
-import {PostBookActions} from './postBook.actions';
+import {PostNewBookActions} from './postBook.actions';
 
-export interface PostBookState {
+interface PostNewBookState {
     book?: BookPost
+    googleBook?: GoogleAPIBookVolume
     isLoading: boolean
-    isError: boolean
 }
 
-const initialState: PostBookState = {
+const initialState: PostNewBookState = {
     isLoading: false,
-    isError: false
 }
 
-export const postBookReducer = createReducer(initialState, builder => {
+export const postNewBookReducer = createReducer(initialState, builder => {
 
-    builder.addCase(PostBookActions.publishBook.pending,state => {
+    builder.addCase(PostNewBookActions.fetchBookByIsbn.pending, state => {
         state.isLoading = true
-        state.isError = false
     })
-
-    builder.addCase(PostBookActions.publishBook.fulfilled, state => {
+    builder.addCase(PostNewBookActions.fetchBookByIsbn.fulfilled, (state, action) => {
+        state.googleBook = action.payload
         state.isLoading = false
-        state.isError = false
     })
-
+    builder.addCase(PostNewBookActions.fetchBookByIsbn.rejected, state => {
+        console.log("Error fetching book by ISBN")
+        state.isLoading = false
+    })
 })

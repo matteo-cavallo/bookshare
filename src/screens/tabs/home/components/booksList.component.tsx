@@ -1,9 +1,6 @@
 import {BookPost} from '../../../../model/bookPost.model';
 import React, {FC, useState} from 'react';
 import {ActivityIndicator, StyleSheet, TouchableOpacity, View, Animated} from 'react-native';
-import {FirestoreReducer} from 'redux-firestore';
-import {TextComponent} from '../../../../components/text.component';
-import {isLoaded} from 'react-redux-firebase';
 import {BookItem} from './bookItem.components';
 
 interface Props {

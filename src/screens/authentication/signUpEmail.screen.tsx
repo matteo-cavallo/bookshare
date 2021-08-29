@@ -14,15 +14,16 @@ import {TextInputComponent} from '../../components/textInput.component';
 import {ThemeContext} from '../../providers/theme.provider';
 import {TextComponent} from '../../components/text.component';
 import {ButtonComponent} from '../../components/button.component';
-import {AuthContext} from '../../providers/auth.provider';
+import {AuthContext} from '../../providers/authentication.provider';
 import {useNavigation} from '@react-navigation/native';
-import {useFirebase} from 'react-redux-firebase';
+import {useAppDispatch, useAppSelector} from '../../store/store.config';
+import {AuthenticationActions} from '../../store/auth/authentication.actions';
 
 type Props = NativeStackScreenProps<AuthenticationNavigatorScreens, "LoginEmail">
 
 export const SignUpEmailScreen: FC<Props> = ({navigation}) => {
 
-    const firebase = useFirebase()
+    const dispatch = useAppDispatch()
 
     // This hook allows to navigate over the Root Navigation Stack
     const rootNavigation = useNavigation()
@@ -31,21 +32,19 @@ export const SignUpEmailScreen: FC<Props> = ({navigation}) => {
     const [password, setPassword] = useState("password")
     const [passwordConfirm, setPasswordConfirm] = useState("password")
 
-    const [loading, setLoading] = useState(false)
+    const loading = useAppSelector(state => state.auth.isLoading)
 
     function submitSignUp() {
-        setLoading(true)
-        firebase.createUser({
+        dispatch(AuthenticationActions.signUpWithEmailAndPassword({
             email,
-            password,
-            signIn: true
-        })
+            password
+        }))
+            .unwrap()
             .then(result => {
                 rootNavigation.navigate("TabsNavigator")
             })
-            .catch(e => {
-                Alert.alert("Attenzione", e.message)
-                setLoading(false)
+            .catch(error => {
+                Alert.alert("Errore nella registrazione", error.message)
             })
     }
 

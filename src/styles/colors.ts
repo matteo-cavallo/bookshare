@@ -7,7 +7,7 @@ export const LightColors = {
 
     // ACTIONS
     ACCENT: "#2ecc71",
-    ACCENT_DISABLED: "#61be50",
+    ACCENT_DISABLED: "rgb(143,227,178)",
 
     // GRAYSCALE
     FILL_TERTIARY: "rgba(118, 118, 128, 0.12)",

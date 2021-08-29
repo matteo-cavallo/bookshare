@@ -27,7 +27,7 @@ export const TabsNavigator: FC = () => {
         <Tabs.Navigator screenOptions={tabsNavigatorOptions}>
             {/* Public tabs */}
             <Tabs.Group>
-                <Tabs.Screen name={"HomeNavigator"} component={HomeNavigator} options={homeScreenOptions}/>
+                <Tabs.Screen name={"HomeNavigator"} component={HomeNavigator} options={homeScreenOptions} />
             </Tabs.Group>
 
             {/* Private tabs*/}

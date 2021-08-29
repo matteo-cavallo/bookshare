@@ -23,38 +23,38 @@ import {PickerSelector} from "../../../components/pickerSelector.component";
 import {BookPost} from '../../../model/bookPost.model';
 import 'react-native-get-random-values';
 import {v4 as uuid} from 'uuid'
-import {useFirebase, useFirestore} from 'react-redux-firebase';
-import {useDispatch, useSelector} from 'react-redux';
-import {RootState} from '../../../store/store.config';
 import {UserModel} from '../../../model/user.model';
+import {useAppDispatch, useAppSelector} from '../../../store/store.config';
+import {PostNewBookActions} from '../../../store/postBook/postBook.actions';
+import {FBAuth} from '../../../firebase/firebase.config';
+import {GoogleBookAPIService} from '../../../services/googleBookAPI.service';
 
 type Props = NativeStackScreenProps<TabsScreens, "PostBook">
 
 export const PostBookScreen: FC<Props> = ({navigation}) => {
 
-    const firestore = useFirestore()
-    const dispatch = useDispatch()
-
-    const auth = useSelector((state: RootState) => state.firebase.auth)
-
+    const dispatch = useAppDispatch()
     const {theme} = useContext(ThemeContext)
 
-    const [canPublish, setCanPublish] = useState(true)
-    const [isLoading, setIsLoading] = useState(false)
+    // Selectors
+    const googleBookData = useAppSelector(state => state.newBook.googleBook)
+    const isLoading = useAppSelector(state => state.newBook.isLoading)
+
+
+    // UI
+    const [canPublish, setCanPublish] = useState(false)
+    const [isbnModal, setIsbnModal] = useState(false)
 
     // Form Data
     const [isbn, setIsbn] = useState("")
     const [title, setTitle] = useState("")
     const [author, setAuthor] = useState("")
     const [description, setDescription] = useState("")
-
     const [conditions, setConditions] = useState("")
     const [selectedPrice, setSelectedPrice] = useState("")
-
     const [position, setPosition] = useState("")
     const [phone, setPhone] = useState("")
 
-    const [isbnModal, setIsbnModal] = useState(false)
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -64,83 +64,52 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
         })
     }, [])
 
+    useEffect(() => {
+        if (
+            isbn.length == 0 ||
+            title.length == 0 ||
+            description.length == 0 ||
+            selectedPrice.length == 0 ||
+            conditions.length == 0 ||
+            position.length == 0
+        ) {
+            // :todo set this to true while debugging
+            setCanPublish(true)
+        } else {
+            setCanPublish(true)
+        }
 
-    function checkFormData() {
-        setCanPublish(true)
-    }
+    }, [isbn, title, author, description, conditions, selectedPrice, position, phone])
+
 
     function handlePublishBook() {
         Alert.alert("Confermi?", "Il tuo libro sarà visibile a tutti pubblicamente.", [
-            {onPress: publishBook, text: "OK"},
+            {text: "OK", onPress: publishBook},
             {text: "Annulla", style: "destructive"}
         ])
     }
 
-    /**
-     *  THis function handles submit of book
-     */
-    const publishBook = async () => {
-        setIsLoading(true)
-        // If check is valid
+    function publishBook() {
 
-        const bookId = uuid() // Google Book else UUID
-        const userId = auth.uid
-
-        // Book creation
-        const book: GoogleAPIBookVolume = {
-            id: bookId,
-            volumeInfo: {
-                title: title,
-                authors: author.split(",") || []
-            }
-        }
-
-        try {
-            // Saving book
-            const bookDocPath = firestore.collection("books").doc(bookId)
-            await firestore.set<GoogleAPIBookVolume>(bookDocPath.path, book)
-
-            const postBook: BookPost = {
-                bookId: bookId,
-                userId: userId,
-                condition: conditions,
-                price: Number(selectedPrice),
-                description: description,
-                position: {
-                    city: "Rome",
-                    latitude: 41.9027835,
-                    longitude: 12.4963655
-                },
-                phone: phone,
-                creationDate: new Date(),
-                lastEdit: new Date(),
-            }
-
-            // Saving Post Book
-            const postRef = firestore.collection("bookPosts")
-            const post = await firestore.add<BookPost>(postRef.path, postBook)
-
-            console.log("Saved post with id: ", post.id)
-
-            const profileDocRef = firestore.collection("users").doc(userId)
-            // User ref
-            firestore.get<UserModel>(profileDocRef.path).then(u => {
-                const newListedBooks = u.data()?.listedBooks || []
-                newListedBooks.push(post.id)
-
-                firestore.update<UserModel>(profileDocRef.path, {
-                    listedBooks: newListedBooks
-                })
-            })
-
-        } catch (e) {
-            console.log("Error saving book: ", e)
-            Alert.alert("Attenzione", "C'è stato un problema con la richiesta. Provare più tardi.")
-        } finally {
-            setIsLoading(false)
-            navigation.goBack()
-        }
     }
+
+
+    /**
+     * Handling Google book autocompletion
+     */
+    useEffect(() => {
+        if(isbn.length == 10 || isbn.length == 13) {
+            dispatch(PostNewBookActions.fetchBookByIsbn(isbn))
+        }
+    }, [isbn])
+
+    useEffect(() => {
+        if(googleBookData){
+            setTitle(googleBookData.volumeInfo.title || "Nessun titolo disponibile")
+            setAuthor(googleBookData.volumeInfo.authors?.join(", ") || "Nessun autore disponibile")
+            setDescription(googleBookData.volumeInfo.description || "Nessuna descrizione disponibile")
+        }
+    },[googleBookData])
 
     const styles = StyleSheet.create({
         container: {
@@ -298,7 +267,8 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
                         </View>
 
                         <View style={styles.section}>
-                            <ButtonComponent onPress={handlePublishBook} loading={isLoading}>Pubblica</ButtonComponent>
+                            <ButtonComponent onPress={handlePublishBook} loading={isLoading}
+                                             disabled={!canPublish}>Pubblica</ButtonComponent>
                             <TextComponent style={[styles.inputFooter, theme.fonts.CAPTION]}>Al momento della
                                 pubblicazione tutti gli annunci sono sottoposto a un rapido controllo standard per
                                 assicurarci che rispettino le nostre Normative sulle vendite prima di diventare visibili
@@ -309,7 +279,7 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
                 </ScrollView>
             </TouchableWithoutFeedback>
 
-            <Modal presentationStyle={"pageSheet"}  visible={isbnModal} animationType={"slide"} >
+            <Modal presentationStyle={"pageSheet"} visible={isbnModal} animationType={"slide"}>
                 <View style={{flex: 1}}>
                     <IsbnScanner setIsbnModal={setIsbnModal} onIsbnScanned={setIsbn}/>
                     <SafeAreaView>

@@ -13,8 +13,8 @@ export interface BookPost {
     condition: string;
     position: Position;
     phone: string;
-    creationDate: Date;
-    lastEdit: Date;
+    creationDate?: Date;
+    lastEdit?: Date;
 }
 
 interface Position {

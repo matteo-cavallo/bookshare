@@ -23,7 +23,7 @@ export const ButtonComponent: FC<Props> = (props) => {
     const styles = StyleSheet.create({
         container: {
             padding: theme.spacing.LG,
-            backgroundColor: theme.colors.ACCENT,
+            backgroundColor: !props.disabled ?  theme.colors.ACCENT : theme.colors.ACCENT_DISABLED,
             borderRadius: theme.spacing.MD,
             marginBottom: theme.spacing.MD,
             alignItems: "center",
