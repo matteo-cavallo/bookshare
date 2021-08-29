@@ -109,9 +109,11 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
             .unwrap()
             .then(result => {
                 console.log("Book posted successfully.")
+                navigation.navigate("HomeNavigator")
             })
             .catch(e => {
                 console.log("Book hasn't been posted.", e.message)
+                Alert.alert("Problema con il caricamento", e.message)
             })
     }
 
