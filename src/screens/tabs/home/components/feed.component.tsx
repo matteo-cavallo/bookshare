@@ -35,8 +35,8 @@ export const Feed = () => {
 
     return (
         <View>
-            <TextComponent style={theme.fonts.LARGE_TITLE}>Feed</TextComponent>
-            <BookList books={books}/>
+            <TextComponent style={theme.fonts.TITLE}>Feed</TextComponent>
+            <BookList books={books} key={"bookList"}/>
         </View>
     )
 }

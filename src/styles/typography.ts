@@ -8,6 +8,10 @@ export const Fonts = StyleSheet.create({
         fontSize: 34,
         fontWeight: 'bold'
     },
+    TITLE: {
+      fontSize: 28,
+      fontWeight: 'bold'
+    },
     CAPTION: {
         fontSize: 12
     },
@@ -18,5 +22,6 @@ export const Fonts = StyleSheet.create({
     SECTION_HEADER: {
         fontSize: 13,
         fontWeight: 'bold',
+        textTransform: 'uppercase'
     }
 })

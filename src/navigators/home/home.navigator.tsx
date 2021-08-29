@@ -22,10 +22,15 @@ export const HomeNavigator = () => {
 }
 
 const homeScreenOptions: NativeStackNavigationOptions = {
-    headerShown: false
+    headerShown: true,
+    headerLargeTitle: true,
+    title: "Bookshare",
+    headerLargeTitleHideShadow: true,
+    headerTranslucent: true
 }
 
 const detailPostOptions: NativeStackNavigationOptions = {
-    headerShown: true
+    headerShown: false,
+    stackPresentation: "fullScreenModal"
 }
 

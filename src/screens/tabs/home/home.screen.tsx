@@ -22,13 +22,13 @@ export const HomeScreen: FC = () => {
             flex: 1,
         },
         scrollView: {
-            paddingHorizontal: theme.spacing.MD,
+            padding: theme.spacing.MD,
         },
     })
 
     return (
         <SafeAreaView style={styles.safeArea}>
-            <ScrollView style={styles.scrollView} contentOffset={{y: -100, x: 0}}>
+            <ScrollView style={styles.scrollView}>
                 <Feed />
             </ScrollView>
         </SafeAreaView>
