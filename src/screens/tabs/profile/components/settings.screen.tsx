@@ -8,7 +8,7 @@ import {Ionicons} from "@expo/vector-icons";
 import {NativeStackScreenProps} from "react-native-screens/native-stack";
 import {ProfileScreens} from "../../../../navigators/profile.navigator";
 
-type Props = NativeStackScreenProps<ProfileScreens, "SettingsScreen">
+type Props = NativeStackScreenProps<ProfileScreens, "Settings">
 
 
 export const SettingsScreen:FC<Props> = ({navigation}) => {
