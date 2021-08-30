@@ -1,6 +1,6 @@
 import React, {FC, useContext, useEffect, useState} from 'react';
 import {Button, Text, View, StyleSheet, Alert} from 'react-native'
-import {BarCodeScanner, PermissionStatus} from "expo-barcode-scanner";
+import {BarCodeEvent, BarCodeScannedCallback, BarCodeScanner, PermissionStatus} from "expo-barcode-scanner";
 import {Ionicons} from "@expo/vector-icons";
 import {ThemeContext} from "../providers/theme.provider";
 import {TextComponent} from "./text.component";
@@ -30,7 +30,8 @@ const IsbnScanner:FC<IsbnScannerProps> = ({setIsbnModal,onIsbnScanned}) => {
         askCameraPermission();
     }, []);
 
-    const handleBarCodeScanned = ({ type, data }) => {
+    const handleBarCodeScanned = (e: BarCodeEvent) => {
+        const {data} = e
         setScanned(true);
         Alert.alert('Scansione effettuata',`${data}`,[
             {text:"Ok",onPress:()=>{
