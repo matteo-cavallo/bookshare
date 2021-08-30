@@ -1,5 +1,5 @@
 import React, {ComponentType, FC, useContext, useEffect} from 'react';
-import {AuthContext} from '../providers/auth.provider';
+import {AuthContext} from '../providers/authentication.provider';
 import {useNavigation} from '@react-navigation/native';
 import {Image, View} from 'react-native';
 import {Center} from '../components/center.component';
@@ -7,13 +7,12 @@ import {TextComponent} from '../components/text.component';
 import {AuthenticationScreen} from '../screens/authentication/authentication.screen';
 import {ButtonComponent} from '../components/button.component';
 import {ThemeContext} from '../providers/theme.provider';
-import {useSelector} from 'react-redux';
-import {RootState} from '../store/store.config';
-import {useSplashScreen} from '../hooks/useSplashScreen.hook';
+import {useDispatch, useSelector} from 'react-redux';
+import {useAppSelector} from '../store/store.config';
 
 export const withAuthentication = (WrappedComponent: ComponentType<any>) => {
 
-    const auth = useSelector((state: RootState) => state.firebase.auth)
+    const auth = useAppSelector(state => state.auth.user)
 
     const rootNavigation = useNavigation()
     const {theme} = useContext(ThemeContext)
@@ -35,7 +34,7 @@ export const withAuthentication = (WrappedComponent: ComponentType<any>) => {
         )
     }
 
-    if (!auth || auth.isAnonymous || auth.isEmpty) {
+    if (!auth || auth.isAnonymous) {
         return Component
     } else {
         return WrappedComponent

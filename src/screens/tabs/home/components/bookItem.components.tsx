@@ -2,7 +2,6 @@ import React, {FC, useContext, useEffect, useState} from 'react';
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import {BookPost} from '../../../../model/bookPost.model';
 import {TextComponent} from '../../../../components/text.component';
-import {FirestoreReducer} from 'redux-firestore';
 import {ThemeContext} from '../../../../providers/theme.provider';
 import {FBFirestore} from '../../../../firebase/firebase.config';
 import {useNavigation} from '@react-navigation/native';

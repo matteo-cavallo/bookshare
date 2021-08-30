@@ -14,15 +14,19 @@ import {TextInputComponent} from '../../components/textInput.component';
 import {ThemeContext} from '../../providers/theme.provider';
 import {TextComponent} from '../../components/text.component';
 import {ButtonComponent} from '../../components/button.component';
-import {AuthContext} from '../../providers/auth.provider';
+import {AuthContext} from '../../providers/authentication.provider';
 import {useNavigation} from '@react-navigation/native';
-import {useFirebase} from 'react-redux-firebase';
+import {useDispatch, useSelector} from 'react-redux';
+import {AuthenticationActions} from '../../store/auth/authentication.actions';
+import {unwrapResult} from '@reduxjs/toolkit';
+import {AppDispatch, useAppDispatch, useAppSelector} from '../../store/store.config';
 
 type Props = NativeStackScreenProps<AuthenticationNavigatorScreens, "LoginEmail">
 
 export const LoginEmailScreen: FC<Props> = ({navigation}) => {
 
-    const firebase = useFirebase()
+    const dispatch = useAppDispatch()
+    const disp = useDispatch()
 
     // This hook allows to navigate over the Root Navigation Stack
     const rootNavigation = useNavigation()
@@ -30,21 +34,21 @@ export const LoginEmailScreen: FC<Props> = ({navigation}) => {
     const [email, setEmail] = useState("m.cavallo1011@gmail.com")
     const [password, setPassword] = useState("password")
 
-    const [loading, setLoading] = useState(false)
+    const isLoading = useAppSelector(state => state.auth.isLoading)
 
-
-    function submitLogin() {
-        setLoading(true)
-        firebase.login({email, password})
-            .then(r => {
+    const submitLogin = async () => {
+        dispatch(AuthenticationActions.loginWithEmail({
+            email,
+            password
+        }))
+            .unwrap()
+            .then(() => {
                 rootNavigation.navigate("TabsNavigator")
-                console.log("Logged with email. User: ", r.user)
             })
-            .catch(reason => {
-                console.log("Error login: ", reason)
-                Alert.alert("Login non riuscito", reason.message )
-                setLoading(false)
+            .catch(error => {
+                Alert.alert("Errore", error.message)
             })
+
     }
 
     const {theme} = useContext(ThemeContext)
@@ -86,12 +90,8 @@ export const LoginEmailScreen: FC<Props> = ({navigation}) => {
                             textContentType={"password"}
                         />
                     </View>
-                    <ButtonComponent onPress={submitLogin}>
-                        {
-                            loading
-                                ? <ActivityIndicator color={"#FFFFFF"}/>
-                                : <Text>Accedi</Text>
-                        }
+                    <ButtonComponent onPress={submitLogin} loading={isLoading}>
+                        <Text>Accedi</Text>
                     </ButtonComponent>
                 </View>
             </TouchableWithoutFeedback>

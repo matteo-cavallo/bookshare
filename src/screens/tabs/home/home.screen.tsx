@@ -6,9 +6,8 @@ import {useDispatch, useSelector} from 'react-redux';
 import {UIActions} from '../../../store/uiStore/uistore.actions';
 import {useNavigation} from '@react-navigation/native'
 import {ThemeContext} from '../../../providers/theme.provider';
-import {AuthContext} from '../../../providers/auth.provider';
+import {AuthContext} from '../../../providers/authentication.provider';
 import {RootState} from '../../../store/store.config';
-import {isLoaded, useFirebase, useFirestore, useFirestoreConnect} from 'react-redux-firebase';
 import IsbnScanner from "../../../components/isbnScanner.component";
 import {Ionicons} from "@expo/vector-icons";
 import {Feed} from './components/feed.component';
@@ -29,7 +28,7 @@ export const HomeScreen: FC = () => {
     return (
         <SafeAreaView style={styles.safeArea}>
             <ScrollView style={styles.scrollView}>
-                <Feed />
+                <TextComponent>Home</TextComponent>
             </ScrollView>
         </SafeAreaView>
     )

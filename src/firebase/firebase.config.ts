@@ -1,10 +1,16 @@
-import firebase from 'firebase/app';
+// Initialize Firebase
+import firebase from 'firebase';
 import 'firebase/auth'
 import 'firebase/firestore'
-import {ReactReduxFirebaseConfig, ReactReduxFirebaseProviderProps} from 'react-redux-firebase';
-import {createFirestoreInstance} from 'redux-firestore';
+import FirestoreDataConverter = firebase.firestore.FirestoreDataConverter;
+import {UserModel} from '../model/user.model';
+import {BookPost} from '../model/bookPost.model';
 
-const firebaseConfig = {
+
+export type FirebaseUser = firebase.User
+export type UserCredential = firebase.auth.UserCredential
+
+export const firebaseConfig = {
     apiKey: "AIzaSyBh0Gd7tzj820Wpvi33DcmuFzVpN8Nc4Bo",
     authDomain: "bookshare-4d2f4.firebaseapp.com",
     projectId: "bookshare-4d2f4",
@@ -12,21 +18,32 @@ const firebaseConfig = {
     messagingSenderId: "194653713104",
     appId: "1:194653713104:web:76ef63326bff6118f3a4d5"
 };
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
+
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}else {
+    firebase.app(); // if already initialized, use that one
+}
+
 
 export const FBAuth = firebase.auth()
 export const FBFirestore = firebase.firestore()
 
 
-// React Redux Firebase Configurations
-const config: Partial<ReactReduxFirebaseConfig> = {
-    userProfile: 'users',
-    useFirestoreForProfile: true,
+export const userConverter: FirestoreDataConverter<UserModel> = {
+    fromFirestore(snapshot: firebase.firestore.QueryDocumentSnapshot, options: firebase.firestore.SnapshotOptions): UserModel {
+        return snapshot.data() as UserModel
+    },
+    toFirestore(modelObject: UserModel): firebase.firestore.DocumentData {
+        return modelObject
+    }
 }
 
-export const ReactReduxFirebaseProps = {
-    firebase,
-    config: config,
-    createFirestoreInstance
+export const bookPostConverter: FirestoreDataConverter<BookPost> = {
+    fromFirestore(snapshot: firebase.firestore.QueryDocumentSnapshot, options: firebase.firestore.SnapshotOptions): BookPost {
+        return snapshot.data() as BookPost
+    },
+    toFirestore(modelObject: BookPost): firebase.firestore.DocumentData {
+        return modelObject
+    }
 }

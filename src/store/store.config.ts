@@ -1,32 +1,40 @@
-import {applyMiddleware, combineReducers, configureStore, createStore, Reducer} from '@reduxjs/toolkit';
-import {UIReducer, UIStoreState} from './uiStore/uistore.reducer';
-import {FirebaseReducer, firebaseReducer} from 'react-redux-firebase';
-import {FirestoreReducer, firestoreReducer} from 'redux-firestore';
-import {postBookReducer, PostBookState} from './postBook/postBook.reducer';
+import {
+    applyMiddleware,
+    combineReducers,
+    configureStore,
+    createStore,
+    Reducer
+} from '@reduxjs/toolkit';
 import thunk from 'redux-thunk';
-import {UserModel} from '../model/user.model';
-import {BookPost} from '../model/bookPost.model';
+import {userReducer} from './user/user.reducer';
+import {authenticationReducer} from './auth/authentication.reducer';
+import {TypedUseSelectorHook, useDispatch, useSelector} from 'react-redux';
+import {postNewBookReducer} from './postBook/postBook.reducer';
 
-interface Schema {
-    books: GoogleAPIBookVolume,
-    bookPosts: BookPost
-}
-
-interface Store {
-    firebase: FirebaseReducer.Reducer<UserModel, Schema>
-    firestore: FirestoreReducer.Reducer<Schema>
-    postBook: PostBookState
-}
-
-const rootReducer = combineReducers<Store>({
-        // React-Redux-Firebase
-        firebase:  firebaseReducer,
-        firestore: firestoreReducer,
-
-        // Other reducers
-    postBook: postBookReducer
+export const store = configureStore({
+    reducer: {
+        user: userReducer,
+        auth: authenticationReducer,
+        newBook: postNewBookReducer
+    },
+    middleware: getDefaultMiddleware => getDefaultMiddleware({
+        immutableCheck: {
+            ignoredPaths: ["auth.user"]
+        },
+        serializableCheck: {
+            ignoredActions: ["authentication/addUser",
+                "authentication/anonymousAuth/fulfilled",
+                "authentication/loginWithEmail/fulfilled",
+                "authentication/signUpEmail/fulfilled"
+            ],
+            ignoredPaths: ["auth.user", "payload.user"]
+        }
+    })
 })
 
-export const store = createStore(rootReducer, applyMiddleware(thunk))
+export type RootState = ReturnType<typeof store.getState>
+export type AppDispatch = typeof store.dispatch
 
-export type RootState = ReturnType<typeof rootReducer>
+// Use throughout your app instead of plain `useDispatch` and `useSelector`
+export const useAppDispatch = () => useDispatch<AppDispatch>()
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector

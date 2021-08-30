@@ -1,48 +1,52 @@
 import React, {FC, useContext} from 'react';
-
-import {StyleSheet, Text, View} from 'react-native';
-import RNPickerSelect, {PickerSelectProps} from "react-native-picker-select";
+import {StyleProp, StyleSheet, Text, TextStyle, TouchableOpacity, View, ViewStyle} from 'react-native';
+import RNPickerSelect, {PickerSelectProps, PickerStyle} from "react-native-picker-select";
 import {ThemeContext} from "../providers/theme.provider";
 import {Ionicons} from "@expo/vector-icons";
 
-interface PickerSelectorProps extends PickerSelectProps {
-
-}
-
-export const PickerSelector:FC<PickerSelectorProps> = (props) => {
+export const PickerSelector: FC<PickerSelectProps> = (props) => {
 
     const {theme} = useContext(ThemeContext);
 
-    const style = StyleSheet.create({
-        container:{
-            flex: 1,
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center',
-            padding: theme.spacing.LG,
-            backgroundColor: theme.colors.FILL_TERTIARY,
-            borderRadius: theme.spacing.LG,
-            marginBottom: theme.spacing.MD
+
+    const iconStyle: StyleProp<TextStyle> = {
+        color: theme.colors.PRIMARY
+    }
+
+    const pickerStyle: PickerStyle = {
+        placeholder: {
+            fontSize: 17,
+            color: theme.colors.SECONDARY
         },
-        input: {
-            flex:1,
-            fontSize: theme.fonts.BODY.fontSize,
-            color: theme.colors.PRIMARY,
+        inputIOS: {
+            fontSize: 17,
+            color: theme.colors.PRIMARY
         },
-        rnPickerSelect:{
-            flex: 1,
-            flexDirection: 'row',
+        inputAndroid: {
+            fontSize: 17,
+            color: theme.colors.PRIMARY
         }
-    })
+    }
+
+    const touchableStyle: StyleProp<ViewStyle> = {
+        paddingHorizontal: theme.spacing.MD,
+        paddingVertical: theme.spacing.LG,
+        backgroundColor: theme.colors.FILL_TERTIARY,
+        borderRadius: theme.spacing.LG,
+        marginBottom: theme.spacing.MD,
+    }
+
+    const pickerIcon = () => {
+        return <Ionicons name={"chevron-forward"} style={iconStyle} size={17}/>
+    }
 
     return (
-        <View style={style.container}>
-            <RNPickerSelect
-                style={{inputIOS:style.input,inputAndroid:style.input,...style.rnPickerSelect,viewContainer:style.rnPickerSelect}}
-                {...props}
-            />
-            <Ionicons name={"chevron-down-outline"} size={theme.spacing.LG} color={theme.colors.SECONDARY}/>
-        </View>
-    );
+        <RNPickerSelect {...props}
+                        style={pickerStyle}
+                        Icon={pickerIcon}
+                        touchableWrapperProps={{style: touchableStyle}}
+                        doneText={"Fatto"}
+        />
+    )
 };
 

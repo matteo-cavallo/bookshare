@@ -1,8 +1,10 @@
 import React, {FC, useContext, useEffect, useLayoutEffect, useState} from 'react';
 import {
+    ActivityIndicator,
     Alert,
     Button,
-    Keyboard, Modal,
+    Keyboard,
+    Modal,
     SafeAreaView,
     ScrollView,
     StyleSheet,
@@ -20,42 +22,42 @@ import {ButtonComponent} from '../../../components/button.component';
 import {Ionicons} from '@expo/vector-icons';
 import IsbnScanner from "../../../components/isbnScanner.component";
 import {PickerSelector} from "../../../components/pickerSelector.component";
-import {BookPost} from '../../../model/bookPost.model';
 import 'react-native-get-random-values';
-import {v4 as uuid} from 'uuid'
-import {useFirebase, useFirestore} from 'react-redux-firebase';
-import {useDispatch, useSelector} from 'react-redux';
-import {RootState} from '../../../store/store.config';
-import {UserModel} from '../../../model/user.model';
+import {useAppDispatch, useAppSelector} from '../../../store/store.config';
+import {PostNewBookActions} from '../../../store/postBook/postBook.actions';
+import {BookConditions, NewBookModel} from '../../../model/newBook.model';
+import {ToggleComponent} from '../../../components/toggle.component';
 
 type Props = NativeStackScreenProps<TabsScreens, "PostBook">
 
 export const PostBookScreen: FC<Props> = ({navigation}) => {
 
-    const firestore = useFirestore()
-    const dispatch = useDispatch()
-
-    const auth = useSelector((state: RootState) => state.firebase.auth)
-
+    const dispatch = useAppDispatch()
     const {theme} = useContext(ThemeContext)
 
+    // Selectors
+    const googleBookData = useAppSelector(state => state.newBook.googleBook)
+    const isLoading = useAppSelector(state => state.newBook.isLoading)
+
+    // UI
     const [canPublish, setCanPublish] = useState(true)
-    const [isLoading, setIsLoading] = useState(false)
+    const [isbnModal, setIsbnModal] = useState(false)
+    const [isbnNotAvailable, setIsbnNotAvailable] = useState(false)
 
     // Form Data
     const [isbn, setIsbn] = useState("")
     const [title, setTitle] = useState("")
     const [author, setAuthor] = useState("")
     const [description, setDescription] = useState("")
-
-    const [conditions, setConditions] = useState("")
-    const [selectedPrice, setSelectedPrice] = useState("")
-
+    const [conditions, setConditions] = useState<BookConditions>()
+    const [price, setPrice] = useState("0")
     const [position, setPosition] = useState("")
     const [phone, setPhone] = useState("")
 
-    const [isbnModal, setIsbnModal] = useState(false)
 
+    /**
+     * Navigation Options
+     */
     useLayoutEffect(() => {
         navigation.setOptions({
             headerTitle: "Post a book",
@@ -64,83 +66,102 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
         })
     }, [])
 
-
-    function checkFormData() {
-        setCanPublish(true)
+    async function checkData(): Promise<void> {
+        try {
+            if(isbn.length == 0 && !isbnNotAvailable){
+                throw Error("Il codice ISBN è necessario")
+            }
+            if (title.length == 0) {
+                throw Error("Il titolo non può essere vuoto")
+            }
+            if (price.length == 0 || Number(price) < 0) {
+                throw Error("Immettere un prezzo")
+            }
+            return Promise.resolve()
+        } catch (e) {
+            return Promise.reject(e)
+        }
     }
 
-    function handlePublishBook() {
-        Alert.alert("Confermi?", "Il tuo libro sarà visibile a tutti pubblicamente.", [
-            {onPress: publishBook, text: "OK"},
-            {text: "Annulla", style: "destructive"}
-        ])
+    async function handlePublishBook() {
+        checkData()
+            .then(() => {
+                Alert.alert("Confermi?", "Il tuo libro sarà visibile a tutti pubblicamente.", [
+                    {text: "OK", onPress: publishBook},
+                    {text: "Annulla", style: "destructive"}
+                ])
+            })
+            .catch(e => {
+                Alert.alert("Attenzione", e.message)
+            })
     }
+
+    function publishBook() {
+        const newBook: NewBookModel = {
+            googleBookId: googleBookData?.id || null,
+            isbn: isbn || null,
+            title,
+            description,
+            price: Number(price) || 0,
+            position: {
+                name: "Position text",
+                latitude: 41,
+                longitude: 12
+            },
+            authors: author.split(",") || [],
+            condition: conditions || BookConditions.NEW,
+            phoneNumber: {
+                countryCode: '39',
+                number: phone
+            }
+        }
+
+        // Dispatching action to upload the new book
+        dispatch(PostNewBookActions.postNewBook(newBook))
+            .unwrap()
+            .then(result => {
+                console.log("Book posted successfully.")
+                navigation.navigate("HomeNavigator")
+            })
+            .catch(e => {
+                console.log("Book hasn't been posted.", e.message)
+                Alert.alert("Problema con il caricamento", e.message)
+            })
+    }
+
+    function handleDeleteGoogleBook() {
+        setTitle("")
+        setAuthor("")
+        setIsbn("")
+        dispatch(PostNewBookActions.deleteGoogleBook())
+    }
+
+
+    useEffect(() => {
+        if (isbnNotAvailable) {
+            handleDeleteGoogleBook()
+        }
+    }, [isbnNotAvailable])
 
     /**
-     *  THis function handles submit of book
+     * Handling Google book autocompletion
      */
-    const publishBook = async () => {
-        setIsLoading(true)
-        // If check is valid
-
-        const bookId = uuid() // Google Book else UUID
-        const userId = auth.uid
-
-        // Book creation
-        const book: GoogleAPIBookVolume = {
-            id: bookId,
-            volumeInfo: {
-                title: title,
-                authors: author.split(",") || []
-            }
+    useEffect(() => {
+        if (isbn.length >= 10 && isbn.length <= 15) {
+            dispatch(PostNewBookActions.fetchBookByIsbn(isbn))
         }
+    }, [isbn])
 
-        try {
-            // Saving book
-            const bookDocPath = firestore.collection("books").doc(bookId)
-            await firestore.set<GoogleAPIBookVolume>(bookDocPath.path, book)
-
-            const postBook: BookPost = {
-                bookId: bookId,
-                userId: userId,
-                condition: conditions,
-                price: Number(selectedPrice),
-                description: description,
-                position: {
-                    city: "Rome",
-                    latitude: 41.9027835,
-                    longitude: 12.4963655
-                },
-                phone: phone,
-                creationDate: new Date(),
-                lastEdit: new Date(),
-            }
-
-            // Saving Post Book
-            const postRef = firestore.collection("bookPosts")
-            const post = await firestore.add<BookPost>(postRef.path, postBook)
-
-            console.log("Saved post with id: ", post.id)
-
-            const profileDocRef = firestore.collection("users").doc(userId)
-            // User ref
-            firestore.get<UserModel>(profileDocRef.path).then(u => {
-                const newListedBooks = u.data()?.listedBooks || []
-                newListedBooks.push(post.id)
-
-                firestore.update<UserModel>(profileDocRef.path, {
-                    listedBooks: newListedBooks
-                })
-            })
-
-        } catch (e) {
-            console.log("Error saving book: ", e)
-            Alert.alert("Attenzione", "C'è stato un problema con la richiesta. Provare più tardi.")
-        } finally {
-            setIsLoading(false)
-            navigation.goBack()
+    /**
+     * Auto completion of Google Books info
+     */
+    useEffect(() => {
+        if (googleBookData) {
+            setTitle(googleBookData.volumeInfo.title || "Nessun titolo disponibile")
+            setAuthor(googleBookData.volumeInfo.authors?.join(", ") || "Nessun autore disponibile")
+            //setDescription(googleBookData.volumeInfo.description || "Nessuna descrizione disponibile")
         }
-    }
+    }, [googleBookData])
 
     const styles = StyleSheet.create({
         container: {
@@ -153,17 +174,19 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
         },
         sectionHeader: {
             color: theme.colors.SECONDARY,
-            marginBottom: theme.spacing.S
+            marginBottom: theme.spacing.MD
         },
         inputFooter: {
-            color: theme.colors.SECONDARY
+            color: theme.colors.SECONDARY,
+            marginBottom: theme.spacing.MD
         },
         imageContainer: {
             borderRadius: theme.spacing.LG,
             borderColor: theme.colors.FILL_TERTIARY,
             borderWidth: 1,
             padding: theme.spacing.LG,
-            minHeight: 120
+            minHeight: 120,
+            marginBottom: theme.spacing.MD
         },
         buttonImages: {
             color: theme.colors.ACCENT,
@@ -172,13 +195,16 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
         imagesDescription: {
             marginTop: theme.spacing.MD,
             color: theme.colors.SECONDARY
-        }
+        },
+        toggle: {}
     })
 
     return (
         <SafeAreaView>
+
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <ScrollView>
+
                     <View style={styles.container}>
                         <TextComponent style={[theme.fonts.LARGE_TITLE, styles.title]}>Posta un
                             libro</TextComponent>
@@ -197,52 +223,89 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
                                 </Center>
                             </TouchableOpacity>
                         </View>
+
+                        {
+                            /**
+                             * ISBN SECTION
+                             */
+                        }
                         <View style={styles.section}>
                             <TextComponent
                                 style={[styles.sectionHeader, theme.fonts.SECTION_HEADER]}>IDENTIFICATIVO</TextComponent>
-                            <TextInputComponent
-                                value={isbn}
-                                placeholder={"ISBN"}
-                                onChangeText={setIsbn}
-                                endItem={
-                                    <Ionicons name={"qr-code-outline"} color={theme.colors.ACCENT} size={25}
-                                              onPress={() => setIsbnModal(true)}/>
-                                }
-                            />
-                            <TextComponent
-                                style={[theme.fonts.CAPTION, styles.inputFooter]}>Solitamente di 10 o 13 cifre. E
-                                il codice che identifica
-                                ogni libro. Scrivilo oppure scansionalo premendo sul QRCode.</TextComponent>
+                            {
+                                googleBookData && <View style={{
+                                    paddingVertical: theme.spacing.LG,
+                                    flexDirection: "row",
+                                    justifyContent: "space-between"
+                                }}>
+                                    <View>
+                                        <TextComponent style={theme.fonts.SECTION_HEADER}>Libro
+                                            scansionato</TextComponent>
+                                        <TextComponent>{title}</TextComponent>
+                                        <TextComponent style={{color: theme.colors.SECONDARY}}>{author}</TextComponent>
+                                    </View>
+                                    <TouchableOpacity onPress={handleDeleteGoogleBook}>
+                                        <Ionicons name={"trash-outline"} size={24} style={{padding: theme.spacing.LG}}/>
+                                    </TouchableOpacity>
+                                </View>
+                            }
+                            {
+                                !isbnNotAvailable &&
+                                <View>
+                                    <TextInputComponent
+                                        value={isbn}
+                                        placeholder={"ISBN"}
+                                        onChangeText={setIsbn}
+                                        endItem={
+                                            <Ionicons name={"qr-code-outline"} color={theme.colors.ACCENT} size={25}
+                                                      onPress={() => setIsbnModal(true)}/>
+                                        }
+                                    />
+
+
+                                    <TextComponent
+                                        style={[theme.fonts.CAPTION, styles.inputFooter]}>Solitamente di 10 o 13 cifre.
+                                        E
+                                        il codice che identifica
+                                        ogni libro. Scrivilo oppure scansionalo premendo sul QRCode.</TextComponent>
+                                </View>
+                            }
+
+                            <ToggleComponent text={"Codice ISBN non disponibile"} onValueChange={setIsbnNotAvailable}
+                                             value={isbnNotAvailable} style={styles.toggle}/>
                         </View>
 
-                        <View style={styles.section}>
-                            <TextComponent
-                                style={[styles.sectionHeader, theme.fonts.SECTION_HEADER]}>DETTAGLI</TextComponent>
-                            <TextInputComponent placeholder={"Titolo"}
-                                                onChangeText={setTitle}
-                                                value={title}
-                                                startItem={<Ionicons name={"book-outline"} size={theme.spacing.XL}
-                                                                     color={theme.colors.SECONDARY}/>}
-                            />
-                            <TextInputComponent placeholder={"Autore"}
-                                                onChangeText={setAuthor}
-                                                value={author}
-                                                startItem={<Ionicons name={"person-circle-outline"}
-                                                                     size={theme.spacing.XL}
-                                                                     color={theme.colors.SECONDARY}/>}
-                            />
-                            <TextInputComponent placeholder={"Descrizione"}
-                                                onChangeText={setDescription}
-                                                value={description}
-                                                startItem={<Ionicons name={"help-circle-outline"}
-                                                                     size={theme.spacing.XL}
-                                                                     color={theme.colors.SECONDARY}/>}
-                            />
-                            <TextComponent
-                                style={[theme.fonts.CAPTION, styles.inputFooter]}>Descrivi il libro e le sue
-                                condizioni. Una descrizione
-                                accurata ti da più possibilità di vendere.</TextComponent>
-                        </View>
+                        {
+                            /**
+                             * DETTAGLI
+                             */
+                        }
+                        {
+                            isbnNotAvailable &&
+                            <View style={styles.section}>
+                                <TextComponent
+                                    style={[styles.sectionHeader, theme.fonts.SECTION_HEADER]}>DETTAGLI</TextComponent>
+                                <TextInputComponent placeholder={"Titolo"}
+                                                    onChangeText={setTitle}
+                                                    value={title}
+                                                    startItem={<Ionicons name={"book-outline"}
+                                                                         size={theme.spacing.XL}
+                                                                         color={theme.colors.SECONDARY}/>}
+                                />
+                                <TextInputComponent placeholder={"Autore"}
+                                                    onChangeText={setAuthor}
+                                                    value={author}
+                                                    startItem={<Ionicons name={"person-circle-outline"}
+                                                                         size={theme.spacing.XL}
+                                                                         color={theme.colors.SECONDARY}/>}
+                                />
+                                <TextComponent
+                                    style={[theme.fonts.CAPTION, styles.inputFooter]}>Descrivi il libro e le sue
+                                    condizioni. Una descrizione
+                                    accurata ti da più possibilità di vendere.</TextComponent>
+                            </View>
+                        }
+
 
                         <View style={styles.section}>
                             <TextComponent
@@ -250,25 +313,39 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
                             {/*TODO: implement price validation*/}
                             <TextInputComponent placeholder={"Prezzo"}
                                                 keyboardType={"decimal-pad"}
-                                                onChangeText={setSelectedPrice}
-                                                value={selectedPrice}
+                                                onChangeText={setPrice}
+                                                value={price}
                                                 endItem={<Ionicons name={"logo-euro"} size={theme.spacing.LG}
                                                                    color={theme.colors.SECONDARY}/>}
+                                                startItem={<TextComponent
+                                                    style={{color: theme.colors.SECONDARY}}>Prezzo: </TextComponent>}
                             />
-                            {/*TODO: Abbellire in caso come da figma*/}
                             <PickerSelector
                                 onValueChange={(value) => setConditions(value)}
                                 placeholder={{
                                     label: "Seleziona lo stato di usura",
-                                    value: "",
+                                    value: undefined,
                                     inputLabel: "Condizione"
                                 }}
                                 items={[
-                                    {label: 'Nuovo', value: 'nuovo'},
-                                    {label: 'Usato come nuovo', value: 'usato_come_nuovo'},
-                                    {label: 'Usato', value: 'usato'},
-                                    {label: 'Molto rovinato', value: 'molto_rovinato'},
+                                    {label: 'Nuovo', value: BookConditions.NEW},
+                                    {label: 'Usato come nuovo', value: BookConditions.AS_NEW},
+                                    {label: 'Usato', value: BookConditions.USED},
+                                    {label: 'Molto rovinato', value: BookConditions.RUINED},
                                 ]}
+                            />
+                            <TextInputComponent
+                                placeholder={"Scrivi qui una descrizione del libro di almeno 15 caratteri."}
+                                onChangeText={setDescription}
+                                value={description}
+                                startItem={<Ionicons name={"clipboard-outline"}
+                                                     size={theme.spacing.XL}
+                                                     color={theme.colors.SECONDARY}/>}
+                                multiline={true}
+                                style={{
+                                    minHeight: 100,
+                                    marginVertical: theme.spacing.MD
+                                }}
                             />
                         </View>
 
@@ -298,10 +375,12 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
                         </View>
 
                         <View style={styles.section}>
-                            <ButtonComponent onPress={handlePublishBook} loading={isLoading}>Pubblica</ButtonComponent>
+                            <ButtonComponent onPress={handlePublishBook} loading={isLoading}
+                                             disabled={!canPublish}>Pubblica</ButtonComponent>
                             <TextComponent style={[styles.inputFooter, theme.fonts.CAPTION]}>Al momento della
                                 pubblicazione tutti gli annunci sono sottoposto a un rapido controllo standard per
-                                assicurarci che rispettino le nostre Normative sulle vendite prima di diventare visibili
+                                assicurarci che rispettino le nostre Normative sulle vendite prima di diventare
+                                visibili
                                 agli altri. Beni diversi dai libri non sono consentiti.</TextComponent>
                         </View>
 
@@ -309,7 +388,7 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
                 </ScrollView>
             </TouchableWithoutFeedback>
 
-            <Modal presentationStyle={"pageSheet"}  visible={isbnModal} animationType={"slide"} >
+            <Modal presentationStyle={"pageSheet"} visible={isbnModal} animationType={"slide"}>
                 <View style={{flex: 1}}>
                     <IsbnScanner setIsbnModal={setIsbnModal} onIsbnScanned={setIsbn}/>
                     <SafeAreaView>
@@ -317,6 +396,24 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
                     </SafeAreaView>
                 </View>
             </Modal>
+
+            {
+                isLoading &&
+                <Center style={{position: "absolute", flex: 1, bottom: 0, top: 0, right: 0, left: 0}}>
+                    <View style={{
+                        width: 80,
+                        height: 80,
+                        backgroundColor: theme.colors.FILL_LOADING,
+                        position: "relative",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        borderRadius: theme.spacing.LG
+                    }}>
+                        <ActivityIndicator size={"large"} color={theme.colors.PRIMARY}/>
+                    </View>
+                </Center>
+            }
+
         </SafeAreaView>
     )
 }
