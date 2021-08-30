@@ -3,19 +3,23 @@
 import {PhoneNumber} from './newBook.model';
 
 export interface BookPost {
-    uid?: string
-    userId?: string
+    // Id
+    owner: string
+    googleBookId: string | null
 
-    title?: string
+    // Contents
+    title: string
     description: string
     price: number
     condition: string
     position: Position | null
     phoneNumber: PhoneNumber | null
 
-    googleBookId: string | null
-
+    // Status
     active: boolean
+    sold: boolean
+
+    // Metadata
     creationDate: Date
     lastEdit: Date
 }

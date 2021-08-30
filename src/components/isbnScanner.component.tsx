@@ -33,7 +33,7 @@ const IsbnScanner:FC<IsbnScannerProps> = ({setIsbnModal,onIsbnScanned}) => {
     const handleBarCodeScanned = (e: BarCodeEvent) => {
         const {data} = e
         setScanned(true);
-        Alert.alert('Scansione effettuata',`${data}`,[
+        Alert.alert('⭐️ Scansione effettuata ⭐️',`ISBN: ${data}`,[
             {text:"Ok",onPress:()=>{
                     onIsbnScanned(data)
                     setIsbnModal(false)

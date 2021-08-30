@@ -28,10 +28,11 @@ const postNewBook = createAsyncThunk<void, NewBookModel>(POST_NEW_BOOK, async (a
     const newBook: BookPost = {
         ...arg,
 
-        active: false,
+        owner: currentUserId,
+        active: true,
+        sold: false,
         creationDate: new Date(),
         lastEdit: new Date(),
-        userId: currentUserId
     }
 
     try {
