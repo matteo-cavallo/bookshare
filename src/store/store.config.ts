@@ -22,7 +22,8 @@ export const store = configureStore({
             ignoredPaths: ["auth.user"]
         },
         serializableCheck: {
-            ignoredActions: ["authentication/addUser",
+            ignoredActions: [
+                "authentication/addUser",
                 "authentication/anonymousAuth/fulfilled",
                 "authentication/loginWithEmail/fulfilled",
                 "authentication/signUpEmail/fulfilled"

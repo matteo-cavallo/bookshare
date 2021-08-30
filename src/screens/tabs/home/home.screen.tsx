@@ -2,19 +2,14 @@ import React, {FC, useContext, useEffect} from 'react';
 import {Center} from '../../../components/center.component';
 import {Button, SafeAreaView, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {TextComponent} from '../../../components/text.component';
-import {useDispatch, useSelector} from 'react-redux';
-import {UIActions} from '../../../store/uiStore/uistore.actions';
-import {useNavigation} from '@react-navigation/native'
 import {ThemeContext} from '../../../providers/theme.provider';
-import {AuthContext} from '../../../providers/authentication.provider';
-import {RootState} from '../../../store/store.config';
-import IsbnScanner from "../../../components/isbnScanner.component";
-import {Ionicons} from "@expo/vector-icons";
-import {Feed} from './components/feed.component';
+import {useAppDispatch} from '../../../store/store.config';
+import {HomeActions} from '../../../store/home/home.actions';
 
 export const HomeScreen: FC = () => {
 
     const {theme} = useContext(ThemeContext)
+    const dispatch = useAppDispatch()
 
     const styles = StyleSheet.create({
         safeArea: {
@@ -25,10 +20,14 @@ export const HomeScreen: FC = () => {
         },
     })
 
+    useEffect(() => {
+        dispatch(HomeActions.fetchFeed())
+    },[])
+
     return (
         <SafeAreaView style={styles.safeArea}>
             <ScrollView style={styles.scrollView}>
-                <TextComponent>Home</TextComponent>
+                <TextComponent>Home boy</TextComponent>
             </ScrollView>
         </SafeAreaView>
     )
