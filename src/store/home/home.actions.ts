@@ -1,25 +1,22 @@
 import {createAsyncThunk} from '@reduxjs/toolkit';
 import {bookPostConverter, FBFirestore} from '../../firebase/firebase.config';
 import {FBCollections} from '../../firebase/collections';
+import {BookPost} from '../../model/bookPost.model';
 
 const prefix = "home/"
 
 const FETCH_FEED =  prefix + "fetchFeed"
 
 
-const fetchFeed = createAsyncThunk(FETCH_FEED, async args => {
-    await FBFirestore.collection(FBCollections.bookPost)
+const fetchFeed = createAsyncThunk<BookPost[], void>(FETCH_FEED, async args => {
+    return await FBFirestore.collection(FBCollections.bookPost)
         .orderBy("creationDate", "desc")
         .limit(8)
         .where("active", "==", true)
         .withConverter(bookPostConverter)
         .get()
         .then(querySnapshot => {
-            const docs = querySnapshot.docs.map(doc => doc.data())
-            console.log(docs)
-        })
-        .catch(e => {
-            console.log(e.message)
+            return querySnapshot.docs.map(doc => doc.data());
         })
 })
 

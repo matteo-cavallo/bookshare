@@ -10,12 +10,14 @@ import {userReducer} from './user/user.reducer';
 import {authenticationReducer} from './auth/authentication.reducer';
 import {TypedUseSelectorHook, useDispatch, useSelector} from 'react-redux';
 import {postNewBookReducer} from './postBook/postBook.reducer';
+import {homeReducer} from './home/home.reducer';
 
 export const store = configureStore({
     reducer: {
         user: userReducer,
         auth: authenticationReducer,
-        newBook: postNewBookReducer
+        newBook: postNewBookReducer,
+        home: homeReducer
     },
     middleware: getDefaultMiddleware => getDefaultMiddleware({
         immutableCheck: {

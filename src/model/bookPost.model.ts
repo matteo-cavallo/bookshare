@@ -4,6 +4,7 @@ import {PhoneNumber} from './newBook.model';
 
 export interface BookPost {
     // Id
+    uid?: string
     owner: string
     googleBookId: string | null
 
@@ -20,8 +21,8 @@ export interface BookPost {
     sold: boolean
 
     // Metadata
-    creationDate: Date
-    lastEdit: Date
+    creationDate: string
+    lastEdit: string
 }
 
 interface Position {
