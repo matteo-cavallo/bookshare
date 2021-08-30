@@ -12,10 +12,12 @@ import {ThemeContext} from '../../../providers/theme.provider';
 import {Ionicons} from '@expo/vector-icons';
 import {RootState, useAppSelector} from '../../../store/store.config';
 import {FBAuth} from '../../../firebase/firebase.config';
+import {NativeStackScreenProps} from 'react-native-screens/native-stack';
+import {ProfileScreens} from '../../../navigators/profile.navigator';
 
-export const ProfileScreen: FC = () => {
+type Props = NativeStackScreenProps<ProfileScreens, "Profile">
 
-    const navigation = useNavigation()
+export const ProfileScreen: FC<Props> = ({navigation}) => {
 
     // Context
     const {theme} = useContext(ThemeContext)
@@ -71,7 +73,7 @@ export const ProfileScreen: FC = () => {
             <SafeAreaView>
                 <View>
                     <View style={styles.header}>
-                        <TouchableOpacity onPress={()=>navigation.navigate("Settings")}>
+                        <TouchableOpacity onPress={() => navigation.navigate("Settings")}>
                             <Ionicons name={"cog-outline"} color={theme.colors.ACCENT} size={theme.icons.XL}/>
                         </TouchableOpacity>
                     </View>

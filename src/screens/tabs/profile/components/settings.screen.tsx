@@ -10,12 +10,9 @@ import {ProfileScreens} from "../../../../navigators/profile.navigator";
 
 type Props = NativeStackScreenProps<ProfileScreens, "Settings">
 
-
 export const SettingsScreen:FC<Props> = ({navigation}) => {
 
     const {theme} = useContext(ThemeContext)
-
-
 
     const styles = StyleSheet.create({
         container: {
