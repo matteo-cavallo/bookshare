@@ -4,12 +4,13 @@ import {PostNewBookActions} from './postBook.actions';
 
 interface PostNewBookState {
     book?: BookPost
-    googleBook?: GoogleAPIBookVolume
+    googleBook: GoogleAPIBookVolume | null
     isLoading: boolean
 }
 
 const initialState: PostNewBookState = {
     isLoading: false,
+    googleBook: null
 }
 
 export const postNewBookReducer = createReducer(initialState, builder => {
@@ -24,5 +25,10 @@ export const postNewBookReducer = createReducer(initialState, builder => {
     builder.addCase(PostNewBookActions.fetchBookByIsbn.rejected, state => {
         console.log("Error fetching book by ISBN")
         state.isLoading = false
+    })
+
+
+    builder.addCase(PostNewBookActions.deleteGoogleBook, state => {
+        state.googleBook = null
     })
 })

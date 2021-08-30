@@ -5,7 +5,8 @@ import {Ionicons} from "@expo/vector-icons";
 import {ThemeContext} from "../providers/theme.provider";
 import {TextComponent} from "./text.component";
 import {Center} from "./center.component";
-
+import {DeviceType} from 'expo-device';
+import * as Device from 'expo-device';
 type IsbnScannerProps = {
     setIsbnModal : (value:boolean)=>void
     onIsbnScanned : (isbn:string)=>void
@@ -31,7 +32,7 @@ const IsbnScanner:FC<IsbnScannerProps> = ({setIsbnModal,onIsbnScanned}) => {
 
     const handleBarCodeScanned = ({ type, data }) => {
         setScanned(true);
-        Alert.alert('Isbn Scansionato',`${data}`,[
+        Alert.alert('Scansione effettuata',`${data}`,[
             {text:"Ok",onPress:()=>{
                     onIsbnScanned(data)
                     setIsbnModal(false)
@@ -56,6 +57,19 @@ const IsbnScanner:FC<IsbnScannerProps> = ({setIsbnModal,onIsbnScanned}) => {
                 <Text>No access to camera</Text>
             </Center>
         )
+    }
+
+    if(!Device.isDevice){
+        return (
+            <Center>
+                <Text>Debug scanner</Text>
+                <Button title={"Scansione fake"} onPress={() => {
+                    onIsbnScanned("8883372050")
+                    setIsbnModal(false)
+                }} />
+            </Center>
+        )
+
     }
 
     return (

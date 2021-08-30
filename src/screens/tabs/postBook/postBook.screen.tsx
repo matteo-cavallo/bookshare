@@ -125,12 +125,25 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
             })
     }
 
+    function handleDeleteGoogleBook(){
+        setTitle("")
+        setAuthor("")
+        setIsbn("")
+        dispatch(PostNewBookActions.deleteGoogleBook())
+    }
+
+
+    useEffect(() => {
+        if(isbnNotAvailable){
+            handleDeleteGoogleBook()
+        }
+    },[isbnNotAvailable])
 
     /**
      * Handling Google book autocompletion
      */
     useEffect(() => {
-        if (isbn.length == 10 || isbn.length == 13) {
+        if (isbn.length >= 10 && isbn.length <= 15) {
             dispatch(PostNewBookActions.fetchBookByIsbn(isbn))
         }
     }, [isbn])
@@ -142,7 +155,7 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
         if (googleBookData) {
             setTitle(googleBookData.volumeInfo.title || "Nessun titolo disponibile")
             setAuthor(googleBookData.volumeInfo.authors?.join(", ") || "Nessun autore disponibile")
-            setDescription(googleBookData.volumeInfo.description || "Nessuna descrizione disponibile")
+            //setDescription(googleBookData.volumeInfo.description || "Nessuna descrizione disponibile")
         }
     }, [googleBookData])
 
@@ -215,6 +228,23 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
                             <TextComponent
                                 style={[styles.sectionHeader, theme.fonts.SECTION_HEADER]}>IDENTIFICATIVO</TextComponent>
                             {
+                                googleBookData && <View style={{
+                                    paddingVertical: theme.spacing.LG,
+                                    flexDirection: "row",
+                                    justifyContent: "space-between"
+                                }}>
+                                    <View>
+                                        <TextComponent style={theme.fonts.SECTION_HEADER}>Libro
+                                            scansionato</TextComponent>
+                                        <TextComponent>{title}</TextComponent>
+                                        <TextComponent style={{color: theme.colors.SECONDARY}}>{author}</TextComponent>
+                                    </View>
+                                    <TouchableOpacity onPress={handleDeleteGoogleBook}>
+                                        <Ionicons name={"trash-outline"} size={24} style={{padding: theme.spacing.LG}}/>
+                                    </TouchableOpacity>
+                                </View>
+                            }
+                            {
                                 !isbnNotAvailable &&
                                 <View>
                                     <TextInputComponent
@@ -235,6 +265,7 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
                                         ogni libro. Scrivilo oppure scansionalo premendo sul QRCode.</TextComponent>
                                 </View>
                             }
+
                             <ToggleComponent text={"Codice ISBN non disponibile"} onValueChange={setIsbnNotAvailable}
                                              value={isbnNotAvailable} style={styles.toggle}/>
                         </View>
@@ -298,17 +329,18 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
                                     {label: 'Molto rovinato', value: BookConditions.RUINED},
                                 ]}
                             />
-                            <TextInputComponent placeholder={"Scrivi qui una descrizione del libro di almeno 15 caratteri."}
-                                                onChangeText={setDescription}
-                                                value={description}
-                                                startItem={<Ionicons name={"clipboard-outline"}
-                                                                     size={theme.spacing.XL}
-                                                                     color={theme.colors.SECONDARY}/>}
-                                                multiline={true}
-                                                style={{
-                                                    minHeight: 100,
-                                                    marginVertical: theme.spacing.MD
-                                                }}
+                            <TextInputComponent
+                                placeholder={"Scrivi qui una descrizione del libro di almeno 15 caratteri."}
+                                onChangeText={setDescription}
+                                value={description}
+                                startItem={<Ionicons name={"clipboard-outline"}
+                                                     size={theme.spacing.XL}
+                                                     color={theme.colors.SECONDARY}/>}
+                                multiline={true}
+                                style={{
+                                    minHeight: 100,
+                                    marginVertical: theme.spacing.MD
+                                }}
                             />
                         </View>
 

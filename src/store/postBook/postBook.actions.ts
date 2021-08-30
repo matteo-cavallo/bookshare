@@ -1,4 +1,4 @@
-import {createAsyncThunk} from '@reduxjs/toolkit';
+import {createAction, createAsyncThunk} from '@reduxjs/toolkit';
 import {BookPost} from '../../model/bookPost.model';
 import {GoogleBookAPIService} from '../../services/googleBookAPI.service';
 import {RootState} from '../store.config';
@@ -12,6 +12,9 @@ const prefix = "postNewBook/"
 
 const POST_NEW_BOOK = prefix + "postNewBook"
 const FETCH_BOOK_INFO_ISBN = prefix + "fetchBookByIsbn"
+const DELETE_GOOGLE_BOOK_INFO = prefix + "deleteGoogleBook"
+
+const deleteGoogleBook = createAction(DELETE_GOOGLE_BOOK_INFO)
 
 const postNewBook = createAsyncThunk<void, NewBookModel>(POST_NEW_BOOK, async (arg, thunkAPI) => {
 
@@ -76,5 +79,6 @@ const fetchBookByIsbn = createAsyncThunk<GoogleAPIBookVolume, string>(FETCH_BOOK
 
 export const PostNewBookActions = {
     postNewBook,
-    fetchBookByIsbn
+    fetchBookByIsbn,
+    deleteGoogleBook
 }
