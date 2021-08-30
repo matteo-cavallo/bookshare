@@ -27,6 +27,7 @@ import {useAppDispatch, useAppSelector} from '../../../store/store.config';
 import {PostNewBookActions} from '../../../store/postBook/postBook.actions';
 import {BookConditions, NewBookModel} from '../../../model/newBook.model';
 import {ToggleComponent} from '../../../components/toggle.component';
+import {HomeActions} from '../../../store/home/home.actions';
 
 type Props = NativeStackScreenProps<TabsScreens, "PostBook">
 
@@ -96,6 +97,9 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
             })
     }
 
+    // Images links
+    const imageLinks = googleBookData?.volumeInfo.imageLinks
+
     function publishBook() {
         const newBook: NewBookModel = {
             googleBookId: googleBookData?.id || null,
@@ -104,7 +108,7 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
             description,
             price: Number(price) || 0,
             position: {
-                name: "Position text",
+                name: position,
                 latitude: 41,
                 longitude: 12
             },
@@ -113,7 +117,8 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
             phoneNumber: {
                 countryCode: '39',
                 number: phone
-            }
+            },
+            mainImage: imageLinks?.smallThumbnail || imageLinks?.thumbnail || imageLinks?.small || imageLinks?.medium || imageLinks?.large || imageLinks?.extraLarge || null
         }
 
         // Dispatching action to upload the new book
@@ -121,6 +126,7 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
             .unwrap()
             .then(result => {
                 console.log("Book posted successfully.")
+                dispatch(HomeActions.fetchFeed())
                 navigation.navigate("HomeNavigator")
             })
             .catch(e => {

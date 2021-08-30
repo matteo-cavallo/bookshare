@@ -8,6 +8,8 @@ export interface NewBookModel {
     condition: BookConditions
     position: BookPosition
     phoneNumber: PhoneNumber
+    mainImage: string | null
+    images?: string[]
 }
 
 export interface PhoneNumber {
@@ -15,7 +17,7 @@ export interface PhoneNumber {
     number: string
 }
 
-interface BookPosition {
+export interface BookPosition {
     name: string
     latitude: number
     longitude: number

@@ -1,6 +1,6 @@
 
 // Listed Book
-import {PhoneNumber} from './newBook.model';
+import {BookPosition, PhoneNumber} from './newBook.model';
 
 export interface BookPost {
     // Id
@@ -13,8 +13,10 @@ export interface BookPost {
     description: string
     price: number
     condition: string
-    position: Position | null
+    position: BookPosition | null
     phoneNumber: PhoneNumber | null
+    mainImage: string | null
+    images?: string[]
 
     // Status
     active: boolean
@@ -23,10 +25,4 @@ export interface BookPost {
     // Metadata
     creationDate: string
     lastEdit: string
-}
-
-interface Position {
-    city?: string
-    latitude: number
-    longitude: number
 }
