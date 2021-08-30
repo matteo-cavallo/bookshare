@@ -1,14 +1,15 @@
-import React, {FC, useContext, useEffect, useState} from 'react';
-import {Center} from '../../../components/center.component';
-import {ActivityIndicator, Button, SafeAreaView, ScrollView, StyleSheet, Text, View} from 'react-native';
+import React, {FC, useContext} from 'react';
+import {
+    SafeAreaView,
+    ScrollView,
+    StyleSheet,
+    TouchableOpacity,
+    View
+} from 'react-native';
 import {TextComponent} from '../../../components/text.component';
-import {useDispatch, useSelector} from 'react-redux';
-import {UIActions} from '../../../store/uiStore/uistore.actions';
 import {useNavigation} from '@react-navigation/native'
 import {ThemeContext} from '../../../providers/theme.provider';
-import {AuthContext} from '../../../providers/authentication.provider';
 import {Ionicons} from '@expo/vector-icons';
-import {DarkColors, LightColors} from '../../../styles/colors';
 import {RootState, useAppSelector} from '../../../store/store.config';
 import {FBAuth} from '../../../firebase/firebase.config';
 
@@ -21,6 +22,7 @@ export const ProfileScreen: FC = () => {
 
     // Selectors
     const auth = useAppSelector(state => state.auth.user)
+    const profile = useAppSelector(state => state.user.user)
 
     function handleLogout(){
         FBAuth.signOut().then(() => {
@@ -30,10 +32,15 @@ export const ProfileScreen: FC = () => {
 
     const styles = StyleSheet.create({
         header: {
+            flex:1,
+            flexDirection: "row",
             paddingHorizontal: theme.spacing.XL,
-            paddingVertical: 50,
             alignItems: "center",
-            justifyContent: "space-around",
+            justifyContent: "flex-end",
+        },
+        textHeader:{
+            ...theme.fonts.LARGE_TITLE,
+            marginHorizontal: theme.spacing.MD
         },
         avatar: {
             width: 100,
@@ -47,24 +54,30 @@ export const ProfileScreen: FC = () => {
         }
     })
 
+    const getHeaderText = () =>{
+        if(profile?.firstName && profile.lastName){
+            return (
+                <TextComponent style={styles.textHeader}>{`${profile.firstName} ${profile.lastName}`}</TextComponent>
+            )
+        }
+
+        return (
+            <TextComponent style={styles.textHeader}>Profile</TextComponent>
+        )
+    }
+
     return (
         <ScrollView>
-            <View>
-                <SafeAreaView style={{backgroundColor: theme.colors.FILL_TERTIARY}}>
+            <SafeAreaView>
+                <View>
                     <View style={styles.header}>
-                        <View style={styles.avatar}>
-                            <Center>
-                            <Ionicons name={"person"} size={40} color={DarkColors.SECONDARY}/>
-                            </Center>
-                        </View>
-                        <TextComponent style={theme.fonts.HEADLINE}>{auth?.email || "No email"}</TextComponent>
+                        <TouchableOpacity onPress={()=>{}}>
+                            <Ionicons name={"person-circle-outline"} color={theme.colors.ACCENT} size={theme.icons.XL}/>
+                        </TouchableOpacity>
                     </View>
-                </SafeAreaView>
-                <View style={styles.body}>
-                    <Button title={"Login"} onPress={() => navigation.navigate("LoginModal")}/>
-                    <Button title={"Logout"} onPress={handleLogout} color={"red"}/>
+                    {getHeaderText()}
                 </View>
-            </View>
+            </SafeAreaView>
         </ScrollView>
     )
 }
