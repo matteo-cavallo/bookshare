@@ -36,15 +36,16 @@ const postNewBook = createAsyncThunk<void, NewBookModel>(POST_NEW_BOOK, async (a
     }
 
     try {
-        // Saving the new post
         const newPostDoc = await FBFirestore
             .collection(FBCollections.bookPost)
             .withConverter(bookPostConverter)
             .add(newBook)
 
+        // Saving the new post
+        console.log("Saved new post with id: ", newPostDoc.id)
+
         // Fire the transaction
         await FBFirestore.runTransaction(async transaction => {
-
             // Getting the User
             const userDocRef = await FBFirestore.collection(FBCollections.users).doc(currentUserId).withConverter(userConverter)
             return transaction.get(userDocRef).then(userDoc => {
@@ -57,9 +58,12 @@ const postNewBook = createAsyncThunk<void, NewBookModel>(POST_NEW_BOOK, async (a
                 transaction.set(userDocRef, {
                     postedBooks: [...postedBooks, newPostDoc.id],
                 }, {merge: true})
+
+                console.log("Updated user's list of posted books")
             })
         })
     } catch (e) {
+        console.log("Error posting a new book")
         throw Error(e.message)
     }
 

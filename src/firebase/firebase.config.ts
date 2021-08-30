@@ -38,6 +38,7 @@ export const userConverter: FirestoreDataConverter<UserModel> = {
         return modelObject
     }
 }
+
 export const bookPostConverter: FirestoreDataConverter<BookPost> = {
     fromFirestore(snapshot: firebase.firestore.QueryDocumentSnapshot, options: firebase.firestore.SnapshotOptions): BookPost {
         return snapshot.data() as BookPost

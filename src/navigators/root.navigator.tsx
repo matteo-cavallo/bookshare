@@ -22,14 +22,14 @@ declare global {
 }
 export const RootNavigator: FC = () => {
 
-    const auth = useAppSelector(state => state.auth.user)
+    const user = useAppSelector(state => state.auth.user)
 
     const RootStack = createNativeStackNavigator<RootStackScreens>()
 
     return (
         <RootStack.Navigator initialRouteName={'SplashScreen'}>
             {
-                !auth ?
+                !user ?
                     <RootStack.Group screenOptions={{headerShown: false, stackAnimation: 'fade'}}>
                         <RootStack.Screen name={'SplashScreen'} component={SplashScreen}/>
                     </RootStack.Group>

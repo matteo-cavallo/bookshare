@@ -26,6 +26,7 @@ type Props = NativeStackScreenProps<AuthenticationNavigatorScreens, "LoginEmail"
 export const LoginEmailScreen: FC<Props> = ({navigation}) => {
 
     const dispatch = useAppDispatch()
+    const disp = useDispatch()
 
     // This hook allows to navigate over the Root Navigation Stack
     const rootNavigation = useNavigation()
@@ -41,12 +42,13 @@ export const LoginEmailScreen: FC<Props> = ({navigation}) => {
             password
         }))
             .unwrap()
-            .then(result => {
+            .then(() => {
                 rootNavigation.navigate("TabsNavigator")
             })
             .catch(error => {
                 Alert.alert("Errore", error.message)
             })
+
     }
 
     const {theme} = useContext(ThemeContext)

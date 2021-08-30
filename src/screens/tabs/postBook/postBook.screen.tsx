@@ -1,5 +1,6 @@
 import React, {FC, useContext, useEffect, useLayoutEffect, useState} from 'react';
 import {
+    ActivityIndicator,
     Alert,
     Button,
     Keyboard,
@@ -67,6 +68,9 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
 
     async function checkData(): Promise<void> {
         try {
+            if(isbn.length == 0 && !isbnNotAvailable){
+                throw Error("Il codice ISBN è necessario")
+            }
             if (title.length == 0) {
                 throw Error("Il titolo non può essere vuoto")
             }
@@ -125,7 +129,7 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
             })
     }
 
-    function handleDeleteGoogleBook(){
+    function handleDeleteGoogleBook() {
         setTitle("")
         setAuthor("")
         setIsbn("")
@@ -134,10 +138,10 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
 
 
     useEffect(() => {
-        if(isbnNotAvailable){
+        if (isbnNotAvailable) {
             handleDeleteGoogleBook()
         }
-    },[isbnNotAvailable])
+    }, [isbnNotAvailable])
 
     /**
      * Handling Google book autocompletion
@@ -197,6 +201,7 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
 
     return (
         <SafeAreaView>
+
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <ScrollView>
 
@@ -391,6 +396,24 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
                     </SafeAreaView>
                 </View>
             </Modal>
+
+            {
+                isLoading &&
+                <Center style={{position: "absolute", flex: 1, bottom: 0, top: 0, right: 0, left: 0}}>
+                    <View style={{
+                        width: 80,
+                        height: 80,
+                        backgroundColor: theme.colors.FILL_LOADING,
+                        position: "relative",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        borderRadius: theme.spacing.LG
+                    }}>
+                        <ActivityIndicator size={"large"} color={theme.colors.PRIMARY}/>
+                    </View>
+                </Center>
+            }
+
         </SafeAreaView>
     )
 }

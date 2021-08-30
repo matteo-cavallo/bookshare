@@ -25,6 +25,7 @@ export const postNewBookReducer = createReducer(initialState, builder => {
     builder.addCase(PostNewBookActions.fetchBookByIsbn.rejected, state => {
         console.log("Error fetching book by ISBN")
         state.isLoading = false
+        state.googleBook = null
     })
 
 

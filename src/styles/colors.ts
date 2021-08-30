@@ -12,6 +12,10 @@ export const LightColors = {
     // GRAYSCALE
     FILL_TERTIARY: "rgba(118, 118, 128, 0.12)",
 
+
+    // Loading
+    FILL_LOADING: "rgba(118, 118, 128, 0.32)",
+
     // BACKGROUND
     BACKGROUND: "#FFFFFF"
 }
