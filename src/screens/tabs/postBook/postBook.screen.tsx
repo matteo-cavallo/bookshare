@@ -2,7 +2,8 @@ import React, {FC, useContext, useEffect, useLayoutEffect, useState} from 'react
 import {
     Alert,
     Button,
-    Keyboard, Modal,
+    Keyboard,
+    Modal,
     SafeAreaView,
     ScrollView,
     StyleSheet,
@@ -20,14 +21,11 @@ import {ButtonComponent} from '../../../components/button.component';
 import {Ionicons} from '@expo/vector-icons';
 import IsbnScanner from "../../../components/isbnScanner.component";
 import {PickerSelector} from "../../../components/pickerSelector.component";
-import {BookPost} from '../../../model/bookPost.model';
 import 'react-native-get-random-values';
-import {v4 as uuid} from 'uuid'
-import {UserModel} from '../../../model/user.model';
 import {useAppDispatch, useAppSelector} from '../../../store/store.config';
 import {PostNewBookActions} from '../../../store/postBook/postBook.actions';
-import {FBAuth} from '../../../firebase/firebase.config';
-import {GoogleBookAPIService} from '../../../services/googleBookAPI.service';
+import {BookConditions, NewBookModel} from '../../../model/newBook.model';
+import {ToggleComponent} from '../../../components/toggle.component';
 
 type Props = NativeStackScreenProps<TabsScreens, "PostBook">
 
@@ -41,20 +39,24 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
     const isLoading = useAppSelector(state => state.newBook.isLoading)
 
     // UI
-    const [canPublish, setCanPublish] = useState(false)
+    const [canPublish, setCanPublish] = useState(true)
     const [isbnModal, setIsbnModal] = useState(false)
+    const [isbnNotAvailable, setIsbnNotAvailable] = useState(false)
 
     // Form Data
     const [isbn, setIsbn] = useState("")
     const [title, setTitle] = useState("")
     const [author, setAuthor] = useState("")
     const [description, setDescription] = useState("")
-    const [conditions, setConditions] = useState("")
-    const [selectedPrice, setSelectedPrice] = useState("")
+    const [conditions, setConditions] = useState<BookConditions>()
+    const [price, setPrice] = useState("0")
     const [position, setPosition] = useState("")
     const [phone, setPhone] = useState("")
 
 
+    /**
+     * Navigation Options
+     */
     useLayoutEffect(() => {
         navigation.setOptions({
             headerTitle: "Post a book",
@@ -63,45 +65,51 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
         })
     }, [])
 
-    useEffect(() => {
-        if (
-            isbn.length == 0 ||
-            title.length == 0 ||
-            description.length == 0 ||
-            selectedPrice.length == 0 ||
-            conditions.length == 0 ||
-            position.length == 0
-        ) {
-            // :todo set this to true while debugging
-            setCanPublish(true)
-        } else {
-            setCanPublish(true)
+    async function checkData(): Promise<void> {
+        try {
+            if (title.length == 0) {
+                throw Error("Il titolo non può essere vuoto")
+            }
+            if (price.length == 0 || Number(price) < 0) {
+                throw Error("Immettere un prezzo")
+            }
+            return Promise.resolve()
+        } catch (e) {
+            return Promise.reject(e)
         }
+    }
 
-    }, [isbn, title, author, description, conditions, selectedPrice, position, phone])
-
-
-    function handlePublishBook() {
-        Alert.alert("Confermi?", "Il tuo libro sarà visibile a tutti pubblicamente.", [
-            {text: "OK", onPress: publishBook},
-            {text: "Annulla", style: "destructive"}
-        ])
+    async function handlePublishBook() {
+        checkData()
+            .then(() => {
+                Alert.alert("Confermi?", "Il tuo libro sarà visibile a tutti pubblicamente.", [
+                    {text: "OK", onPress: publishBook},
+                    {text: "Annulla", style: "destructive"}
+                ])
+            })
+            .catch(e => {
+                Alert.alert("Attenzione", e.message)
+            })
     }
 
     function publishBook() {
-        const newBook: BookPost = {
-            bookId: googleBookData?.id || null,
-            title: title,
-            description: description,
-            price: Number(selectedPrice) || 0,
-            condition: conditions,
-            phone: phone,
+        const newBook: NewBookModel = {
+            googleBookId: googleBookData?.id || null,
+            isbn: isbn || null,
+            title,
+            description,
+            price: Number(price) || 0,
             position: {
-                city: "Rome",
+                name: "Position text",
                 latitude: 41,
                 longitude: 12
             },
-            active: true
+            authors: author.split(",") || [],
+            condition: conditions || BookConditions.NEW,
+            phoneNumber: {
+                countryCode: '39',
+                number: phone
+            }
         }
 
         // Dispatching action to upload the new book
@@ -122,18 +130,21 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
      * Handling Google book autocompletion
      */
     useEffect(() => {
-        if(isbn.length == 10 || isbn.length == 13) {
+        if (isbn.length == 10 || isbn.length == 13) {
             dispatch(PostNewBookActions.fetchBookByIsbn(isbn))
         }
     }, [isbn])
 
+    /**
+     * Auto completion of Google Books info
+     */
     useEffect(() => {
-        if(googleBookData){
+        if (googleBookData) {
             setTitle(googleBookData.volumeInfo.title || "Nessun titolo disponibile")
             setAuthor(googleBookData.volumeInfo.authors?.join(", ") || "Nessun autore disponibile")
             setDescription(googleBookData.volumeInfo.description || "Nessuna descrizione disponibile")
         }
-    },[googleBookData])
+    }, [googleBookData])
 
     const styles = StyleSheet.create({
         container: {
@@ -146,17 +157,19 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
         },
         sectionHeader: {
             color: theme.colors.SECONDARY,
-            marginBottom: theme.spacing.S
+            marginBottom: theme.spacing.MD
         },
         inputFooter: {
-            color: theme.colors.SECONDARY
+            color: theme.colors.SECONDARY,
+            marginBottom: theme.spacing.MD
         },
         imageContainer: {
             borderRadius: theme.spacing.LG,
             borderColor: theme.colors.FILL_TERTIARY,
             borderWidth: 1,
             padding: theme.spacing.LG,
-            minHeight: 120
+            minHeight: 120,
+            marginBottom: theme.spacing.MD
         },
         buttonImages: {
             color: theme.colors.ACCENT,
@@ -165,13 +178,15 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
         imagesDescription: {
             marginTop: theme.spacing.MD,
             color: theme.colors.SECONDARY
-        }
+        },
+        toggle: {}
     })
 
     return (
         <SafeAreaView>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <ScrollView>
+
                     <View style={styles.container}>
                         <TextComponent style={[theme.fonts.LARGE_TITLE, styles.title]}>Posta un
                             libro</TextComponent>
@@ -190,52 +205,71 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
                                 </Center>
                             </TouchableOpacity>
                         </View>
+
+                        {
+                            /**
+                             * ISBN SECTION
+                             */
+                        }
                         <View style={styles.section}>
                             <TextComponent
                                 style={[styles.sectionHeader, theme.fonts.SECTION_HEADER]}>IDENTIFICATIVO</TextComponent>
-                            <TextInputComponent
-                                value={isbn}
-                                placeholder={"ISBN"}
-                                onChangeText={setIsbn}
-                                endItem={
-                                    <Ionicons name={"qr-code-outline"} color={theme.colors.ACCENT} size={25}
-                                              onPress={() => setIsbnModal(true)}/>
-                                }
-                            />
-                            <TextComponent
-                                style={[theme.fonts.CAPTION, styles.inputFooter]}>Solitamente di 10 o 13 cifre. E
-                                il codice che identifica
-                                ogni libro. Scrivilo oppure scansionalo premendo sul QRCode.</TextComponent>
+                            {
+                                !isbnNotAvailable &&
+                                <View>
+                                    <TextInputComponent
+                                        value={isbn}
+                                        placeholder={"ISBN"}
+                                        onChangeText={setIsbn}
+                                        endItem={
+                                            <Ionicons name={"qr-code-outline"} color={theme.colors.ACCENT} size={25}
+                                                      onPress={() => setIsbnModal(true)}/>
+                                        }
+                                    />
+
+
+                                    <TextComponent
+                                        style={[theme.fonts.CAPTION, styles.inputFooter]}>Solitamente di 10 o 13 cifre.
+                                        E
+                                        il codice che identifica
+                                        ogni libro. Scrivilo oppure scansionalo premendo sul QRCode.</TextComponent>
+                                </View>
+                            }
+                            <ToggleComponent text={"Codice ISBN non disponibile"} onValueChange={setIsbnNotAvailable}
+                                             value={isbnNotAvailable} style={styles.toggle}/>
                         </View>
 
-                        <View style={styles.section}>
-                            <TextComponent
-                                style={[styles.sectionHeader, theme.fonts.SECTION_HEADER]}>DETTAGLI</TextComponent>
-                            <TextInputComponent placeholder={"Titolo"}
-                                                onChangeText={setTitle}
-                                                value={title}
-                                                startItem={<Ionicons name={"book-outline"} size={theme.spacing.XL}
-                                                                     color={theme.colors.SECONDARY}/>}
-                            />
-                            <TextInputComponent placeholder={"Autore"}
-                                                onChangeText={setAuthor}
-                                                value={author}
-                                                startItem={<Ionicons name={"person-circle-outline"}
-                                                                     size={theme.spacing.XL}
-                                                                     color={theme.colors.SECONDARY}/>}
-                            />
-                            <TextInputComponent placeholder={"Descrizione"}
-                                                onChangeText={setDescription}
-                                                value={description}
-                                                startItem={<Ionicons name={"help-circle-outline"}
-                                                                     size={theme.spacing.XL}
-                                                                     color={theme.colors.SECONDARY}/>}
-                            />
-                            <TextComponent
-                                style={[theme.fonts.CAPTION, styles.inputFooter]}>Descrivi il libro e le sue
-                                condizioni. Una descrizione
-                                accurata ti da più possibilità di vendere.</TextComponent>
-                        </View>
+                        {
+                            /**
+                             * DETTAGLI
+                             */
+                        }
+                        {
+                            isbnNotAvailable &&
+                            <View style={styles.section}>
+                                <TextComponent
+                                    style={[styles.sectionHeader, theme.fonts.SECTION_HEADER]}>DETTAGLI</TextComponent>
+                                <TextInputComponent placeholder={"Titolo"}
+                                                    onChangeText={setTitle}
+                                                    value={title}
+                                                    startItem={<Ionicons name={"book-outline"}
+                                                                         size={theme.spacing.XL}
+                                                                         color={theme.colors.SECONDARY}/>}
+                                />
+                                <TextInputComponent placeholder={"Autore"}
+                                                    onChangeText={setAuthor}
+                                                    value={author}
+                                                    startItem={<Ionicons name={"person-circle-outline"}
+                                                                         size={theme.spacing.XL}
+                                                                         color={theme.colors.SECONDARY}/>}
+                                />
+                                <TextComponent
+                                    style={[theme.fonts.CAPTION, styles.inputFooter]}>Descrivi il libro e le sue
+                                    condizioni. Una descrizione
+                                    accurata ti da più possibilità di vendere.</TextComponent>
+                            </View>
+                        }
+
 
                         <View style={styles.section}>
                             <TextComponent
@@ -243,25 +277,38 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
                             {/*TODO: implement price validation*/}
                             <TextInputComponent placeholder={"Prezzo"}
                                                 keyboardType={"decimal-pad"}
-                                                onChangeText={setSelectedPrice}
-                                                value={selectedPrice}
+                                                onChangeText={setPrice}
+                                                value={price}
                                                 endItem={<Ionicons name={"logo-euro"} size={theme.spacing.LG}
                                                                    color={theme.colors.SECONDARY}/>}
+                                                startItem={<TextComponent
+                                                    style={{color: theme.colors.SECONDARY}}>Prezzo: </TextComponent>}
                             />
-                            {/*TODO: Abbellire in caso come da figma*/}
                             <PickerSelector
                                 onValueChange={(value) => setConditions(value)}
                                 placeholder={{
                                     label: "Seleziona lo stato di usura",
-                                    value: "",
+                                    value: undefined,
                                     inputLabel: "Condizione"
                                 }}
                                 items={[
-                                    {label: 'Nuovo', value: 'nuovo'},
-                                    {label: 'Usato come nuovo', value: 'usato_come_nuovo'},
-                                    {label: 'Usato', value: 'usato'},
-                                    {label: 'Molto rovinato', value: 'molto_rovinato'},
+                                    {label: 'Nuovo', value: BookConditions.NEW},
+                                    {label: 'Usato come nuovo', value: BookConditions.AS_NEW},
+                                    {label: 'Usato', value: BookConditions.USED},
+                                    {label: 'Molto rovinato', value: BookConditions.RUINED},
                                 ]}
+                            />
+                            <TextInputComponent placeholder={"Scrivi qui una descrizione del libro di almeno 15 caratteri."}
+                                                onChangeText={setDescription}
+                                                value={description}
+                                                startItem={<Ionicons name={"clipboard-outline"}
+                                                                     size={theme.spacing.XL}
+                                                                     color={theme.colors.SECONDARY}/>}
+                                                multiline={true}
+                                                style={{
+                                                    minHeight: 100,
+                                                    marginVertical: theme.spacing.MD
+                                                }}
                             />
                         </View>
 
@@ -295,7 +342,8 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
                                              disabled={!canPublish}>Pubblica</ButtonComponent>
                             <TextComponent style={[styles.inputFooter, theme.fonts.CAPTION]}>Al momento della
                                 pubblicazione tutti gli annunci sono sottoposto a un rapido controllo standard per
-                                assicurarci che rispettino le nostre Normative sulle vendite prima di diventare visibili
+                                assicurarci che rispettino le nostre Normative sulle vendite prima di diventare
+                                visibili
                                 agli altri. Beni diversi dai libri non sono consentiti.</TextComponent>
                         </View>
 

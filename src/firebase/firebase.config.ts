@@ -4,6 +4,7 @@ import 'firebase/auth'
 import 'firebase/firestore'
 import FirestoreDataConverter = firebase.firestore.FirestoreDataConverter;
 import {UserModel} from '../model/user.model';
+import {BookPost} from '../model/bookPost.model';
 
 
 export type FirebaseUser = firebase.User
@@ -18,8 +19,12 @@ export const firebaseConfig = {
     appId: "1:194653713104:web:76ef63326bff6118f3a4d5"
 };
 
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}else {
+    firebase.app(); // if already initialized, use that one
+}
 
-firebase.initializeApp(firebaseConfig);
 
 export const FBAuth = firebase.auth()
 export const FBFirestore = firebase.firestore()
@@ -30,6 +35,14 @@ export const userConverter: FirestoreDataConverter<UserModel> = {
         return snapshot.data() as UserModel
     },
     toFirestore(modelObject: UserModel): firebase.firestore.DocumentData {
+        return modelObject
+    }
+}
+export const bookPostConverter: FirestoreDataConverter<BookPost> = {
+    fromFirestore(snapshot: firebase.firestore.QueryDocumentSnapshot, options: firebase.firestore.SnapshotOptions): BookPost {
+        return snapshot.data() as BookPost
+    },
+    toFirestore(modelObject: BookPost): firebase.firestore.DocumentData {
         return modelObject
     }
 }

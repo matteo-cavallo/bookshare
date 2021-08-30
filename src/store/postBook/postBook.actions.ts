@@ -2,17 +2,18 @@ import {createAsyncThunk} from '@reduxjs/toolkit';
 import {BookPost} from '../../model/bookPost.model';
 import {GoogleBookAPIService} from '../../services/googleBookAPI.service';
 import {RootState} from '../store.config';
-import {FBAuth, FBFirestore, userConverter} from '../../firebase/firebase.config';
+import {bookPostConverter, FBAuth, FBFirestore, userConverter} from '../../firebase/firebase.config';
 import {FBCollections} from '../../firebase/collections';
 import {UserModel} from '../../model/user.model';
 import firebase from 'firebase';
+import {NewBookModel} from '../../model/newBook.model';
 
 const prefix = "postNewBook/"
 
 const POST_NEW_BOOK = prefix + "postNewBook"
 const FETCH_BOOK_INFO_ISBN = prefix + "fetchBookByIsbn"
 
-const postNewBook = createAsyncThunk<void, BookPost>(POST_NEW_BOOK, async (arg, thunkAPI) => {
+const postNewBook = createAsyncThunk<void, NewBookModel>(POST_NEW_BOOK, async (arg, thunkAPI) => {
 
     // Grab user from context
     const currentUserId = FBAuth.currentUser?.uid
@@ -21,15 +22,24 @@ const postNewBook = createAsyncThunk<void, BookPost>(POST_NEW_BOOK, async (arg, 
     }
 
     // Preparing Data
-    arg.userId = currentUserId
-    arg.creationDate = new Date()
-    arg.lastEdit = new Date()
+    const newBook: BookPost = {
+        ...arg,
+
+        active: false,
+        creationDate: new Date(),
+        lastEdit: new Date(),
+        userId: currentUserId
+    }
 
     try {
+        // Saving the new post
+        const newPostDoc = await FBFirestore
+            .collection(FBCollections.bookPost)
+            .withConverter(bookPostConverter)
+            .add(newBook)
+
         // Fire the transaction
-        return await FBFirestore.runTransaction(async transaction => {
-            // Saving the new post
-            const newPostDoc = await FBFirestore.collection(FBCollections.bookPost).add(arg)
+        await FBFirestore.runTransaction(async transaction => {
 
             // Getting the User
             const userDocRef = await FBFirestore.collection(FBCollections.users).doc(currentUserId).withConverter(userConverter)
@@ -42,7 +52,7 @@ const postNewBook = createAsyncThunk<void, BookPost>(POST_NEW_BOOK, async (arg, 
                 const postedBooks = userDoc?.data()?.postedBooks || []
                 transaction.set(userDocRef, {
                     postedBooks: [...postedBooks, newPostDoc.id],
-                },{merge: true})
+                }, {merge: true})
             })
         })
     } catch (e) {
