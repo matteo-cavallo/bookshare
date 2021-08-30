@@ -13,7 +13,7 @@ export const ProfileNavigator = () => {
 
     return (
         <ProfileStack.Navigator>
-            <ProfileStack.Screen name={"ProfileScreen"} component={ProfileScreen} />
+            <ProfileStack.Screen name={"ProfileScreen"} options={{headerShown:false}}  component={ProfileScreen} />
         </ProfileStack.Navigator>
     )
 }
