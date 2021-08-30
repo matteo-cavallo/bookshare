@@ -44,6 +44,7 @@ export const TabsNavigator: FC = () => {
 const tabsNavigatorOptions: BottomTabNavigationOptions = {
     headerShown: true,
     tabBarActiveTintColor: LightColors.ACCENT,
+    title:"Profile"
 }
 
 const homeScreenOptions: BottomTabNavigationOptions = {

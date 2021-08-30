@@ -1,10 +1,6 @@
 import React, {FC, useContext} from 'react';
 import {
-    ButtonProps,
     StyleSheet,
-    Text,
-    TextInput,
-    TextInputProps,
     TouchableOpacity,
     TouchableOpacityProps,
     View
