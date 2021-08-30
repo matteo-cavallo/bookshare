@@ -1,10 +1,13 @@
-import {createNativeStackNavigator} from 'react-native-screens/native-stack';
+import {createNativeStackNavigator, NativeStackNavigationOptions} from 'react-native-screens/native-stack';
 import React from 'react';
 import {ProfileScreen} from '../screens/tabs/profile/profile.screen';
+import {SettingsScreen} from "../screens/tabs/profile/components/settings.screen";
+import {AccountScreen} from "../screens/tabs/profile/components/account.screen";
 
-type ProfileScreens = {
-    ProfileScreen: undefined;
-    ProfileInfo: undefined;
+export type ProfileScreens = {
+    Profile: undefined;
+    Settings: undefined;
+    Account: undefined;
 }
 
 export const ProfileNavigator = () => {
@@ -13,7 +16,24 @@ export const ProfileNavigator = () => {
 
     return (
         <ProfileStack.Navigator>
-            <ProfileStack.Screen name={"ProfileScreen"} options={{headerShown:false}}  component={ProfileScreen} />
+            <ProfileStack.Screen name={"Profile"} options={profileScreenOptions}  component={ProfileScreen} />
+            <ProfileStack.Screen name={"Settings"} options={settingsScreenOptions} component={SettingsScreen} />
+            <ProfileStack.Screen name={"Account"} options={accountScreenOptions} component={AccountScreen} />
         </ProfileStack.Navigator>
     )
+}
+
+
+export const profileScreenOptions: NativeStackNavigationOptions = {
+    headerShown:false
+}
+
+export const settingsScreenOptions: NativeStackNavigationOptions = {
+    headerLargeTitle: true,
+    title: "Settings"
+}
+
+export const accountScreenOptions: NativeStackNavigationOptions = {
+    headerLargeTitle: true,
+    title: "Account"
 }

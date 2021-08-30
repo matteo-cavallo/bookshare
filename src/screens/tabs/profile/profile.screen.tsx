@@ -71,8 +71,8 @@ export const ProfileScreen: FC = () => {
             <SafeAreaView>
                 <View>
                     <View style={styles.header}>
-                        <TouchableOpacity onPress={()=>{}}>
-                            <Ionicons name={"person-circle-outline"} color={theme.colors.ACCENT} size={theme.icons.XL}/>
+                        <TouchableOpacity onPress={()=>navigation.navigate("Settings")}>
+                            <Ionicons name={"cog-outline"} color={theme.colors.ACCENT} size={theme.icons.XL}/>
                         </TouchableOpacity>
                     </View>
                     {getHeaderText()}
