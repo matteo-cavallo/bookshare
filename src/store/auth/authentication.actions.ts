@@ -4,6 +4,7 @@ import {FBCollections} from '../../firebase/collections';
 
 const prefix = "authentication/"
 
+const RESET_STATE = prefix + "reset"
 const ADD_USER = prefix + "addUser"
 const ANONYMOUS_AUTH = prefix + "anonymousAuth"
 const LOGOUT = prefix + "logout"
@@ -11,6 +12,7 @@ const LOGIN_EMAIL = prefix + "loginWithEmail"
 const SIGNUP_EMAIL = prefix + "signUpEmail"
 
 const setUser = createAction<FirebaseUser | null>(ADD_USER)
+const resetState = createAction(RESET_STATE)
 
 /**
  * Anonymous Authentication
@@ -72,5 +74,6 @@ export const AuthenticationActions = {
     anonymousAuthentication,
     loginWithEmail,
     signOut,
-    signUpWithEmailAndPassword
+    signUpWithEmailAndPassword,
+    resetState
 }

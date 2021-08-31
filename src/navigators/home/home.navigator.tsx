@@ -5,7 +5,7 @@ import {BottomTabNavigationOptions} from '@react-navigation/bottom-tabs';
 
 export type HomeStackParams = {
     Home: undefined;
-    BookPostDetail: {bookId: string};
+    BookDetail: {uid: string};
 }
 
 export const HomeNavigator = () => {
@@ -15,16 +15,14 @@ export const HomeNavigator = () => {
     return (
         <Stack.Navigator>
             <Stack.Screen name={"Home"} component={HomeScreen} options={homeScreenOptions}/>
+            <Stack.Screen name={"BookDetail"} component={HomeScreen} options={homeScreenOptions}/>
         </Stack.Navigator>
     )
 }
 
 const homeScreenOptions: NativeStackNavigationOptions = {
     headerShown: true,
-    headerLargeTitle: true,
     title: "Bookshare",
-    headerLargeTitleHideShadow: true,
-    headerTranslucent: true
 }
 
 const detailPostOptions: NativeStackNavigationOptions = {

@@ -16,7 +16,6 @@ export const SectionComponent: FC<Props> = (props) => {
 
     const {theme} = useContext(ThemeContext)
 
-    const isLoading = useAppSelector(state => state.home.isLoading)
 
     const styles = StyleSheet.create({
         section: {},
@@ -34,9 +33,6 @@ export const SectionComponent: FC<Props> = (props) => {
         <View style={styles.section}>
             <View style={styles.header}>
                 <TextComponent style={styles.title}>{title}</TextComponent>
-                {
-                    isLoading && <ActivityIndicator/>
-                }
             </View>
             <View style={styles.body}>
                 {

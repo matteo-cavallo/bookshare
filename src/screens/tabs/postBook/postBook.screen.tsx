@@ -242,9 +242,9 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
                                 googleBookData && <View style={{
                                     paddingVertical: theme.spacing.LG,
                                     flexDirection: "row",
-                                    justifyContent: "space-between"
+                                    justifyContent: "space-between",
                                 }}>
-                                    <View>
+                                    <View style={{flex: 1, flexShrink: 1}}>
                                         <TextComponent style={theme.fonts.SECTION_HEADER}>Libro
                                             scansionato</TextComponent>
                                         <TextComponent>{title}</TextComponent>

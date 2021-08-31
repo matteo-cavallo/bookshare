@@ -16,8 +16,6 @@ export const PostItemComponent: FC<Props> = ({post}) => {
         container: {
             padding: theme.spacing.MD,
             flexDirection: "row",
-            borderBottomColor: theme.colors.FILL_TERTIARY,
-            borderBottomWidth: 1
         },
         imageContainer: {
             marginRight: theme.spacing.MD
