@@ -30,7 +30,8 @@ export const BookDetail: FC<Props> = ({navigation, route}) => {
     const styles = StyleSheet.create({
         container: {
             padding: theme.spacing.LG,
-            flex: 1
+            flex: 1,
+            backgroundColor: "#FFF"
         },
         scrollView: {},
         navBar: {
@@ -39,24 +40,35 @@ export const BookDetail: FC<Props> = ({navigation, route}) => {
         },
         header: {
             minHeight: 300,
-            backgroundColor: theme.colors.FILL_TERTIARY,
-            paddingBottom: theme.spacing.LG
+            paddingBottom: theme.spacing.LG,
         },
         content: {
-            padding: theme.spacing.LG
+            paddingHorizontal: theme.spacing.LG
         },
-        titleContainer:{
+        section: {
+            marginBottom: theme.spacing.MD
+        },
+        titleContainer: {
             flexDirection: "row",
-
+            marginBottom: theme.spacing.LG,
+            backgroundColor: theme.colors.ACCENT,
+            padding: theme.spacing.LG,
+            alignItems: "center",
+            //borderRightWidth: 8,
+            //borderRightColor: "#FFF"
         },
-        title:{
-            ...theme.fonts.HEADLINE,
-            flex: 1,
-            flexShrink: 1
+        title: {
+            ...theme.fonts.SUBHEADLINE,
+            color: "#FFF",
+        },
+        subTitle: {
+            ...theme.fonts.CAPTION,
+            color: "#FFF",
         },
         price: {
-            ...theme.fonts.HEADLINE,
-            marginLeft: theme.spacing.MD
+            ...theme.fonts.TITLE,
+            marginLeft: theme.spacing.S,
+            color: "#FFF"
         }
     })
 
@@ -82,10 +94,27 @@ export const BookDetail: FC<Props> = ({navigation, route}) => {
                                style={{height: '100%', aspectRatio: 3 / 4}}/>
                     </Center>
                 </View>
+                <View style={styles.titleContainer}>
+                    <View style={{flex: 1, flexShrink: 1}}>
+                        <TextComponent style={styles.title}>{book?.title}</TextComponent>
+                        <TextComponent style={styles.subTitle}>{book?.position?.name}</TextComponent>
+                    </View>
+                    <TextComponent style={styles.price}>{book?.price} €</TextComponent>
+                </View>
                 <View style={styles.content}>
-                    <View style={styles.titleContainer}>
-                    <TextComponent style={styles.title}>{book?.title}</TextComponent>
-                    <TextComponent style={styles.price}>€{book?.price}</TextComponent>
+                    <View style={styles.section}>
+                        <TextComponent style={theme.fonts.SECTION_HEADER}>Descrizione</TextComponent>
+                        <TextComponent>{book?.description || "Nessuna descrizione disponibile"}</TextComponent>
+                    </View>
+
+                    <View style={styles.section}>
+                        <TextComponent style={theme.fonts.SECTION_HEADER}>Condizioni</TextComponent>
+                        <TextComponent>{book?.condition || "Nessuna descrizione disponibile"}</TextComponent>
+                    </View>
+
+                    <View style={styles.section}>
+                        <TextComponent style={theme.fonts.SECTION_HEADER}>CONTATTI</TextComponent>
+                        <TextComponent>{book?.phoneNumber?.number || "Nessun numero fornito"}</TextComponent>
                     </View>
                 </View>
             </ScrollView>

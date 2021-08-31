@@ -20,6 +20,9 @@ import {BookPost} from '../../../model/bookPost.model';
 import {PostItemComponent} from './components/postItem.component';
 import {NativeStackScreenProps} from 'react-native-screens/native-stack';
 import {HomeStackParams} from '../../../navigators/home/home.navigator';
+import {usePaginatedData} from '../../../hooks/usePaginatedData.hook';
+import {FBCollections} from '../../../firebase/collections';
+import {OrderByDirection} from '../../../firebase/firebase.config';
 
 type Props = NativeStackScreenProps<HomeStackParams, "Home">
 
@@ -28,9 +31,14 @@ export const HomeScreen: FC<Props> = ({navigation}) => {
     const {theme} = useContext(ThemeContext)
     const dispatch = useAppDispatch()
 
-    const items = useAppSelector(state => state.home.feed)
-    const refreshing = useAppSelector(state => state.home.isLoading)
-    const isLoadingMoreItems = useAppSelector(state => state.home.isLoadingMoreData)
+    const [order, setOrder] = useState<OrderByDirection>("desc")
+    const [orderBy, setOrderBy] = useState<keyof BookPost>("title")
+
+    const {data, getMoreData, fetchFirstBatch, loadingMoreItems, loading} = usePaginatedData<BookPost>(FBCollections.bookPost, orderBy, {
+        direction: order,
+        firstBatch: 6,
+        moreDataBatch: 4
+    })
 
     const styles = StyleSheet.create({
         safeArea: {
@@ -40,10 +48,6 @@ export const HomeScreen: FC<Props> = ({navigation}) => {
             padding: theme.spacing.MD,
         },
     })
-
-    useEffect(() => {
-        dispatch(HomeActions.fetchFeed())
-    }, [])
 
     const renderItem = (props: ListRenderItemInfo<BookPost>) => {
         const {item, index, separators} = props
@@ -60,14 +64,9 @@ export const HomeScreen: FC<Props> = ({navigation}) => {
         })
     }
 
-    function handleFetchMoreData() {
-        if (!isLoadingMoreItems) {
-            dispatch(HomeActions.fetchMoreDataFeed())
-        }
-    }
 
     const listFooterComponent: FC = () => (
-        isLoadingMoreItems ? <ActivityIndicator/> : null
+        loadingMoreItems ? <ActivityIndicator/> : null
     )
 
     const listSeprator:FC = () => (
@@ -77,19 +76,20 @@ export const HomeScreen: FC<Props> = ({navigation}) => {
     const listHeader: FC = () => (
             <View style={{padding: theme.spacing.LG}}>
                 <TextComponent style={theme.fonts.TITLE}>Feed</TextComponent>
+                <Button title={order == "desc" ? "Z-A": "A-Z"} onPress={() => setOrder(order == "desc" ? "asc" : "desc")} />
             </View>
     )
 
 
     return (
         <SafeAreaView style={styles.safeArea}>
-            <FlatList data={items}
+            <FlatList data={data}
                       renderItem={renderItem}
                       keyExtractor={(item, index) => item.uid || index.toString()}
-                      refreshControl={<RefreshControl refreshing={refreshing}
-                                                      onRefresh={() => dispatch(HomeActions.fetchFeed())}/>}
+                      refreshControl={<RefreshControl refreshing={loading}
+                                                      onRefresh={() => fetchFirstBatch()}/>}
                       onEndReachedThreshold={0}
-                      onEndReached={handleFetchMoreData}
+                      onEndReached={getMoreData}
                       ListFooterComponent={listFooterComponent}
                       ItemSeparatorComponent={listSeprator}
                       ListHeaderComponent={listHeader}

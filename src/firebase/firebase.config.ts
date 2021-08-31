@@ -7,8 +7,6 @@ import {UserModel} from '../model/user.model';
 import {BookPost} from '../model/bookPost.model';
 
 
-export type FirebaseUser = firebase.User
-export type UserCredential = firebase.auth.UserCredential
 
 export const firebaseConfig = {
     apiKey: "AIzaSyBh0Gd7tzj820Wpvi33DcmuFzVpN8Nc4Bo",
@@ -49,3 +47,12 @@ export const bookPostConverter: FirestoreDataConverter<BookPost> = {
         return modelObject
     }
 }
+
+
+export type FirebaseUser = firebase.User
+export type UserCredential = firebase.auth.UserCredential
+export type DocumentData = firebase.firestore.DocumentData
+export type DocumentSnapshot = firebase.firestore.DocumentSnapshot
+export type QueryDocumentSnapshot = firebase.firestore.QueryDocumentSnapshot
+export type SnapshotOptions = firebase.firestore.SnapshotOptions
+export type OrderByDirection = firebase.firestore.OrderByDirection
