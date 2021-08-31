@@ -52,7 +52,7 @@ export const NavigationLinkComponent: FC<NavigationLinkComponentProps> = (props)
             {props.startItem && <View style={style.startItem}>
                 {props.startItem}
             </View>}
-            <TextComponent {...props} style={[props.style, style.text]} placeholderTextColor={theme.colors.SECONDARY}/>
+            <TextComponent {...props} style={[style.text,props.style]} placeholderTextColor={theme.colors.SECONDARY}/>
             {
                 endItem && <View style={style.endItem}>
                     {endItem}
