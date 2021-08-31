@@ -1,17 +1,17 @@
 import React, {FC, useContext, useEffect, useState} from 'react';
 
 import {ActivityIndicator, Alert, Button, ScrollView, StyleSheet, TouchableOpacity, View} from 'react-native';
-import {TextComponent} from "../../../../components/text.component";
-import {ThemeContext} from "../../../../providers/theme.provider";
-import {TextInputComponent} from "../../../../components/textInput.component";
-import {NavigationLinkComponent} from "../../../../components/navigationLink.component";
+import {TextComponent} from "../../../../../components/text.component";
+import {ThemeContext} from "../../../../../providers/theme.provider";
+import {TextInputComponent} from "../../../../../components/textInput.component";
+import {NavigationLinkComponent} from "../../../../../components/navigationLink.component";
 import {Ionicons} from "@expo/vector-icons";
-import {useAppDispatch, useAppSelector} from "../../../../store/store.config";
+import {useAppDispatch, useAppSelector} from "../../../../../store/store.config";
 import {NativeStackScreenProps} from "react-native-screens/native-stack";
-import {ProfileScreens} from "../../../../navigators/profile.navigator";
-import {UserModel} from "../../../../model/user.model";
-import {UserActions} from "../../../../store/user/user.actions";
-import {Center} from "../../../../components/center.component";
+import {ProfileScreens} from "../../../../../navigators/profile.navigator";
+import {UserModel} from "../../../../../model/user.model";
+import {UserActions} from "../../../../../store/user/user.actions";
+import {Center} from "../../../../../components/center.component";
 
 type Props = NativeStackScreenProps<ProfileScreens, "Account">
 
