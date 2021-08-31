@@ -1,4 +1,4 @@
-import React, {FC, useContext} from 'react';
+import React, {FC, useContext, useEffect} from 'react';
 import {
     SafeAreaView,
     ScrollView,
@@ -7,13 +7,13 @@ import {
     View
 } from 'react-native';
 import {TextComponent} from '../../../components/text.component';
-import {useNavigation} from '@react-navigation/native'
 import {ThemeContext} from '../../../providers/theme.provider';
 import {Ionicons} from '@expo/vector-icons';
-import {RootState, useAppSelector} from '../../../store/store.config';
+import {RootState, useAppDispatch, useAppSelector} from '../../../store/store.config';
 import {FBAuth} from '../../../firebase/firebase.config';
 import {NativeStackScreenProps} from 'react-native-screens/native-stack';
 import {ProfileScreens} from '../../../navigators/profile.navigator';
+import {UserActions} from "../../../store/user/user.actions";
 
 type Props = NativeStackScreenProps<ProfileScreens, "Profile">
 
@@ -22,9 +22,15 @@ export const ProfileScreen: FC<Props> = ({navigation}) => {
     // Context
     const {theme} = useContext(ThemeContext)
 
+    const dispatch = useAppDispatch()
+
     // Selectors
     const auth = useAppSelector(state => state.auth.user)
     const profile = useAppSelector(state => state.user.user)
+
+    useEffect(()=>{
+        dispatch(UserActions.fetchUser())
+    },[])
 
     function handleLogout(){
         FBAuth.signOut().then(() => {

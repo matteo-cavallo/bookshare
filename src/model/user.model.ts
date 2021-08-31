@@ -5,6 +5,7 @@ export interface UserModel {
 
     firstName?: string;
     lastName?: string;
+    birthday?: string;
 
     postedBooks: string[]
 }

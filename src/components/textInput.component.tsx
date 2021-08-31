@@ -43,7 +43,7 @@ export const TextInputComponent: FC<TextInputComponentProps> = (props) => {
             {props.startItem && <View style={style.startItem}>
                 {props.startItem}
             </View>}
-            <TextInput {...props}  style={[props.style, style.textInput]} placeholderTextColor={theme.colors.SECONDARY}/>
+            <TextInput {...props} style={[style.textInput,props.style]} placeholderTextColor={theme.colors.SECONDARY}/>
             {
              props.endItem &&   <View style={style.endItem}>
                     {props.endItem}
