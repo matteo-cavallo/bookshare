@@ -18,8 +18,12 @@ import {HomeActions} from '../../../store/home/home.actions';
 import {SectionComponent} from './components/section.component';
 import {BookPost} from '../../../model/bookPost.model';
 import {PostItemComponent} from './components/postItem.component';
+import {NativeStackScreenProps} from 'react-native-screens/native-stack';
+import {HomeStackParams} from '../../../navigators/home/home.navigator';
 
-export const HomeScreen: FC = () => {
+type Props = NativeStackScreenProps<HomeStackParams, "Home">
+
+export const HomeScreen: FC<Props> = ({navigation}) => {
 
     const {theme} = useContext(ThemeContext)
     const dispatch = useAppDispatch()
@@ -44,7 +48,16 @@ export const HomeScreen: FC = () => {
     const renderItem = (props: ListRenderItemInfo<BookPost>) => {
         const {item, index, separators} = props
 
-        return <PostItemComponent key={index} post={item}/>
+        return <PostItemComponent key={index}
+                                  post={item}
+                                  navigateTo={handleNavigateToDetails}
+        />
+    }
+
+    function handleNavigateToDetails(uid: string){
+        navigation.navigate("BookDetail", {
+            uid
+        })
     }
 
     function handleFetchMoreData() {

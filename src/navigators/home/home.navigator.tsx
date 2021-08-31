@@ -2,6 +2,7 @@ import {createNativeStackNavigator, NativeStackNavigationOptions} from 'react-na
 import React from 'react';
 import {HomeScreen} from '../../screens/tabs/home/home.screen';
 import {BottomTabNavigationOptions} from '@react-navigation/bottom-tabs';
+import {BookDetail} from '../../screens/tabs/home/bookDetail.screen';
 
 export type HomeStackParams = {
     Home: undefined;
@@ -15,7 +16,7 @@ export const HomeNavigator = () => {
     return (
         <Stack.Navigator>
             <Stack.Screen name={"Home"} component={HomeScreen} options={homeScreenOptions}/>
-            <Stack.Screen name={"BookDetail"} component={HomeScreen} options={homeScreenOptions}/>
+            <Stack.Screen name={"BookDetail"} component={BookDetail} options={detailPostOptions}/>
         </Stack.Navigator>
     )
 }

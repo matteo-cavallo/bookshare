@@ -1,15 +1,22 @@
-import {Image, StyleSheet, View} from 'react-native';
+import {Image, StyleSheet, TouchableOpacity, View} from 'react-native';
 import React, {FC, useContext} from 'react';
 import {BookPost} from '../../../../model/bookPost.model';
 import {TextComponent} from '../../../../components/text.component';
 import {ThemeContext} from '../../../../providers/theme.provider';
 import {Center} from '../../../../components/center.component';
+import {NativeStackScreenProps} from 'react-native-screens/native-stack';
+import {HomeStackParams} from '../../../../navigators/home/home.navigator';
+import {useNavigation} from '@react-navigation/native';
+
 
 interface Props {
     post: BookPost
+    navigateTo: (uid: string) => void
 }
 
-export const PostItemComponent: FC<Props> = ({post}) => {
+
+export const PostItemComponent: FC<Props> = ({post, navigateTo}) => {
+
     const {theme} = useContext(ThemeContext)
 
     const styles = StyleSheet.create({
@@ -55,17 +62,25 @@ export const PostItemComponent: FC<Props> = ({post}) => {
         )
     }
 
+    function handleNavigation(){
+        if(post.uid){
+            navigateTo(post.uid)
+        }
+    }
+
     return (
-        <View style={styles.container}>
-            <View style={styles.imageContainer}>
-                {renderImage()}
+        <TouchableOpacity onPress={handleNavigation} >
+            <View style={styles.container}>
+                <View style={styles.imageContainer}>
+                    {renderImage()}
+                </View>
+                <View style={styles.content}>
+                    <TextComponent
+                        style={styles.positionText}>{post.position?.name || "Nessuna posizione specificata"}</TextComponent>
+                    <TextComponent style={styles.title}>{post.title}</TextComponent>
+                    <TextComponent style={styles.price}>€{post.price}</TextComponent>
+                </View>
             </View>
-            <View style={styles.content}>
-                <TextComponent
-                    style={styles.positionText}>{post.position?.name || "Nessuna posizione specificata"}</TextComponent>
-                <TextComponent style={styles.title}>{post.title}</TextComponent>
-                <TextComponent style={styles.price}>€{post.price}</TextComponent>
-            </View>
-        </View>
+        </TouchableOpacity>
     )
 }
