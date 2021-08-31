@@ -1,9 +1,10 @@
 
 // Listed Book
-import {PhoneNumber} from './newBook.model';
+import {BookPosition, PhoneNumber} from './newBook.model';
 
 export interface BookPost {
     // Id
+    uid?: string
     owner: string
     googleBookId: string | null
 
@@ -12,20 +13,16 @@ export interface BookPost {
     description: string
     price: number
     condition: string
-    position: Position | null
+    position: BookPosition | null
     phoneNumber: PhoneNumber | null
+    mainImage: string | null
+    images?: string[]
 
     // Status
     active: boolean
     sold: boolean
 
     // Metadata
-    creationDate: Date
-    lastEdit: Date
-}
-
-interface Position {
-    city?: string
-    latitude: number
-    longitude: number
+    creationDate: string
+    lastEdit: string
 }

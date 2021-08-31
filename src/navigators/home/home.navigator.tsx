@@ -2,10 +2,11 @@ import {createNativeStackNavigator, NativeStackNavigationOptions} from 'react-na
 import React from 'react';
 import {HomeScreen} from '../../screens/tabs/home/home.screen';
 import {BottomTabNavigationOptions} from '@react-navigation/bottom-tabs';
+import {BookDetail} from '../../screens/tabs/home/bookDetail.screen';
 
 export type HomeStackParams = {
     Home: undefined;
-    BookPostDetail: {bookId: string};
+    BookDetail: {uid: string};
 }
 
 export const HomeNavigator = () => {
@@ -15,16 +16,14 @@ export const HomeNavigator = () => {
     return (
         <Stack.Navigator>
             <Stack.Screen name={"Home"} component={HomeScreen} options={homeScreenOptions}/>
+            <Stack.Screen name={"BookDetail"} component={BookDetail} options={detailPostOptions}/>
         </Stack.Navigator>
     )
 }
 
 const homeScreenOptions: NativeStackNavigationOptions = {
     headerShown: true,
-    headerLargeTitle: true,
     title: "Bookshare",
-    headerLargeTitleHideShadow: true,
-    headerTranslucent: true
 }
 
 const detailPostOptions: NativeStackNavigationOptions = {

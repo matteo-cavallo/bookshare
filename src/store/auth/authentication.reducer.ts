@@ -17,6 +17,9 @@ export const authenticationReducer = createReducer(initialState, builder => {
     builder.addCase(AuthenticationActions.setUser, (state, action) => {
         state.user = action.payload
     })
+    builder.addCase(AuthenticationActions.resetState, state => {
+        state.isLoading = false
+    })
 
     /**
      * Sign In with Email

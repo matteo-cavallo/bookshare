@@ -25,14 +25,16 @@ const postNewBook = createAsyncThunk<void, NewBookModel>(POST_NEW_BOOK, async (a
     }
 
     // Preparing Data
+    const date = new Date()
+
     const newBook: BookPost = {
         ...arg,
 
         owner: currentUserId,
         active: true,
         sold: false,
-        creationDate: new Date(),
-        lastEdit: new Date(),
+        creationDate: date.toISOString(),
+        lastEdit: date.toISOString(),
     }
 
     try {
