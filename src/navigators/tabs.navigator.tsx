@@ -15,7 +15,7 @@ import {HomeNavigator} from './home/home.navigator';
 
 export type TabsScreens = {
     HomeNavigator: undefined,
-    Profile: undefined;
+    ProfileNavigator: undefined;
     PostBook: undefined;
 }
 
@@ -34,7 +34,7 @@ export const TabsNavigator: FC = () => {
             <Tabs.Group>
                 <Tabs.Screen name={"PostBook"} component={withAuthentication(PostBookScreen)}
                              options={sellBookOptions}/>
-                <Tabs.Screen name={"Profile"} component={withAuthentication(ProfileNavigator)}
+                <Tabs.Screen name={"ProfileNavigator"} component={withAuthentication(ProfileNavigator)}
                              options={profileScreenOptions}/>
             </Tabs.Group>
         </Tabs.Navigator>
@@ -44,6 +44,7 @@ export const TabsNavigator: FC = () => {
 const tabsNavigatorOptions: BottomTabNavigationOptions = {
     headerShown: true,
     tabBarActiveTintColor: LightColors.ACCENT,
+    title:"Profile"
 }
 
 const homeScreenOptions: BottomTabNavigationOptions = {

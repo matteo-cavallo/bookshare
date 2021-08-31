@@ -1,10 +1,11 @@
 import React, {FC, useContext} from 'react';
-import {StyleSheet, Text, TextInput, TextInputProps, View} from 'react-native';
+import {StyleSheet, Text, TextInput, TextInputProps, View, ViewProps, ViewStyle} from 'react-native';
 import {ThemeContext} from '../providers/theme.provider';
 
 interface TextInputComponentProps extends TextInputProps {
     endItem?: JSX.Element,
-    startItem?: JSX.Element
+    startItem?: JSX.Element,
+    containerStyle?: ViewStyle
 }
 
 export const TextInputComponent: FC<TextInputComponentProps> = (props) => {
@@ -17,6 +18,7 @@ export const TextInputComponent: FC<TextInputComponentProps> = (props) => {
             backgroundColor: theme.colors.FILL_TERTIARY,
             borderRadius: theme.spacing.LG,
             marginBottom: theme.spacing.MD,
+            ...props.containerStyle
         },
         textInput: {
             flex:1,
@@ -41,7 +43,7 @@ export const TextInputComponent: FC<TextInputComponentProps> = (props) => {
             {props.startItem && <View style={style.startItem}>
                 {props.startItem}
             </View>}
-            <TextInput {...props} style={[props.style, style.textInput]} placeholderTextColor={theme.colors.SECONDARY}/>
+            <TextInput {...props} style={[style.textInput,props.style]} placeholderTextColor={theme.colors.SECONDARY}/>
             {
              props.endItem &&   <View style={style.endItem}>
                     {props.endItem}

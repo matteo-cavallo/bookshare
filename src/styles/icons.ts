@@ -1,5 +1,5 @@
 export const Icons = {
-    XS: 16,
+    XS: 17,
     S: 20,
     MD: 24,
     LG: 28,

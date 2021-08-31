@@ -17,7 +17,10 @@ export const LightColors = {
     FILL_LOADING: "rgba(118, 118, 128, 0.32)",
 
     // BACKGROUND
-    BACKGROUND: "#FFFFFF"
+    BACKGROUND: "#FFFFFF",
+
+    //CUSTOM COLORS
+    DANGER: "#FF3B30"
 }
 
 export const DarkColors = {
@@ -31,5 +34,8 @@ export const DarkColors = {
     FILL_TERTIARY: "#3A3A3C",
 
     // BACKGROUND
-    BACKGROUND: "#000000"
+    BACKGROUND: "#000000",
+
+    //CUSTOM COLORS
+    DANGER: "#FF453A"
 }
