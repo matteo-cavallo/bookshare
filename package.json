@@ -22,13 +22,17 @@
     "babel-plugin-inline-dotenv": "^1.6.0",
     "expo": "~42.0.1",
     "expo-barcode-scanner": "~10.2.2",
+    "expo-device": "~3.3.0",
+    "expo-location": "~12.1.2",
     "expo-status-bar": "~1.0.4",
     "firebase": "^8.2.3",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz",
+    "react-native-dotenv": "^3.2.0",
     "react-native-gesture-handler": "~1.10.2",
     "react-native-get-random-values": "^1.7.0",
+    "react-native-maps": "0.28.0",
     "react-native-modal": "^13.0.0",
     "react-native-picker-select": "^8.0.4",
     "react-native-reanimated": "~2.2.0",
@@ -38,9 +42,7 @@
     "react-redux": "^7.2.4",
     "redux": "^4.1.1",
     "redux-thunk": "^2.3.0",
-    "uuid": "^8.3.2",
-    "expo-device": "~3.3.0",
-    "react-native-maps": "0.28.0"
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",
