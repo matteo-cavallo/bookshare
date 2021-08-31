@@ -158,7 +158,9 @@ export const AccountScreen:FC<Props> = ({navigation}) => {
 
             <View style={styles.section}>
                 <TextComponent style={styles.sectionHeader} >Posizione</TextComponent>
-                <NavigationLinkComponent startItem={
+                <NavigationLinkComponent
+                    onPress={()=>navigation.navigate("Position")}
+                    startItem={
                     <Ionicons name={"navigate-circle-outline"} size={theme.icons.XS}/>
                 } >Gestisci posizione</NavigationLinkComponent>
             </View>

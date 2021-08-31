@@ -39,7 +39,8 @@
     "redux": "^4.1.1",
     "redux-thunk": "^2.3.0",
     "uuid": "^8.3.2",
-    "expo-device": "~3.3.0"
+    "expo-device": "~3.3.0",
+    "react-native-maps": "0.28.0"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",
