@@ -89,6 +89,8 @@ export const PositionScreen:FC<Props> = ({navigation}) => {
             //if user has already setted the position load data
             setPosition(userDefaultPosition)
             setPositionRadius(userDefaultPosition.radius)
+            //Animate camera to the default position
+            animateMapToRegion(userDefaultPosition.lat,userDefaultPosition.lng)
         }
     },[])
 
@@ -171,6 +173,7 @@ export const PositionScreen:FC<Props> = ({navigation}) => {
                 <TextInputComponent
                     value={searchBar}
                     onChangeText={setSearchBar}
+                    placeholder={"Inserire il nome di una città"}
                     onSubmitEditing={(event)=>{handleAddressSearch(event.nativeEvent.text)}}
                     startItem={
                         <TouchableOpacity onPress={()=>handleAddressSearch(searchBar)}>
@@ -201,7 +204,7 @@ export const PositionScreen:FC<Props> = ({navigation}) => {
 
                 <Circle
                     center={choosePosition()}
-                    radius={positionRadius*1000}
+                    radius={positionRadius*1000} //The positionRadius is in meters , *1000 = km
                     strokeWidth={2}
                     strokeColor="#3399ff"
                     fillColor="rgba(129,178,251,0.5)"
