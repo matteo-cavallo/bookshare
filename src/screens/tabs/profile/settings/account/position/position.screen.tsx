@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 
 import {Alert, Slider, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {ThemeContext} from "../../../../../../providers/theme.provider";
@@ -10,14 +10,16 @@ import {ButtonComponent} from "../../../../../../components/button.component";
 import * as Location from 'expo-location';
 import {LocationAccuracy, LocationObject} from 'expo-location';
 import {GoogleMapsAPI} from "../../../../../../services/googleMapsAPI.service";
+import {BookSharePosition} from "../../../../../../model/position";
 
 export const PositionScreen = () => {
 
     const {theme} = useContext(ThemeContext)
 
-    const [positionName,setPositionName] = useState("Vetralla, VT")
-    const [location,setLocation] = useState<LocationObject>(null)
+    const [position,setPosition] = useState<BookSharePosition>(null)
     const [positionRadius,setPositionRadius] = useState(50)
+    const mapRef = React.createRef<MapView>();
+    const [isMapLoaded,setIsMapLoaded] = useState(false)
 
     const styles = StyleSheet.create({
         container:{
@@ -61,7 +63,7 @@ export const PositionScreen = () => {
         }
     })
 
-    const handleFetchLocation = async ()  =>{
+    const handleFetchLocation = async ():void  =>{
         let { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== 'granted') {
             Alert.alert("Richiesta Posizione","Concedere i permessi per la posizione per proseguire",[
@@ -71,9 +73,22 @@ export const PositionScreen = () => {
             return;
         }
 
-        let location = await Location.getCurrentPositionAsync({accuracy:LocationAccuracy.Low});
-        setLocation(location);
+        //Get user coordinates
+        let location = await Location.getCurrentPositionAsync({accuracy:LocationAccuracy.Low})
+        //Retrive user position(address name ecc...) from location
+        let newPosition = await GoogleMapsAPI.getLocationName(location.coords.latitude,location.coords.longitude) as BookSharePosition
+        setPosition(newPosition)
+        console.log(newPosition)
+        //Animate map
+        if(isMapLoaded && mapRef && mapRef.current){
+            mapRef.current.animateToRegion({
+                latitude: newPosition.lat,
+                longitude: newPosition.lng,
+            })
+        }
+
     }
+
     return (
         <View style={styles.container}>
             <View
@@ -90,19 +105,25 @@ export const PositionScreen = () => {
                     }
                 />
             </View>
-            <MapView style={styles.map} />
+            <MapView
+                showsUserLocation={true}
+                style={styles.map}
+                ref={mapRef}
+                onMapReady={()=>{
+                    setIsMapLoaded(true)
+                    handleFetchLocation()
+                }}
+            />
             <View style={styles.modalContainer} >
                 <View style={styles.modalCard}>
-                    <TextComponent style={styles.positionName}>{ location &&`${location.coords.latitude} & ${location.coords.longitude}`}</TextComponent>
+                    <TextComponent style={styles.positionName}>{ position && position.address}</TextComponent>
                     <TextComponent style={theme.fonts.SECTION_HEADER}>Raggio di Vendita</TextComponent>
                     <View style={styles.sliderContainer}>
                         <Slider style={styles.slider} value={positionRadius} onValueChange={setPositionRadius} maximumValue={250} minimumValue={5} />
                         <TextComponent style={styles.sliderText} >{positionRadius.toFixed()}</TextComponent>
                     </View>
                 </View>
-                <ButtonComponent onPress={()=>{
-                    GoogleMapsAPI.getLocationName(location.coords.latitude,location.coords.longitude)
-                }}>Applica</ButtonComponent>
+                <ButtonComponent onPress={()=>{}}>Applica</ButtonComponent>
             </View>
 
 
