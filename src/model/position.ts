@@ -4,4 +4,5 @@ export interface BookSharePosition {
     lat:number
     lng: number
     placeId: string
+    radius: number
 }

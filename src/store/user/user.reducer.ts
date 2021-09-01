@@ -1,6 +1,7 @@
 import {createReducer} from '@reduxjs/toolkit';
 import {UserModel} from '../../model/user.model';
 import {UserActions} from "./user.actions";
+import {BookSharePosition} from "../../model/position";
 
 interface UserState {
     user?: UserModel;
@@ -16,6 +17,11 @@ const initialState: UserState = {
 export const userReducer = createReducer(
     initialState,
     builder => {
+        builder.addCase(UserActions.setDefaultPosition, (state,action)=>{
+            console.log(action.payload)
+            state.user = {...state.user,defaultPosition:action.payload}
+        })
+
         builder.addCase(UserActions.fetchUser.pending,state => {
             state.isLoading = true
             state.isError = false

@@ -4,7 +4,7 @@ import {LocationResult} from "../model/googleMapsApi.model";
 import {BookSharePosition} from "../model/position";
 
 
-const getLocationName = async (lat:number,lng:number): Promise<BookSharePosition> => {
+const getLocationName = async (lat:number,lng:number,radius:number): Promise<BookSharePosition> => {
 
     try {
         const result = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${lat},${lng}&key=${GOOGLE_MAP_KEY}`) //
@@ -19,7 +19,8 @@ const getLocationName = async (lat:number,lng:number): Promise<BookSharePosition
             address: formattedAddress,
             lat: lat,
             lng: lng,
-            placeId: placeId
+            placeId: placeId,
+            radius: radius
 
         } as BookSharePosition
 
@@ -30,7 +31,7 @@ const getLocationName = async (lat:number,lng:number): Promise<BookSharePosition
     }
 }
 
-const getLocationCoordinates = async (address:string,language:string) => {
+const getLocationCoordinates = async (address:string,language:string,radius:number) => {
 
     try {
         const result = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${address}&language=${language}&key=${GOOGLE_MAP_KEY}`) //
@@ -47,7 +48,8 @@ const getLocationCoordinates = async (address:string,language:string) => {
             address: formattedAddress,
             lat: location.lat,
             lng: location.lng,
-            placeId: placeId
+            placeId: placeId,
+            radius:radius
 
         } as BookSharePosition
 

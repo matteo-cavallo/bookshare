@@ -1,27 +1,42 @@
-import React, {useContext, useEffect, useRef, useState} from 'react';
-
+import React, {FC, useContext, useEffect, useRef, useState} from 'react';
 import {Alert, Slider, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {ThemeContext} from "../../../../../../providers/theme.provider";
 import {TextInputComponent} from "../../../../../../components/textInput.component";
 import {Ionicons} from "@expo/vector-icons";
-import MapView from 'react-native-maps';
+import MapView, {Circle} from 'react-native-maps';
 import {TextComponent} from "../../../../../../components/text.component";
 import {ButtonComponent} from "../../../../../../components/button.component";
 import * as Location from 'expo-location';
-import {LocationAccuracy, LocationObject} from 'expo-location';
+import {LocationAccuracy} from 'expo-location';
 import {GoogleMapsAPI} from "../../../../../../services/googleMapsAPI.service";
 import {BookSharePosition} from "../../../../../../model/position";
+import {useAppDispatch, useAppSelector} from "../../../../../../store/store.config";
+import {UserActions} from "../../../../../../store/user/user.actions";
+import {NativeStackScreenProps} from "react-native-screens/native-stack";
+import {HomeStackParams} from "../../../../../../navigators/home/home.navigator";
 
-export const PositionScreen = () => {
+type Props = NativeStackScreenProps<HomeStackParams, "Home">
+
+export const PositionScreen:FC<Props> = ({navigation}) => {
 
     const {theme} = useContext(ThemeContext)
 
+    //MAIN POSITION
     const [position,setPosition] = useState<BookSharePosition>(null)
+    //Slider
     const [positionRadius,setPositionRadius] = useState(50)
+    //Searchbar
+    const [searchBar,setSearchBar] = useState("")
+    //Ref for the map, allows to do camera animations
     const mapRef = useRef<MapView>();
-    const [isMapLoaded,setIsMapLoaded] = useState(false)
+    //Searchbar language for the places, should be the keyboard language or the phone language
     const [searchLanguage,setSearchLanguage] = useState("it")
 
+    //REDUX
+    const dispatch = useAppDispatch()
+    const userDefaultPosition = useAppSelector(state => state.user.user?.defaultPosition)
+
+    //App default position: Roma
     const defaultPosition = {latitude:41.9027835, longitude: 12.4963655}
 
     const styles = StyleSheet.create({
@@ -67,16 +82,38 @@ export const PositionScreen = () => {
     })
 
     useEffect(()=>{
-        handleFetchLocation()
+        //initial position loading
+        if (!userDefaultPosition){
+            handleFetchLocation()
+        }else{
+            //if user has already setted the position load data
+            setPosition(userDefaultPosition)
+            setPositionRadius(userDefaultPosition.radius)
+        }
     },[])
 
+    const handleDispatch = () =>{
+        //Dispatch to the reducer the position
+        if(position){
+            dispatch(UserActions.setDefaultPosition(position))
+            //go back to settings
+            navigation.goBack()
+        }else {
+            //alert message , should never be visible
+            Alert.alert("Attenzione","Non è stata selezionata nessuna posizione!",[
+                {text:"Ok"}
+            ])
+        }
+    }
+
+    //Handler for the search bar
     const handleAddressSearch = async (address:string) =>{
-        console.log("add: ",address)
-        let newPosition = await GoogleMapsAPI.getLocationCoordinates(address,"it") as BookSharePosition
+        let newPosition = await GoogleMapsAPI.getLocationCoordinates(address,searchLanguage,positionRadius) as BookSharePosition
         setPosition(newPosition)
         animateMapToRegion(newPosition.lat,newPosition.lng)
     }
 
+    //Handler for retriving user location
     const handleFetchLocation = async ():void  =>{
         //ask location permission
         let { status } = await Location.requestForegroundPermissionsAsync();
@@ -91,20 +128,39 @@ export const PositionScreen = () => {
         //Get user coordinates
         let location = await Location.getCurrentPositionAsync({accuracy:LocationAccuracy.Low})
 
-        handleUpdateMapPosition(location.coords.latitude,location.coords.longitude)
+        await handleUpdateMapPosition(location.coords.latitude,location.coords.longitude)
     }
 
+    //Convert a location to a Position address
     const handleUpdateMapPosition = async (lat:number,lng:number) =>{
-        let newPosition = await GoogleMapsAPI.getLocationName(lat,lng) as BookSharePosition
+        let newPosition = await GoogleMapsAPI.getLocationName(lat,lng,positionRadius) as BookSharePosition
         setPosition(newPosition)
         animateMapToRegion(newPosition.lat,newPosition.lng)
     }
 
+    //Animate the map camera
     const animateMapToRegion = (lat:number,lng:number) =>{
         mapRef.current?.animateToRegion({
             latitude: lat,
             longitude: lng,
         })
+    }
+
+    //selector of the right position
+    const choosePosition = () =>{
+        if(position){
+            return {
+                latitude: position.lat,
+                longitude: position.lng
+            }
+        }
+        return defaultPosition
+    }
+
+    //Slider handler for setting the radius
+    const handleRadiusChange = (newRadius:number) =>{
+        setPositionRadius(newRadius)
+        setPosition({...position,radius:newRadius})
     }
 
     return (
@@ -113,9 +169,14 @@ export const PositionScreen = () => {
                 style={styles.searchBar}
             >
                 <TextInputComponent
+                    value={searchBar}
+                    onChangeText={setSearchBar}
                     onSubmitEditing={(event)=>{handleAddressSearch(event.nativeEvent.text)}}
                     startItem={
-                        <Ionicons name={"search-outline"} size={theme.icons.XS} color={theme.colors.SECONDARY}/>
+                        <TouchableOpacity onPress={()=>handleAddressSearch(searchBar)}>
+                            <Ionicons name={"search-outline"} size={theme.icons.XS} color={theme.colors.SECONDARY}/>
+                        </TouchableOpacity>
+
                     }
                     endItem={
                         <TouchableOpacity onPress={handleFetchLocation}>
@@ -129,15 +190,24 @@ export const PositionScreen = () => {
                 style={styles.map}
                 ref={mapRef}
                 onMapReady={()=>{
-                    setIsMapLoaded(true)
-                    handleFetchLocation()
+                    if (!userDefaultPosition){
+                        handleFetchLocation()
+                    }
                 }}
                 onLongPress={(event) =>{
                     handleUpdateMapPosition(event.nativeEvent.coordinate.latitude,event.nativeEvent.coordinate.longitude)
                 }}
                 >
+
+                <Circle
+                    center={choosePosition()}
+                    radius={positionRadius*1000}
+                    strokeWidth={2}
+                    strokeColor="#3399ff"
+                    fillColor="rgba(129,178,251,0.5)"
+                />
                 <MapView.Marker
-                    coordinate={position? {latitude: position.lat, longitude: position.lng }: defaultPosition}
+                    coordinate={choosePosition()}
                     title={"Selected Position"}
                 />
             </MapView>
@@ -146,11 +216,11 @@ export const PositionScreen = () => {
                     <TextComponent style={styles.positionName}>{ position && position.address}</TextComponent>
                     <TextComponent style={theme.fonts.SECTION_HEADER}>Raggio di Vendita</TextComponent>
                     <View style={styles.sliderContainer}>
-                        <Slider style={styles.slider} value={positionRadius} onValueChange={setPositionRadius} maximumValue={250} minimumValue={5} />
+                        <Slider step={5} style={styles.slider} value={positionRadius} onValueChange={handleRadiusChange} maximumValue={250} minimumValue={5} />
                         <TextComponent style={styles.sliderText} >{positionRadius.toFixed()}</TextComponent>
                     </View>
                 </View>
-                <ButtonComponent onPress={()=>{}}>Applica</ButtonComponent>
+                <ButtonComponent onPress={()=>handleDispatch()}>Applica</ButtonComponent>
             </View>
 
 
