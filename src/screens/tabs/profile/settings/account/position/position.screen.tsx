@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 
 import {Alert, Slider, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {ThemeContext} from "../../../../../../providers/theme.provider";
@@ -18,8 +18,11 @@ export const PositionScreen = () => {
 
     const [position,setPosition] = useState<BookSharePosition>(null)
     const [positionRadius,setPositionRadius] = useState(50)
-    const mapRef = React.createRef<MapView>();
+    const mapRef = useRef<MapView>();
     const [isMapLoaded,setIsMapLoaded] = useState(false)
+    const [searchLanguage,setSearchLanguage] = useState("it")
+
+    const defaultPosition = {latitude:41.9027835, longitude: 12.4963655}
 
     const styles = StyleSheet.create({
         container:{
@@ -63,7 +66,19 @@ export const PositionScreen = () => {
         }
     })
 
+    useEffect(()=>{
+        handleFetchLocation()
+    },[])
+
+    const handleAddressSearch = async (address:string) =>{
+        console.log("add: ",address)
+        let newPosition = await GoogleMapsAPI.getLocationCoordinates(address,"it") as BookSharePosition
+        setPosition(newPosition)
+        animateMapToRegion(newPosition.lat,newPosition.lng)
+    }
+
     const handleFetchLocation = async ():void  =>{
+        //ask location permission
         let { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== 'granted') {
             Alert.alert("Richiesta Posizione","Concedere i permessi per la posizione per proseguire",[
@@ -75,18 +90,21 @@ export const PositionScreen = () => {
 
         //Get user coordinates
         let location = await Location.getCurrentPositionAsync({accuracy:LocationAccuracy.Low})
-        //Retrive user position(address name ecc...) from location
-        let newPosition = await GoogleMapsAPI.getLocationName(location.coords.latitude,location.coords.longitude) as BookSharePosition
-        setPosition(newPosition)
-        console.log(newPosition)
-        //Animate map
-        if(isMapLoaded && mapRef && mapRef.current){
-            mapRef.current.animateToRegion({
-                latitude: newPosition.lat,
-                longitude: newPosition.lng,
-            })
-        }
 
+        handleUpdateMapPosition(location.coords.latitude,location.coords.longitude)
+    }
+
+    const handleUpdateMapPosition = async (lat:number,lng:number) =>{
+        let newPosition = await GoogleMapsAPI.getLocationName(lat,lng) as BookSharePosition
+        setPosition(newPosition)
+        animateMapToRegion(newPosition.lat,newPosition.lng)
+    }
+
+    const animateMapToRegion = (lat:number,lng:number) =>{
+        mapRef.current?.animateToRegion({
+            latitude: lat,
+            longitude: lng,
+        })
     }
 
     return (
@@ -95,6 +113,7 @@ export const PositionScreen = () => {
                 style={styles.searchBar}
             >
                 <TextInputComponent
+                    onSubmitEditing={(event)=>{handleAddressSearch(event.nativeEvent.text)}}
                     startItem={
                         <Ionicons name={"search-outline"} size={theme.icons.XS} color={theme.colors.SECONDARY}/>
                     }
@@ -113,7 +132,15 @@ export const PositionScreen = () => {
                     setIsMapLoaded(true)
                     handleFetchLocation()
                 }}
-            />
+                onLongPress={(event) =>{
+                    handleUpdateMapPosition(event.nativeEvent.coordinate.latitude,event.nativeEvent.coordinate.longitude)
+                }}
+                >
+                <MapView.Marker
+                    coordinate={position? {latitude: position.lat, longitude: position.lng }: defaultPosition}
+                    title={"Selected Position"}
+                />
+            </MapView>
             <View style={styles.modalContainer} >
                 <View style={styles.modalCard}>
                     <TextComponent style={styles.positionName}>{ position && position.address}</TextComponent>
