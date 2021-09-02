@@ -18,6 +18,7 @@ export const LightColors = {
 
     // BACKGROUND
     BACKGROUND: "#FFFFFF",
+    BACKGROUND_SECONDARY: "#F2F2F7",
 
     //CUSTOM COLORS
     DANGER: "#FF3B30"
@@ -35,6 +36,7 @@ export const DarkColors = {
 
     // BACKGROUND
     BACKGROUND: "#000000",
+    BACKGROUND_SECONDARY: "#1C1C1E",
 
     //CUSTOM COLORS
     DANGER: "#FF453A"

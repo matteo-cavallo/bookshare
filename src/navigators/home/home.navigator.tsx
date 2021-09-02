@@ -2,7 +2,7 @@ import {createNativeStackNavigator, NativeStackNavigationOptions} from 'react-na
 import React from 'react';
 import {HomeScreen} from '../../screens/tabs/home/home.screen';
 import {BottomTabNavigationOptions} from '@react-navigation/bottom-tabs';
-import {BookDetail} from '../../screens/tabs/home/bookDetail.screen';
+import {BookDetail} from '../../screens/tabs/home/detail/bookDetail.screen';
 
 export type HomeStackParams = {
     Home: undefined;

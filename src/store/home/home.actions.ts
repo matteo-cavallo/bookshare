@@ -24,13 +24,6 @@ const fetchFeed = createAsyncThunk<BookPost[], void>(FETCH_FEED, async (arg) => 
         .catch(e => {
             throw Error(e)
         })
-}, {
-        condition: (arg, api) => {
-            const state =  api.getState() as RootState
-            if(state.home.isLoading || state.home.feed.length != 0){
-                return false
-            }
-        }
 })
 
 
