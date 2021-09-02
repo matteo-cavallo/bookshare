@@ -1,7 +1,6 @@
 import {createReducer} from '@reduxjs/toolkit';
 import {UserModel} from '../../model/user.model';
 import {UserActions} from "./user.actions";
-import {BookSharePosition} from "../../model/position";
 
 interface UserState {
     user?: UserModel;

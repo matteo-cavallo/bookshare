@@ -8,7 +8,6 @@ const prefix = "user/"
 
 const FETCH_USER = prefix + "fetchUser"
 const UPDATE_USER = prefix + "updateUser"
-const SET_DEFAULT_POSITION = prefix + "setDefaultPosition"
 
 const fetchUser = createAsyncThunk<UserModel,void>(FETCH_USER, async (args)=>{
 
@@ -18,7 +17,6 @@ const fetchUser = createAsyncThunk<UserModel,void>(FETCH_USER, async (args)=>{
     if(!userId){
         throw Error("User not found!")
     }
-
 
     return FBFirestore
         .collection(FBCollections.users)
@@ -53,10 +51,6 @@ const updateUser = createAsyncThunk<void,UserModel>(UPDATE_USER, async (draftUse
         .doc(userId)
         .set(draftUser,{merge:true})
 })
-
-
-// createAction<BookSharePosition,BookSharePosition>(SET_DEFAULT_POSITION)
-
 
 export const UserActions = {
     fetchUser,

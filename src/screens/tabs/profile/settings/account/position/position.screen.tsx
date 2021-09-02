@@ -14,7 +14,6 @@ import {useAppDispatch, useAppSelector} from "../../../../../../store/store.conf
 import {UserActions} from "../../../../../../store/user/user.actions";
 import {NativeStackScreenProps} from "react-native-screens/native-stack";
 import {HomeStackParams} from "../../../../../../navigators/home/home.navigator";
-import {HomeActions} from "../../../../../../store/home/home.actions";
 
 type Props = NativeStackScreenProps<HomeStackParams, "Home">
 
@@ -99,7 +98,6 @@ export const PositionScreen:FC<Props> = ({navigation}) => {
     const handleDispatch = () =>{
         //Dispatch to the reducer the position
         if(position){
-            //TODO: implement async action with firebase dispatch, the user data is retrieved automatically on login
             dispatch(UserActions.updateUser({defaultPosition:position}))
                 .unwrap()
                 .then(result => {
