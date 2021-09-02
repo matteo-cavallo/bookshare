@@ -202,8 +202,17 @@ export const AccountScreen:FC<Props> = ({navigation}) => {
                     editable={false}
                     value={profile?.email}
                     style={[styles.sectionItem,{color: theme.colors.SECONDARY}]}
+                    containerStyle={styles.sectionStartItem}
                     startItem={
                         <TextComponent style={styles.sectionTextItem}>Email</TextComponent>
+                    }/>
+                <TextInputComponent
+                    onChangeText={(value)=>setDraftAccount({...draftAccount,phoneNumber:{...draftAccount.phoneNumber,number:value}})}
+                    value={draftAccount?.phoneNumber?.number}
+                    style={[styles.sectionItem,{color: theme.colors.PRIMARY}]}
+                    containerStyle={styles.sectionEndItem}
+                    startItem={
+                        <TextComponent style={styles.sectionTextItem}>Telefono</TextComponent>
                     }/>
             </View>
 
@@ -213,7 +222,7 @@ export const AccountScreen:FC<Props> = ({navigation}) => {
                     onPress={()=>navigation.navigate("Position")}
                     startItem={
                     <Ionicons name={"navigate-circle-outline"} size={theme.icons.XS}/>
-                } >Gestisci posizione</NavigationLinkComponent>
+                } >{profile?.defaultPosition ? `Posizione: ${profile.defaultPosition.address} - ${profile.defaultPosition.radius}km`:"Gestisci posizione" } </NavigationLinkComponent>
             </View>
 
             <NavigationLinkComponent

@@ -392,7 +392,7 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
                                 onPress={()=>rootNavigation.navigate("Position")}
                                 startItem={
                                     <Ionicons name={"navigate-circle-outline"} size={theme.icons.XS}/>
-                                } >{position ? `Posizione: ${position.address}`:"Seleziona una posizione" } </NavigationLinkComponent>
+                                } >{position ? `Posizione: ${position.address} - ${position.radius}km`:"Seleziona una posizione" } </NavigationLinkComponent>
                         </View>
 
                         {/*TODO: implementare keyboard avoidance*/}
