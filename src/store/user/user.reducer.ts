@@ -17,11 +17,6 @@ const initialState: UserState = {
 export const userReducer = createReducer(
     initialState,
     builder => {
-        builder.addCase(UserActions.setDefaultPosition, (state,action)=>{
-            console.log(action.payload)
-            state.user = {...state.user,defaultPosition:action.payload}
-        })
-
         builder.addCase(UserActions.fetchUser.pending,state => {
             state.isLoading = true
             state.isError = false

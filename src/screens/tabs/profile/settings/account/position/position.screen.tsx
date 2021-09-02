@@ -14,6 +14,7 @@ import {useAppDispatch, useAppSelector} from "../../../../../../store/store.conf
 import {UserActions} from "../../../../../../store/user/user.actions";
 import {NativeStackScreenProps} from "react-native-screens/native-stack";
 import {HomeStackParams} from "../../../../../../navigators/home/home.navigator";
+import {HomeActions} from "../../../../../../store/home/home.actions";
 
 type Props = NativeStackScreenProps<HomeStackParams, "Home">
 
@@ -35,6 +36,7 @@ export const PositionScreen:FC<Props> = ({navigation}) => {
     //REDUX
     const dispatch = useAppDispatch()
     const userDefaultPosition = useAppSelector(state => state.user.user?.defaultPosition)
+    const user = useAppSelector(state => state.user.user)
 
     //App default position: Roma
     const defaultPosition = {latitude:41.9027835, longitude: 12.4963655}
@@ -97,9 +99,26 @@ export const PositionScreen:FC<Props> = ({navigation}) => {
     const handleDispatch = () =>{
         //Dispatch to the reducer the position
         if(position){
-            dispatch(UserActions.setDefaultPosition(position))
-            //go back to settings
-            navigation.goBack()
+            //TODO: implement async action with firebase dispatch, the user data is retrieved automatically on login
+            dispatch(UserActions.updateUser({defaultPosition:position}))
+                .unwrap()
+                .then(result => {
+                    console.log("User default position updated successfully.")
+                    dispatch(UserActions.fetchUser()).unwrap()
+                        .then(result=>{
+                            //go back to settings
+                            navigation.goBack() //TODO: on go back the button save on the top corner is clickable and contains the old user data, should be fixed
+                        })
+                        .catch(e=>{
+                            console.log("Can't fetch the new user position", e.message)
+                            Alert.alert("Problema con il caricamento della nuova posizione", e.message)
+                        })
+                })
+                .catch(e => {
+                    console.log("Default position hasn't been updated.", e.message)
+                    Alert.alert("Problema con il salvataggio", e.message)
+                })
+
         }else {
             //alert message , should never be visible
             Alert.alert("Attenzione","Non è stata selezionata nessuna posizione!",[

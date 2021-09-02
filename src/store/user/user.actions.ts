@@ -54,11 +54,11 @@ const updateUser = createAsyncThunk<void,UserModel>(UPDATE_USER, async (draftUse
         .set(draftUser,{merge:true})
 })
 
-const setDefaultPosition = createAction<BookSharePosition,BookSharePosition>(SET_DEFAULT_POSITION)
+
+// createAction<BookSharePosition,BookSharePosition>(SET_DEFAULT_POSITION)
 
 
 export const UserActions = {
     fetchUser,
     updateUser,
-    setDefaultPosition
 }
