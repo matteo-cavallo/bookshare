@@ -56,3 +56,6 @@ export type DocumentSnapshot = firebase.firestore.DocumentSnapshot
 export type QueryDocumentSnapshot = firebase.firestore.QueryDocumentSnapshot
 export type SnapshotOptions = firebase.firestore.SnapshotOptions
 export type OrderByDirection = firebase.firestore.OrderByDirection
+export type Query = firebase.firestore.Query
+export type WhereFilterOp = firebase.firestore.WhereFilterOp
+export type FieldPath = firebase.firestore.FieldPath

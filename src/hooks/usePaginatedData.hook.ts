@@ -1,10 +1,10 @@
 import {
     bookPostConverter,
     DocumentData, DocumentSnapshot,
-    FBFirestore,
-    OrderByDirection,
+    FBFirestore, FieldPath,
+    OrderByDirection, Query,
     QueryDocumentSnapshot,
-    SnapshotOptions
+    SnapshotOptions, WhereFilterOp
 } from '../firebase/firebase.config';
 import {useEffect, useState} from 'react';
 import {FBCollections} from '../firebase/collections';
@@ -12,9 +12,9 @@ import {FBCollections} from '../firebase/collections';
 type PaginatedDataHookOptions = {
     direction: OrderByDirection
     firstBatch: number
-    moreDataBatch: number
+    moreDataBatch: number,
 }
-export const usePaginatedData = <T>(collection: string, orderBy: keyof T,options: PaginatedDataHookOptions) => {
+export const usePaginatedData = <T>(collection: string, orderBy: keyof T, options: PaginatedDataHookOptions) => {
 
     const {firstBatch, moreDataBatch, direction} = options
 
@@ -27,7 +27,7 @@ export const usePaginatedData = <T>(collection: string, orderBy: keyof T,options
     useEffect(() => {
         setLastDocRef(null)
         fetchFirstBatch()
-    },[direction, orderBy])
+    }, [direction, orderBy])
 
     // Main function
     // It fetches just the first batch of data
@@ -47,7 +47,7 @@ export const usePaginatedData = <T>(collection: string, orderBy: keyof T,options
                 setData(docs)
 
                 // Storing Ref to last object
-                if(docs.length == 0){
+                if (docs.length == 0) {
                     setLastDocRef(null)
                 } else {
                     const ref = docs[docs.length - 1] as any
@@ -108,7 +108,7 @@ const genericConverter = <T>() => ({
         return modelObject
     },
     fromFirestore(snapshot: QueryDocumentSnapshot, options: SnapshotOptions): T {
-        const data =  snapshot.data()
+        const data = snapshot.data()
         data.uid = snapshot.id
         return data as T
     }

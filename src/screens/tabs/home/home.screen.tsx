@@ -23,6 +23,8 @@ import {HomeStackParams} from '../../../navigators/home/home.navigator';
 import {usePaginatedData} from '../../../hooks/usePaginatedData.hook';
 import {FBCollections} from '../../../firebase/collections';
 import {OrderByDirection} from '../../../firebase/firebase.config';
+import {TextInputComponent} from '../../../components/textInput.component';
+import {Ionicons} from '@expo/vector-icons';
 
 type Props = NativeStackScreenProps<HomeStackParams, "Home">
 
@@ -33,11 +35,13 @@ export const HomeScreen: FC<Props> = ({navigation}) => {
 
     const [order, setOrder] = useState<OrderByDirection>("desc")
     const [orderBy, setOrderBy] = useState<keyof BookPost>("title")
+    const [searchText, setSearchText] = useState("")
 
     const {data, getMoreData, fetchFirstBatch, loadingMoreItems, loading} = usePaginatedData<BookPost>(FBCollections.bookPost, orderBy, {
         direction: order,
         firstBatch: 6,
-        moreDataBatch: 4
+        moreDataBatch: 4,
+        whereValue: searchText,
     })
 
     const styles = StyleSheet.create({
@@ -73,10 +77,23 @@ export const HomeScreen: FC<Props> = ({navigation}) => {
         <View style={{height: 1, backgroundColor: theme.colors.FILL_TERTIARY}}/>
     )
 
+    const SearchBar: FC = () => (
+                <TextInputComponent
+                    placeholder={"Cerca"}
+                    startItem={<Ionicons name={"search"} size={17} color={theme.colors.SECONDARY}/>}
+                    style={{
+                    }}
+                    containerStyle={{
+                        marginTop: theme.spacing.S
+                    }}
+                />
+    )
+
+
     const listHeader: FC = () => (
             <View style={{padding: theme.spacing.LG}}>
                 <TextComponent style={theme.fonts.TITLE}>Feed</TextComponent>
-                <Button title={order == "desc" ? "Z-A": "A-Z"} onPress={() => setOrder(order == "desc" ? "asc" : "desc")} />
+                <SearchBar />
             </View>
     )
 
