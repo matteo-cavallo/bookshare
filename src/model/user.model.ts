@@ -1,3 +1,4 @@
+import {BookSharePosition} from "./position";
 
 export interface UserModel {
     uid?: string;
@@ -6,6 +7,8 @@ export interface UserModel {
     firstName?: string;
     lastName?: string;
     birthday?: string;
+
+    defaultPosition?: BookSharePosition
 
     postedBooks: string[]
 }
