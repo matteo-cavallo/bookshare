@@ -1,5 +1,6 @@
 import React, {FC, useContext, useEffect} from 'react';
 import {
+    ActivityIndicator,
     SafeAreaView,
     ScrollView,
     StyleSheet,
@@ -14,6 +15,7 @@ import {FBAuth} from '../../../firebase/firebase.config';
 import {NativeStackScreenProps} from 'react-native-screens/native-stack';
 import {ProfileScreens} from '../../../navigators/profile.navigator';
 import {UserActions} from "../../../store/user/user.actions";
+import {Center} from '../../../components/center.component';
 
 type Props = NativeStackScreenProps<ProfileScreens, "Profile">
 
@@ -71,6 +73,14 @@ export const ProfileScreen: FC<Props> = ({navigation}) => {
 
         return (
             <TextComponent style={styles.textHeader}>Profile</TextComponent>
+        )
+    }
+
+    if(!profile){
+        return (
+            <Center>
+                <ActivityIndicator />
+            </Center>
         )
     }
 

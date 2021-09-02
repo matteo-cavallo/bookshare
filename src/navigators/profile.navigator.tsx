@@ -3,6 +3,8 @@ import React from 'react';
 import {ProfileScreen} from '../screens/tabs/profile/profile.screen';
 import {SettingsScreen} from "../screens/tabs/profile/settings/settings.screen";
 import {AccountScreen} from "../screens/tabs/profile/settings/account/account.screen";
+import {PositionScreen} from "../screens/tabs/profile/settings/account/position/position.screen";
+import {BookSharePosition} from "../model/position";
 
 export type ProfileScreens = {
     Profile: undefined;
@@ -37,3 +39,4 @@ export const accountScreenOptions: NativeStackNavigationOptions = {
     headerLargeTitle: true,
     title: "Account"
 }
+

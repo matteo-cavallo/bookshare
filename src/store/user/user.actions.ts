@@ -2,6 +2,7 @@ import {createAction, createAsyncThunk} from "@reduxjs/toolkit";
 import {UserModel} from "../../model/user.model";
 import {FBAuth, FBFirestore, userConverter} from "../../firebase/firebase.config";
 import {FBCollections} from "../../firebase/collections";
+import {BookSharePosition} from "../../model/position";
 
 const prefix = "user/"
 
@@ -16,7 +17,6 @@ const fetchUser = createAsyncThunk<UserModel,void>(FETCH_USER, async (args)=>{
     if(!userId){
         throw Error("User not found!")
     }
-
 
     return FBFirestore
         .collection(FBCollections.users)
@@ -52,8 +52,7 @@ const updateUser = createAsyncThunk<void,UserModel>(UPDATE_USER, async (draftUse
         .set(draftUser,{merge:true})
 })
 
-
 export const UserActions = {
     fetchUser,
-    updateUser
+    updateUser,
 }

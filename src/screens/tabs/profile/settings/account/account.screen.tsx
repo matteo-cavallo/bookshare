@@ -1,6 +1,15 @@
 import React, {FC, useContext, useEffect, useState} from 'react';
 
-import {ActivityIndicator, Alert, Button, ScrollView, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {
+    ActivityIndicator,
+    Alert,
+    Button,
+    DeviceEventEmitter,
+    ScrollView,
+    StyleSheet,
+    TouchableOpacity,
+    View
+} from 'react-native';
 import {TextComponent} from "../../../../../components/text.component";
 import {ThemeContext} from "../../../../../providers/theme.provider";
 import {TextInputComponent} from "../../../../../components/textInput.component";
@@ -12,6 +21,9 @@ import {ProfileScreens} from "../../../../../navigators/profile.navigator";
 import {UserModel} from "../../../../../model/user.model";
 import {UserActions} from "../../../../../store/user/user.actions";
 import {Center} from "../../../../../components/center.component";
+import {useIsFocused} from "@react-navigation/native";
+import {BookSharePosition} from "../../../../../model/position";
+import {ON_APPLY_EVENT_EMITTER, OnApplyEventProps} from "./position/position.screen";
 
 type Props = NativeStackScreenProps<ProfileScreens, "Account">
 
@@ -26,13 +38,22 @@ export const AccountScreen:FC<Props> = ({navigation}) => {
     const [canSubmit,setCanSubmit] = useState(false)
     const [draftAccount, setDraftAccount] = useState<UserModel>(null)
 
-
     useEffect(()=>{
         if(!draftAccount){
             setDraftAccount(profile)
         }
     },[profile, draftAccount])
 
+
+    //Listener for the position widget callback
+    useEffect(()=>{
+        DeviceEventEmitter.addListener(ON_APPLY_EVENT_EMITTER, (params:OnApplyEventProps) =>
+            handleOnApplyPositionScreen(params.position,params.goBack));
+
+        return () => {
+            DeviceEventEmitter.removeAllListeners(ON_APPLY_EVENT_EMITTER)
+        };
+    },[])
 
     useEffect(()=>{
         if(draftAccount && profile){
@@ -49,7 +70,6 @@ export const AccountScreen:FC<Props> = ({navigation}) => {
             })
         }
     },[navigation,canSubmit, profile, draftAccount])
-
 
     const submitButton = () =>{
         return(
@@ -106,6 +126,37 @@ export const AccountScreen:FC<Props> = ({navigation}) => {
         }
     })
 
+    const handleOnApplyPositionScreen = (position:BookSharePosition,goBack:()=>void) =>{
+        //Dispatch to the reducer the position
+        if(position){
+            dispatch(UserActions.updateUser({defaultPosition:position}))
+                .unwrap()
+                .then(result => {
+                    console.log("User default position updated successfully.")
+                    dispatch(UserActions.fetchUser()).unwrap()
+                        .then(result=>{
+                            //go back to account screen from positionScreen
+                            setDraftAccount(null)
+                            goBack()
+                        })
+                        .catch(e=>{
+                            console.log("Can't fetch the new user position", e.message)
+                            Alert.alert("Problema con il caricamento della nuova posizione", e.message)
+                        })
+                })
+                .catch(e => {
+                    console.log("Default position hasn't been updated.", e.message)
+                    Alert.alert("Problema con il salvataggio", e.message)
+                })
+
+        }else {
+            //alert message , should never be visible
+            Alert.alert("Attenzione","Non è stata selezionata nessuna posizione!",[
+                {text:"Ok"}
+            ])
+        }
+    }
+
     if(isLoading){
         return (
             <Center>
@@ -151,16 +202,27 @@ export const AccountScreen:FC<Props> = ({navigation}) => {
                     editable={false}
                     value={profile?.email}
                     style={[styles.sectionItem,{color: theme.colors.SECONDARY}]}
+                    containerStyle={styles.sectionStartItem}
                     startItem={
                         <TextComponent style={styles.sectionTextItem}>Email</TextComponent>
+                    }/>
+                <TextInputComponent
+                    onChangeText={(value)=>setDraftAccount({...draftAccount,phoneNumber:{...draftAccount.phoneNumber,number:value}})}
+                    value={draftAccount?.phoneNumber?.number}
+                    style={[styles.sectionItem,{color: theme.colors.PRIMARY}]}
+                    containerStyle={styles.sectionEndItem}
+                    startItem={
+                        <TextComponent style={styles.sectionTextItem}>Telefono</TextComponent>
                     }/>
             </View>
 
             <View style={styles.section}>
                 <TextComponent style={styles.sectionHeader} >Posizione</TextComponent>
-                <NavigationLinkComponent startItem={
+                <NavigationLinkComponent
+                    onPress={()=>navigation.navigate("Position")}
+                    startItem={
                     <Ionicons name={"navigate-circle-outline"} size={theme.icons.XS}/>
-                } >Gestisci posizione</NavigationLinkComponent>
+                } >{profile?.defaultPosition ? `Posizione: ${profile.defaultPosition.address} - ${profile.defaultPosition.radius}km`:"Gestisci posizione" } </NavigationLinkComponent>
             </View>
 
             <NavigationLinkComponent
