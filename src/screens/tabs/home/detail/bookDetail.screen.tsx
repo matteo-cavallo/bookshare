@@ -9,6 +9,9 @@ import {BookDetailActions} from '../../../../store/bookDetail/bookDetail.actions
 import {useTheme} from '@react-navigation/native';
 import {ThemeContext} from '../../../../providers/theme.provider';
 import {Ionicons} from '@expo/vector-icons';
+import {ButtonComponent} from '../../../../components/button.component';
+import {conditionMapper} from '../../../../utils/mappers/condition.mapper';
+import {BookConditions} from '../../../../model/newBook.model';
 
 type Props = NativeStackScreenProps<HomeStackParams, "BookDetail">
 
@@ -31,7 +34,6 @@ export const BookDetail: FC<Props> = ({navigation, route}) => {
         container: {
             padding: theme.spacing.LG,
             flex: 1,
-            backgroundColor: "#FFF"
         },
         scrollView: {},
         navBar: {
@@ -50,16 +52,16 @@ export const BookDetail: FC<Props> = ({navigation, route}) => {
         },
         titleContainer: {
             flexDirection: "row",
-            marginBottom: theme.spacing.LG,
-            backgroundColor: theme.colors.ACCENT,
             padding: theme.spacing.LG,
             alignItems: "center",
+            justifyContent: "center"
             //borderRightWidth: 8,
             //borderRightColor: "#FFF"
         },
         title: {
-            ...theme.fonts.SUBHEADLINE,
-            color: "#FFF",
+            ...theme.fonts.TITLE,
+            flexShrink: 1,
+            flex: 1
         },
         subTitle: {
             ...theme.fonts.CAPTION,
@@ -69,6 +71,24 @@ export const BookDetail: FC<Props> = ({navigation, route}) => {
             ...theme.fonts.TITLE,
             marginLeft: theme.spacing.S,
             color: "#FFF"
+        },
+        userSection: {
+            flexDirection: "row",
+            alignItems: "center",
+            marginVertical: theme.spacing.LG
+        },
+        userImage: {
+            margin: theme.spacing.LG,
+            backgroundColor: theme.colors.FILL_TERTIARY,
+            width: 50,
+            height: 50,
+            justifyContent:"center",
+            alignItems: "center",
+            borderRadius: 25
+        },
+        userContent: {
+            flex: 1,
+            flexShrink: 1
         }
     })
 
@@ -91,25 +111,61 @@ export const BookDetail: FC<Props> = ({navigation, route}) => {
                     </View>
                     <Center>
                         <Image source={{uri: book?.mainImage || undefined}}
-                               style={{height: '100%', aspectRatio: 3 / 4}}/>
+                               style={{height: '100%', aspectRatio: 3 / 4, borderRadius: theme.spacing.MD}}/>
                     </Center>
                 </View>
-                <View style={styles.titleContainer}>
-                    <View style={{flex: 1, flexShrink: 1}}>
+                <View>
+
+                    <View style={styles.titleContainer}>
                         <TextComponent style={styles.title}>{book?.title}</TextComponent>
-                        <TextComponent style={styles.subTitle}>{book?.position?.name}</TextComponent>
+                        <View style={{
+                            width: 44,
+                            height: 44,
+                            backgroundColor: theme.colors.FILL_TERTIARY,
+                            justifyContent: "center",
+                            alignItems: "center",
+                            borderRadius: 22
+                        }}>
+                            <Ionicons name={"heart-outline"} size={24}/>
+                        </View>
                     </View>
-                    <TextComponent style={styles.price}>{book?.price} €</TextComponent>
                 </View>
                 <View style={styles.content}>
+                    <View style={{marginBottom: theme.spacing.LG}}>
+                        <TextComponent style={theme.fonts.HEADLINE}>€{book?.price}</TextComponent>
+                    </View>
+
+
                     <View style={styles.section}>
-                        <TextComponent style={theme.fonts.SECTION_HEADER}>Descrizione</TextComponent>
+                        <TextComponent style={theme.fonts.SECTION_HEADER}>Posizione del libro</TextComponent>
+                        <TextComponent
+                            style={[{color: theme.colors.ACCENT}, theme.fonts.HEADLINE]}>{book?.position?.address || "Nessuna posizione fornita"}</TextComponent>
+                    </View>
+
+
+
+                    <View style={styles.section}>
+                        <View style={styles.userSection}>
+                            <View style={styles.userImage}>
+                                <Ionicons name={"person"} />
+                            </View>
+                            <View style={styles.userContent}>
+                                <TextComponent style={theme.fonts.SUBHEADLINE}>Nome utente</TextComponent>
+                                <ButtonComponent style={{marginTop: theme.spacing.MD}}>Contatta l'utente</ButtonComponent>
+                            </View>
+                        </View>
+                    </View>
+
+
+                    <View style={styles.section}>
+                        <TextComponent style={theme.fonts.SECTION_HEADER}>Descrizione fornita
+                            dall'utente</TextComponent>
                         <TextComponent>{book?.description || "Nessuna descrizione disponibile"}</TextComponent>
                     </View>
 
                     <View style={styles.section}>
                         <TextComponent style={theme.fonts.SECTION_HEADER}>Condizioni</TextComponent>
-                        <TextComponent>{book?.condition || "Nessuna descrizione disponibile"}</TextComponent>
+                        <TextComponent>{conditionMapper(book?.condition) || "Nessuna descrizione disponibile"}</TextComponent>
                     </View>
 
                     <View style={styles.section}>

@@ -34,7 +34,7 @@ export const HomeScreen: FC<Props> = ({navigation}) => {
     const dispatch = useAppDispatch()
 
     const [order, setOrder] = useState<OrderByDirection>("desc")
-    const [orderBy, setOrderBy] = useState<keyof BookPost>("title")
+    const [orderBy, setOrderBy] = useState<keyof BookPost>("creationDate")
     const [searchText, setSearchText] = useState("")
 
     const {data, getMoreData, fetchFirstBatch, loadingMoreItems, loading} = usePaginatedData<BookPost>(FBCollections.bookPost, orderBy, {

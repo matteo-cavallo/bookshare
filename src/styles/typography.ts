@@ -26,6 +26,7 @@ export const Fonts = StyleSheet.create({
     SECTION_HEADER: {
         fontSize: 13,
         fontWeight: 'bold',
-        textTransform: 'uppercase'
+        textTransform: 'uppercase',
+        marginBottom: 4
     }
 })
