@@ -2,7 +2,7 @@ import React, {FC, useContext, useEffect, useLayoutEffect, useState} from 'react
 import {
     ActivityIndicator,
     Alert,
-    Button,
+    Button, DeviceEventEmitter,
     Keyboard,
     Modal,
     SafeAreaView,
@@ -28,6 +28,11 @@ import {PostNewBookActions} from '../../../store/postBook/postBook.actions';
 import {BookConditions, NewBookModel} from '../../../model/newBook.model';
 import {ToggleComponent} from '../../../components/toggle.component';
 import {HomeActions} from '../../../store/home/home.actions';
+import {NavigationLinkComponent} from "../../../components/navigationLink.component";
+import {ON_APPLY_EVENT_EMITTER, OnApplyEventProps} from "../profile/settings/account/position/position.screen";
+import {BookSharePosition} from "../../../model/position";
+import {useNavigation} from "@react-navigation/native";
+import {UserActions} from "../../../store/user/user.actions";
 
 type Props = NativeStackScreenProps<TabsScreens, "PostBook">
 
@@ -36,9 +41,12 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
     const dispatch = useAppDispatch()
     const {theme} = useContext(ThemeContext)
 
+    const rootNavigation = useNavigation()
+
     // Selectors
     const googleBookData = useAppSelector(state => state.newBook.googleBook)
     const isLoading = useAppSelector(state => state.newBook.isLoading)
+    const userPosition = useAppSelector(state => state.user.user?.defaultPosition)
 
     // UI
     const [canPublish, setCanPublish] = useState(true)
@@ -52,7 +60,7 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
     const [description, setDescription] = useState("")
     const [conditions, setConditions] = useState<BookConditions>()
     const [price, setPrice] = useState("0")
-    const [position, setPosition] = useState("")
+    const [position, setPosition] = useState<BookSharePosition>()
     const [phone, setPhone] = useState("")
 
 
@@ -66,6 +74,16 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
             //headerRight: props => <Button title={"Pubblica"} disabled={!canPublish} onPress={() => handlePublishBook()} color={props.tintColor}/>
         })
     }, [])
+
+    useEffect(()=>{
+        dispatch(UserActions.fetchUser())
+    },[])
+
+    useEffect(()=>{
+        if(userPosition){
+            setPosition(userPosition)
+        }
+    },[userPosition])
 
     async function checkData(): Promise<void> {
         try {
@@ -107,11 +125,7 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
             title,
             description,
             price: Number(price) || 0,
-            position: {
-                name: position,
-                latitude: 41,
-                longitude: 12
-            },
+            position: position,
             authors: author.split(",") || [],
             condition: conditions || BookConditions.NEW,
             phoneNumber: {
@@ -204,6 +218,22 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
         },
         toggle: {}
     })
+
+    //Listener for the position widget callback
+    useEffect(()=>{
+        DeviceEventEmitter.addListener(ON_APPLY_EVENT_EMITTER, (params:OnApplyEventProps) =>
+            handleOnPositionApply(params.position,params.goBack));
+
+        return () => {
+            DeviceEventEmitter.removeAllListeners(ON_APPLY_EVENT_EMITTER)
+        };
+    },[])
+
+    const handleOnPositionApply = (newPosition:BookSharePosition,goBack:()=>void) =>{
+        console.log("NEW POS : ",newPosition)
+        setPosition(newPosition)
+        goBack()
+    }
 
     return (
         <SafeAreaView>
@@ -358,12 +388,11 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
                         <View style={styles.section}>
                             <TextComponent
                                 style={[styles.sectionHeader, theme.fonts.SECTION_HEADER]}>Posizione</TextComponent>
-                            <TextInputComponent placeholder={"Posizione"}
-                                                onChangeText={setPosition}
-                                                value={position}
-                                                startItem={<Ionicons name={"locate-outline"} size={theme.spacing.XL}
-                                                                     color={theme.colors.SECONDARY}/>}
-                            />
+                            <NavigationLinkComponent
+                                onPress={()=>rootNavigation.navigate("Position")}
+                                startItem={
+                                    <Ionicons name={"navigate-circle-outline"} size={theme.icons.XS}/>
+                                } >{position ? `Posizione: ${position.address}`:"Seleziona una posizione" } </NavigationLinkComponent>
                         </View>
 
                         {/*TODO: implementare keyboard avoidance*/}

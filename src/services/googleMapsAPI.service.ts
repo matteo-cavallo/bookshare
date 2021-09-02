@@ -2,10 +2,9 @@ import axios from "axios";
 import {GOOGLE_MAP_KEY} from '@env'
 import {LocationResult} from "../model/googleMapsApi.model";
 import {BookSharePosition} from "../model/position";
-
+import geohash from "ngeohash";
 
 const getLocationName = async (lat:number,lng:number,radius:number): Promise<BookSharePosition> => {
-
     try {
         const result = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${lat},${lng}&key=${GOOGLE_MAP_KEY}`) //
 
@@ -20,7 +19,8 @@ const getLocationName = async (lat:number,lng:number,radius:number): Promise<Boo
             lat: lat,
             lng: lng,
             placeId: placeId,
-            radius: radius
+            radius: radius,
+            geoHash: geohash.encode(lat, lng)
 
         } as BookSharePosition
 
@@ -43,14 +43,13 @@ const getLocationCoordinates = async (address:string,language:string,radius:numb
         const placeId = locationResult.results[0].place_id
         const location = locationResult.results[0].geometry.location
 
-        console.log("formatted : ",formattedAddress)
         const position = {
             address: formattedAddress,
             lat: location.lat,
             lng: location.lng,
             placeId: placeId,
-            radius:radius
-
+            radius:radius,
+            geoHash:geohash.encode(location.lat, location.lng)
         } as BookSharePosition
 
         return position

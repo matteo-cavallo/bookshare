@@ -1,6 +1,7 @@
 
 // Listed Book
 import {BookPosition, PhoneNumber} from './newBook.model';
+import {BookSharePosition} from "./position";
 
 export interface BookPost {
     // Id
@@ -13,7 +14,7 @@ export interface BookPost {
     description: string
     price: number
     condition: string
-    position: BookPosition | null
+    position: BookSharePosition | null
     phoneNumber: PhoneNumber | null
     mainImage: string | null
     images?: string[]

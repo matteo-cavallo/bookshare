@@ -75,11 +75,6 @@ export const SettingsScreen:FC<Props> = ({navigation}) => {
                                  onPress={handleSignOut}
                 >Logout</ButtonComponent>
             </View>
-
-
-
-
-
         </ScrollView>
     );
 };

@@ -1,5 +1,5 @@
 import React, {FC, useContext, useEffect, useRef, useState} from 'react';
-import {Alert, Slider, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {Alert, DeviceEventEmitter, Slider, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {ThemeContext} from "../../../../../../providers/theme.provider";
 import {TextInputComponent} from "../../../../../../components/textInput.component";
 import {Ionicons} from "@expo/vector-icons";
@@ -15,9 +15,15 @@ import {UserActions} from "../../../../../../store/user/user.actions";
 import {NativeStackScreenProps} from "react-native-screens/native-stack";
 import {HomeStackParams} from "../../../../../../navigators/home/home.navigator";
 
-type Props = NativeStackScreenProps<HomeStackParams, "Home">
+type Props = NativeStackScreenProps<HomeStackParams, "Profile">
 
-export const PositionScreen:FC<Props> = ({navigation}) => {
+export const ON_APPLY_EVENT_EMITTER = "positionScreen.onApply"
+export interface OnApplyEventProps {
+    position:BookSharePosition
+    goBack: ()=>void
+}
+
+export const PositionScreen:FC<Props> = ({navigation,route}) => {
 
     const {theme} = useContext(ThemeContext)
 
@@ -39,6 +45,8 @@ export const PositionScreen:FC<Props> = ({navigation}) => {
 
     //App default position: Roma
     const defaultPosition = {latitude:41.9027835, longitude: 12.4963655}
+
+
 
     const styles = StyleSheet.create({
         container:{
@@ -96,33 +104,7 @@ export const PositionScreen:FC<Props> = ({navigation}) => {
     },[])
 
     const handleDispatch = () =>{
-        //Dispatch to the reducer the position
-        if(position){
-            dispatch(UserActions.updateUser({defaultPosition:position}))
-                .unwrap()
-                .then(result => {
-                    console.log("User default position updated successfully.")
-                    dispatch(UserActions.fetchUser()).unwrap()
-                        .then(result=>{
-                            //go back to settings
-                            navigation.goBack() //TODO: on go back the button save on the top corner is clickable and contains the old user data, should be fixed
-                        })
-                        .catch(e=>{
-                            console.log("Can't fetch the new user position", e.message)
-                            Alert.alert("Problema con il caricamento della nuova posizione", e.message)
-                        })
-                })
-                .catch(e => {
-                    console.log("Default position hasn't been updated.", e.message)
-                    Alert.alert("Problema con il salvataggio", e.message)
-                })
-
-        }else {
-            //alert message , should never be visible
-            Alert.alert("Attenzione","Non è stata selezionata nessuna posizione!",[
-                {text:"Ok"}
-            ])
-        }
+        DeviceEventEmitter.emit(ON_APPLY_EVENT_EMITTER, {position:position,goBack:navigation.goBack});
     }
 
     //Handler for the search bar

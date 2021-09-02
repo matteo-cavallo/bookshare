@@ -5,4 +5,5 @@ export interface BookSharePosition {
     lng: number
     placeId: string
     radius: number
+    geoHash: string
 }

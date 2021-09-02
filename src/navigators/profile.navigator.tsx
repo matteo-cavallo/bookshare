@@ -4,12 +4,12 @@ import {ProfileScreen} from '../screens/tabs/profile/profile.screen';
 import {SettingsScreen} from "../screens/tabs/profile/settings/settings.screen";
 import {AccountScreen} from "../screens/tabs/profile/settings/account/account.screen";
 import {PositionScreen} from "../screens/tabs/profile/settings/account/position/position.screen";
+import {BookSharePosition} from "../model/position";
 
 export type ProfileScreens = {
     Profile: undefined;
     Settings: undefined;
     Account: undefined;
-    Position: undefined;
 }
 
 export const ProfileNavigator = () => {
@@ -21,7 +21,6 @@ export const ProfileNavigator = () => {
             <ProfileStack.Screen name={"Profile"} options={profileScreenOptions}  component={ProfileScreen} />
             <ProfileStack.Screen name={"Settings"} options={settingsScreenOptions} component={SettingsScreen} />
             <ProfileStack.Screen name={"Account"} options={accountScreenOptions} component={AccountScreen} />
-            <ProfileStack.Screen name={"Position"} options={positionScreenOptions} component={PositionScreen} />
         </ProfileStack.Navigator>
     )
 }
@@ -41,6 +40,3 @@ export const accountScreenOptions: NativeStackNavigationOptions = {
     title: "Account"
 }
 
-export const positionScreenOptions: NativeStackNavigationOptions = {
-    title: "Posizione"
-}
