@@ -9,6 +9,10 @@ import {BookDetailActions} from '../../../../store/bookDetail/bookDetail.actions
 import {useTheme} from '@react-navigation/native';
 import {ThemeContext} from '../../../../providers/theme.provider';
 import {Ionicons} from '@expo/vector-icons';
+import {ButtonComponent} from '../../../../components/button.component';
+import {conditionMapper} from '../../../../utils/mappers/condition.mapper';
+import {BookConditions} from '../../../../model/newBook.model';
+import {bookDetailReducer} from '../../../../store/bookDetail/bookDetail.reducer';
 
 type Props = NativeStackScreenProps<HomeStackParams, "BookDetail">
 
@@ -20,17 +24,44 @@ export const BookDetail: FC<Props> = ({navigation, route}) => {
     const dispatch = useAppDispatch()
 
     const book = useAppSelector(state => state.bookDetail.book)
+    const user = useAppSelector(state => state.bookDetail.user)
     const isLoading = useAppSelector(state => state.bookDetail.isLoading)
 
     useEffect(() => {
         dispatch(BookDetailActions.fetchBook({uid}))
+            .then(() => {
+                dispatch(BookDetailActions.fetchUser({uid: book?.owner}))
+            })
     }, [uid])
 
+    const handleSavePost = () => {
+        if(book?.uid){
+            dispatch(BookDetailActions.savePost({
+                postId: book.uid,
+                save: !isPostSaved()
+            })).then(() => {
+                dispatch(BookDetailActions.fetchBook({
+                    uid
+                }))
+                dispatch(BookDetailActions.fetchUser({
+                    uid: book.owner
+                }))
+            })
+        }
+    }
+
+    const isPostSaved = () => {
+        if(book?.uid && user?.savedPosts){
+            return user.savedPosts?.includes(book.uid) || false
+        } else {
+            return false
+        }
+    }
 
     const styles = StyleSheet.create({
         container: {
             padding: theme.spacing.LG,
-            flex: 1
+            flex: 1,
         },
         scrollView: {},
         navBar: {
@@ -39,24 +70,61 @@ export const BookDetail: FC<Props> = ({navigation, route}) => {
         },
         header: {
             minHeight: 300,
-            backgroundColor: theme.colors.FILL_TERTIARY,
-            paddingBottom: theme.spacing.LG
+            paddingBottom: theme.spacing.LG,
         },
         content: {
-            padding: theme.spacing.LG
+            paddingHorizontal: theme.spacing.LG
         },
-        titleContainer:{
+        section: {
+            marginBottom: theme.spacing.MD
+        },
+        titleContainer: {
             flexDirection: "row",
-
+            padding: theme.spacing.LG,
+            alignItems: "center",
+            justifyContent: "center"
+            //borderRightWidth: 8,
+            //borderRightColor: "#FFF"
         },
-        title:{
-            ...theme.fonts.HEADLINE,
+        title: {
+            ...theme.fonts.TITLE,
+            flexShrink: 1,
+            flex: 1
+        },
+        subTitle: {
+            ...theme.fonts.CAPTION,
+            color: "#FFF",
+        },
+        price: {
+            ...theme.fonts.TITLE,
+            marginLeft: theme.spacing.S,
+            color: "#FFF"
+        },
+        userSection: {
+            flexDirection: "row",
+            alignItems: "center",
+            marginVertical: theme.spacing.LG
+        },
+        userImage: {
+            margin: theme.spacing.LG,
+            backgroundColor: theme.colors.FILL_TERTIARY,
+            width: 50,
+            height: 50,
+            justifyContent: "center",
+            alignItems: "center",
+            borderRadius: 25
+        },
+        userContent: {
             flex: 1,
             flexShrink: 1
         },
-        price: {
-            ...theme.fonts.HEADLINE,
-            marginLeft: theme.spacing.MD
+        saveButton: {
+            width: 44,
+            height: 44,
+            backgroundColor: theme.colors.FILL_TERTIARY,
+            justifyContent: "center",
+            alignItems: "center",
+            borderRadius: 22,
         }
     })
 
@@ -79,13 +147,62 @@ export const BookDetail: FC<Props> = ({navigation, route}) => {
                     </View>
                     <Center>
                         <Image source={{uri: book?.mainImage || undefined}}
-                               style={{height: '100%', aspectRatio: 3 / 4}}/>
+                               style={{height: '100%', aspectRatio: 3 / 4, borderRadius: theme.spacing.MD}}/>
                     </Center>
                 </View>
-                <View style={styles.content}>
+                <View>
+
                     <View style={styles.titleContainer}>
-                    <TextComponent style={styles.title}>{book?.title}</TextComponent>
-                    <TextComponent style={styles.price}>€{book?.price}</TextComponent>
+                        <TextComponent style={styles.title}>{book?.title}</TextComponent>
+                        <TouchableOpacity style={styles.saveButton}
+                                          onPress={handleSavePost}
+                        >
+                            <Ionicons name={isPostSaved() ? "heart" : "heart-outline"} size={24} color={theme.colors.DANGER}/>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+                <View style={styles.content}>
+                    <View style={{marginBottom: theme.spacing.LG}}>
+                        <TextComponent style={theme.fonts.HEADLINE}>€{book?.price}</TextComponent>
+                    </View>
+
+
+                    <View style={styles.section}>
+                        <TextComponent style={theme.fonts.SECTION_HEADER}>Posizione del libro</TextComponent>
+                        <TextComponent
+                            style={[{color: theme.colors.ACCENT}, theme.fonts.HEADLINE]}>{book?.position?.address || "Nessuna posizione fornita"}</TextComponent>
+                    </View>
+
+
+                    <View style={styles.section}>
+                        <View style={styles.userSection}>
+                            <View style={styles.userImage}>
+                                <Ionicons name={"person"}/>
+                            </View>
+                            <View style={styles.userContent}>
+                                <TextComponent
+                                    style={theme.fonts.SUBHEADLINE}>{user?.firstName && user.lastName && `${user?.firstName} ${user?.lastName}` || user?.email}</TextComponent>
+                                <ButtonComponent style={{marginTop: theme.spacing.MD}}>Contatta
+                                    l'utente</ButtonComponent>
+                            </View>
+                        </View>
+                    </View>
+
+
+                    <View style={styles.section}>
+                        <TextComponent style={theme.fonts.SECTION_HEADER}>Descrizione fornita
+                            dall'utente</TextComponent>
+                        <TextComponent>{book?.description || "Nessuna descrizione disponibile"}</TextComponent>
+                    </View>
+
+                    <View style={styles.section}>
+                        <TextComponent style={theme.fonts.SECTION_HEADER}>Condizioni</TextComponent>
+                        <TextComponent>{conditionMapper(book?.condition) || "Nessuna descrizione disponibile"}</TextComponent>
+                    </View>
+
+                    <View style={styles.section}>
+                        <TextComponent style={theme.fonts.SECTION_HEADER}>CONTATTI</TextComponent>
+                        <TextComponent>{book?.phoneNumber?.number || "Nessun numero fornito"}</TextComponent>
                     </View>
                 </View>
             </ScrollView>

@@ -13,4 +13,5 @@ export interface UserModel {
 
 
     postedBooks: string[]
+    savedPosts?: string[]
 }

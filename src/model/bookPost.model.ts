@@ -1,6 +1,6 @@
 
 // Listed Book
-import {BookPosition, PhoneNumber} from './newBook.model';
+import { PhoneNumber} from './newBook.model';
 import {BookSharePosition} from "./position";
 
 export interface BookPost {
@@ -26,4 +26,5 @@ export interface BookPost {
     // Metadata
     creationDate: string
     lastEdit: string
+    saves?: number
 }
