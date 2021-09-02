@@ -8,7 +8,7 @@ export interface NewBookModel {
     description: string
     price: number
     condition: BookConditions
-    position: BookSharePosition
+    position: BookSharePosition | null
     phoneNumber: PhoneNumber
     mainImage: string | null
     images?: string[]
@@ -23,5 +23,5 @@ export const enum BookConditions {
     NEW = "NEW",
     AS_NEW = "AS_NEW",
     USED = "USED",
-    RUINED = "RUINED"
+    RUINED = "RUINED",
 }

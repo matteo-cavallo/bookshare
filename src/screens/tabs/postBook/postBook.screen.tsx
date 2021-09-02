@@ -60,7 +60,7 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
     const [description, setDescription] = useState("")
     const [conditions, setConditions] = useState<BookConditions>()
     const [price, setPrice] = useState("0")
-    const [position, setPosition] = useState<BookSharePosition>()
+    const [position, setPosition] = useState<BookSharePosition | null>(null)
     const [phone, setPhone] = useState("")
 
 

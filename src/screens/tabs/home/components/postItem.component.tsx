@@ -76,7 +76,7 @@ export const PostItemComponent: FC<Props> = ({post, navigateTo}) => {
                 </View>
                 <View style={styles.content}>
                     <TextComponent
-                        style={styles.positionText}>{post.position?.name || "Nessuna posizione specificata"}</TextComponent>
+                        style={styles.positionText}>{post.position?.address || "Nessuna posizione specificata"}</TextComponent>
                     <TextComponent style={styles.title}>{post.title}</TextComponent>
                     <TextComponent style={styles.price}>€{post.price}</TextComponent>
                 </View>

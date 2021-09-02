@@ -1,5 +1,14 @@
 import React, {FC, useContext, useEffect, useRef, useState} from 'react';
-import {Alert, DeviceEventEmitter, SafeAreaView, Slider, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {
+    Alert,
+    Button,
+    DeviceEventEmitter,
+    SafeAreaView,
+    Slider,
+    StyleSheet,
+    TouchableOpacity,
+    View
+} from 'react-native';
 import {ThemeContext} from "../../../../../../providers/theme.provider";
 import {TextInputComponent} from "../../../../../../components/textInput.component";
 import {Ionicons} from "@expo/vector-icons";
@@ -46,6 +55,13 @@ export const PositionScreen: FC<Props> = ({navigation, route}) => {
 
     //App default position: Roma
     const defaultPosition = {latitude: 41.9027835, longitude: 12.4963655}
+
+    // Header Settings
+    useEffect(() => {
+        navigation.setOptions({
+            headerLeft: props => <Button title={"Annulla"} onPress={() => navigation.goBack()} />
+        })
+    },[])
 
 
     const styles = StyleSheet.create({
