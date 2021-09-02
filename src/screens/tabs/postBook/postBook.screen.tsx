@@ -46,7 +46,7 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
     // Selectors
     const googleBookData = useAppSelector(state => state.newBook.googleBook)
     const isLoading = useAppSelector(state => state.newBook.isLoading)
-    const userPosition = useAppSelector(state => state.user.user?.defaultPosition)
+    const userDetails = useAppSelector(state => state.user.user)
 
     // UI
     const [canPublish, setCanPublish] = useState(true)
@@ -80,10 +80,15 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
     },[])
 
     useEffect(()=>{
-        if(userPosition){
-            setPosition(userPosition)
+        if(userDetails){
+            if(userDetails.defaultPosition){
+                setPosition(userDetails.defaultPosition)
+            }
+            if(userDetails.phoneNumber?.number){
+                setPhone(userDetails.phoneNumber.number)
+            }
         }
-    },[userPosition])
+    },[userDetails])
 
     async function checkData(): Promise<void> {
         try {
