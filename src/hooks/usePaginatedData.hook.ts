@@ -103,7 +103,7 @@ export const usePaginatedData = <T>(collection: string, orderBy: keyof T, option
     }
 }
 
-const genericConverter = <T>() => ({
+export const genericConverter = <T>() => ({
     toFirestore(modelObject: T): DocumentData {
         return modelObject
     },

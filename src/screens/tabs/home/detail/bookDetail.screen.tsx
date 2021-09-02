@@ -12,6 +12,7 @@ import {Ionicons} from '@expo/vector-icons';
 import {ButtonComponent} from '../../../../components/button.component';
 import {conditionMapper} from '../../../../utils/mappers/condition.mapper';
 import {BookConditions} from '../../../../model/newBook.model';
+import {bookDetailReducer} from '../../../../store/bookDetail/bookDetail.reducer';
 
 type Props = NativeStackScreenProps<HomeStackParams, "BookDetail">
 
@@ -23,12 +24,39 @@ export const BookDetail: FC<Props> = ({navigation, route}) => {
     const dispatch = useAppDispatch()
 
     const book = useAppSelector(state => state.bookDetail.book)
+    const user = useAppSelector(state => state.bookDetail.user)
     const isLoading = useAppSelector(state => state.bookDetail.isLoading)
 
     useEffect(() => {
         dispatch(BookDetailActions.fetchBook({uid}))
+            .then(() => {
+                dispatch(BookDetailActions.fetchUser({uid: book?.owner}))
+            })
     }, [uid])
 
+    const handleSavePost = () => {
+        if(book?.uid){
+            dispatch(BookDetailActions.savePost({
+                postId: book.uid,
+                save: !isPostSaved()
+            })).then(() => {
+                dispatch(BookDetailActions.fetchBook({
+                    uid
+                }))
+                dispatch(BookDetailActions.fetchUser({
+                    uid: book.owner
+                }))
+            })
+        }
+    }
+
+    const isPostSaved = () => {
+        if(book?.uid && user?.savedPosts){
+            return user.savedPosts?.includes(book.uid) || false
+        } else {
+            return false
+        }
+    }
 
     const styles = StyleSheet.create({
         container: {
@@ -82,13 +110,21 @@ export const BookDetail: FC<Props> = ({navigation, route}) => {
             backgroundColor: theme.colors.FILL_TERTIARY,
             width: 50,
             height: 50,
-            justifyContent:"center",
+            justifyContent: "center",
             alignItems: "center",
             borderRadius: 25
         },
         userContent: {
             flex: 1,
             flexShrink: 1
+        },
+        saveButton: {
+            width: 44,
+            height: 44,
+            backgroundColor: theme.colors.FILL_TERTIARY,
+            justifyContent: "center",
+            alignItems: "center",
+            borderRadius: 22,
         }
     })
 
@@ -118,16 +154,11 @@ export const BookDetail: FC<Props> = ({navigation, route}) => {
 
                     <View style={styles.titleContainer}>
                         <TextComponent style={styles.title}>{book?.title}</TextComponent>
-                        <View style={{
-                            width: 44,
-                            height: 44,
-                            backgroundColor: theme.colors.FILL_TERTIARY,
-                            justifyContent: "center",
-                            alignItems: "center",
-                            borderRadius: 22
-                        }}>
-                            <Ionicons name={"heart-outline"} size={24}/>
-                        </View>
+                        <TouchableOpacity style={styles.saveButton}
+                                          onPress={handleSavePost}
+                        >
+                            <Ionicons name={isPostSaved() ? "heart" : "heart-outline"} size={24} color={theme.colors.DANGER}/>
+                        </TouchableOpacity>
                     </View>
                 </View>
                 <View style={styles.content}>
@@ -143,15 +174,16 @@ export const BookDetail: FC<Props> = ({navigation, route}) => {
                     </View>
 
 
-
                     <View style={styles.section}>
                         <View style={styles.userSection}>
                             <View style={styles.userImage}>
-                                <Ionicons name={"person"} />
+                                <Ionicons name={"person"}/>
                             </View>
                             <View style={styles.userContent}>
-                                <TextComponent style={theme.fonts.SUBHEADLINE}>Nome utente</TextComponent>
-                                <ButtonComponent style={{marginTop: theme.spacing.MD}}>Contatta l'utente</ButtonComponent>
+                                <TextComponent
+                                    style={theme.fonts.SUBHEADLINE}>{user?.firstName && user.lastName && `${user?.firstName} ${user?.lastName}` || user?.email}</TextComponent>
+                                <ButtonComponent style={{marginTop: theme.spacing.MD}}>Contatta
+                                    l'utente</ButtonComponent>
                             </View>
                         </View>
                     </View>
