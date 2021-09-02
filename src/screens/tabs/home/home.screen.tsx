@@ -41,7 +41,6 @@ export const HomeScreen: FC<Props> = ({navigation}) => {
         direction: order,
         firstBatch: 6,
         moreDataBatch: 4,
-        whereValue: searchText,
     })
 
     const styles = StyleSheet.create({
@@ -93,7 +92,6 @@ export const HomeScreen: FC<Props> = ({navigation}) => {
     const listHeader: FC = () => (
             <View style={{padding: theme.spacing.LG}}>
                 <TextComponent style={theme.fonts.TITLE}>Feed</TextComponent>
-                <SearchBar />
             </View>
     )
 
