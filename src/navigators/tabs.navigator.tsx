@@ -12,10 +12,12 @@ import {TextInputComponent} from '../components/textInput.component';
 import {LightColors} from '../styles/colors';
 import {useNavigation} from '@react-navigation/native';
 import {HomeNavigator} from './home/home.navigator';
+import {ChatsNavigator} from "./chats.navigator";
 
 export type TabsScreens = {
     HomeNavigator: undefined,
     ProfileNavigator: undefined;
+    ChatsNavigator: undefined;
     PostBook: undefined;
 }
 
@@ -32,8 +34,11 @@ export const TabsNavigator: FC = () => {
 
             {/* Private tabs*/}
             <Tabs.Group>
+
                 <Tabs.Screen name={"PostBook"} component={withAuthentication(PostBookScreen)}
                              options={sellBookOptions}/>
+                <Tabs.Screen name={"ChatsNavigator"} component={withAuthentication(ChatsNavigator)}
+                             options={chatsScreenOptions}/>
                 <Tabs.Screen name={"ProfileNavigator"} component={withAuthentication(ProfileNavigator)}
                              options={profileScreenOptions}/>
             </Tabs.Group>
@@ -57,6 +62,13 @@ const profileScreenOptions: BottomTabNavigationOptions = {
     headerShown: false,
     tabBarIcon: props => <Ionicons name={"person"} size={props.size} color={props.color}/>
 }
+
+const chatsScreenOptions: BottomTabNavigationOptions = {
+    headerShown: false,
+    title: "Chats",
+    tabBarIcon: props => <Ionicons name={"chatbubble"} size={props.size} color={props.color}/>
+}
+
 
 const sellBookOptions: BottomTabNavigationOptions = {
     tabBarButton: props => {
