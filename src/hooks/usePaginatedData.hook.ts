@@ -1,22 +1,34 @@
-import {
+import fb,{
     bookPostConverter,
     DocumentData, DocumentSnapshot,
     FBFirestore, FieldPath,
     OrderByDirection, Query,
     QueryDocumentSnapshot,
-    SnapshotOptions, WhereFilterOp
+    SnapshotOptions, WhereFilterOp,
 } from '../firebase/firebase.config';
 import {useEffect, useState} from 'react';
 import {FBCollections} from '../firebase/collections';
+import firebase from 'firebase';
 
-type PaginatedDataHookOptions = {
+type customFetchOptions<T> = {
+    collection: string
+    withConvertedDefault: typeof genericConverter
+    orderByDefault:string
+    direction: OrderByDirection
+    firstBatch: number
+    fetchThen: (querySnapshot: fb.firestore.QuerySnapshot<T> ) => void
+}
+
+type PaginatedDataHookOptions<T> = {
     direction: OrderByDirection
     firstBatch: number
     moreDataBatch: number,
+    customFetch?:  (options:customFetchOptions<T>) =>void
 }
-export const usePaginatedData = <T>(collection: string, orderBy: keyof T, options: PaginatedDataHookOptions) => {
 
-    const {firstBatch, moreDataBatch, direction} = options
+export const usePaginatedData = <T>(collection: string, orderBy: keyof T, options: PaginatedDataHookOptions<T>) => {
+
+    const {firstBatch, moreDataBatch, direction,customFetch} = options
 
     // Data
     const [data, setData] = useState<T[]>([])
@@ -29,34 +41,49 @@ export const usePaginatedData = <T>(collection: string, orderBy: keyof T, option
         fetchFirstBatch()
     }, [direction, orderBy])
 
+
+    const fetchThen = (querySnapshot: firebase.firestore.QuerySnapshot<T>) => {
+            console.log("Fetched data: ", querySnapshot.docs.map(snap => snap.id))
+
+            // Storing data
+            setLoading(false)
+            const docs = querySnapshot.docs.map(doc => doc.data());
+            setData(docs)
+
+            // Storing Ref to last object
+            if (docs.length == 0) {
+                setLastDocRef(null)
+            } else {
+                const ref = docs[docs.length - 1] as any
+                setLastDocRef(ref[orderBy])
+            }
+        }
+
     // Main function
     // It fetches just the first batch of data
     const fetchFirstBatch = () => {
         setLoading(true)
-        FBFirestore.collection(collection)
-            .withConverter(genericConverter<T>())
-            .orderBy(orderBy.toString(), direction)
-            .limit(firstBatch)
-            .get()
-            .then(querySnapshot => {
-                console.log("Fetched data: ", querySnapshot.docs.map(snap => snap.id))
-
-                // Storing data
-                setLoading(false)
-                const docs = querySnapshot.docs.map(doc => doc.data());
-                setData(docs)
-
-                // Storing Ref to last object
-                if (docs.length == 0) {
-                    setLastDocRef(null)
-                } else {
-                    const ref = docs[docs.length - 1] as any
-                    setLastDocRef(ref[orderBy])
-                }
+        if (customFetch) {
+            customFetch({
+                collection:collection,
+                withConvertedDefault: genericConverter,
+                orderByDefault: orderBy.toString(),
+                direction: direction,
+                firstBatch: firstBatch,
+                fetchThen: fetchThen
             })
-            .catch(e => {
-                console.log("Error fetch paginated data: ", e)
-            })
+        }else{
+            FBFirestore.collection(collection)
+                .withConverter(genericConverter<T>())
+                .orderBy(orderBy.toString(), direction)
+                .limit(firstBatch)
+                .get()
+                .then(fetchThen)
+                .catch(e => {
+                    console.log("Error fetch paginated data: ", e)
+                })
+        }
+
     }
 
     // Function called by the view
@@ -99,7 +126,7 @@ export const usePaginatedData = <T>(collection: string, orderBy: keyof T, option
         getMoreData,
         fetchFirstBatch,
         loading,
-        loadingMoreItems
+        loadingMoreItems,
     }
 }
 

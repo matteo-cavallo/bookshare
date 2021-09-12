@@ -60,3 +60,4 @@ export type Query = firebase.firestore.Query
 export type WhereFilterOp = firebase.firestore.WhereFilterOp
 export type FieldPath = firebase.firestore.FieldPath
 export const FieldValue = firebase.firestore.FieldValue
+export default firebase
