@@ -1,6 +1,6 @@
-import {BookSharePosition} from "./position";
+import {BookSharePosition} from "./bookSharePosition.model";
 
-export interface NewBookModel {
+export interface Book {
     googleBookId: string | null
     isbn: string | null
     title: string

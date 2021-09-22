@@ -6,13 +6,10 @@ import {HomeStackParams} from '../../../../navigators/home/home.navigator';
 import {useAppDispatch, useAppSelector} from '../../../../store/store.config';
 import {Center} from '../../../../components/center.component';
 import {BookDetailActions} from '../../../../store/bookDetail/bookDetail.actions';
-import {useTheme} from '@react-navigation/native';
 import {ThemeContext} from '../../../../providers/theme.provider';
 import {Ionicons} from '@expo/vector-icons';
 import {ButtonComponent} from '../../../../components/button.component';
 import {conditionMapper} from '../../../../utils/mappers/condition.mapper';
-import {BookConditions} from '../../../../model/newBook.model';
-import {bookDetailReducer} from '../../../../store/bookDetail/bookDetail.reducer';
 
 type Props = NativeStackScreenProps<HomeStackParams, "BookDetail">
 
@@ -23,12 +20,12 @@ export const BookDetail: FC<Props> = ({navigation, route}) => {
     const {theme} = useContext(ThemeContext)
     const dispatch = useAppDispatch()
 
-    const book = useAppSelector(state => state.bookDetail.book)
+    const book = useAppSelector(state => state.bookDetail.post)
     const user = useAppSelector(state => state.bookDetail.user)
     const isLoading = useAppSelector(state => state.bookDetail.isLoading)
 
     useEffect(() => {
-        dispatch(BookDetailActions.fetchBook({uid}))
+        dispatch(BookDetailActions.fetchPost({uid}))
             .then(() => {
                 dispatch(BookDetailActions.fetchUser({uid: book?.owner}))
             })
@@ -40,7 +37,7 @@ export const BookDetail: FC<Props> = ({navigation, route}) => {
                 postId: book.uid,
                 save: !isPostSaved()
             })).then(() => {
-                dispatch(BookDetailActions.fetchBook({
+                dispatch(BookDetailActions.fetchPost({
                     uid
                 }))
                 dispatch(BookDetailActions.fetchUser({

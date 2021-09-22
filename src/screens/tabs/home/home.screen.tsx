@@ -16,13 +16,10 @@ import {ThemeContext} from '../../../providers/theme.provider';
 import {useAppDispatch, useAppSelector} from '../../../store/store.config';
 import {HomeActions} from '../../../store/home/home.actions';
 import {SectionComponent} from './components/section.component';
-import {BookPost} from '../../../model/bookPost.model';
+import {Post} from 'model/post.model';
 import {PostItemComponent} from './components/postItem.component';
 import {NativeStackScreenProps} from 'react-native-screens/native-stack';
 import {HomeStackParams} from '../../../navigators/home/home.navigator';
-import {usePaginatedData} from '../../../hooks/usePaginatedData.hook';
-import {FBCollections} from '../../../firebase/collections';
-import {OrderByDirection} from '../../../firebase/firebase.config';
 import {TextInputComponent} from '../../../components/textInput.component';
 import {Ionicons} from '@expo/vector-icons';
 
@@ -33,15 +30,15 @@ export const HomeScreen: FC<Props> = ({navigation}) => {
     const {theme} = useContext(ThemeContext)
     const dispatch = useAppDispatch()
 
-    const [order, setOrder] = useState<OrderByDirection>("desc")
-    const [orderBy, setOrderBy] = useState<keyof BookPost>("creationDate")
+    //const [order, setOrder] = useState<OrderByDirection>("desc")
+    const [orderBy, setOrderBy] = useState<keyof Post>("creationDate")
     const [searchText, setSearchText] = useState("")
 
-    const {data, getMoreData, fetchFirstBatch, loadingMoreItems, loading} = usePaginatedData<BookPost>(FBCollections.bookPost, orderBy, {
+    /*const {data, getMoreData, fetchFirstBatch, loadingMoreItems, loading} = usePaginatedData<Post>(FBCollections.bookPost, orderBy, {
         direction: order,
         firstBatch: 6,
         moreDataBatch: 4,
-    })
+    })*/
 
     const styles = StyleSheet.create({
         safeArea: {
@@ -52,7 +49,7 @@ export const HomeScreen: FC<Props> = ({navigation}) => {
         },
     })
 
-    const renderItem = (props: ListRenderItemInfo<BookPost>) => {
+    const renderItem = (props: ListRenderItemInfo<Post>) => {
         const {item, index, separators} = props
 
         return <PostItemComponent key={index}
@@ -68,9 +65,9 @@ export const HomeScreen: FC<Props> = ({navigation}) => {
     }
 
 
-    const listFooterComponent: FC = () => (
+/*    const listFooterComponent: FC = () => (
         loadingMoreItems ? <ActivityIndicator/> : null
-    )
+    )*/
 
     const listSeprator:FC = () => (
         <View style={{height: 1, backgroundColor: theme.colors.FILL_TERTIARY}}/>
@@ -98,7 +95,7 @@ export const HomeScreen: FC<Props> = ({navigation}) => {
 
     return (
         <SafeAreaView style={styles.safeArea}>
-            <FlatList data={data}
+{/*            <FlatList data={data}
                       renderItem={renderItem}
                       keyExtractor={(item, index) => item.uid || index.toString()}
                       refreshControl={<RefreshControl refreshing={loading}
@@ -108,7 +105,7 @@ export const HomeScreen: FC<Props> = ({navigation}) => {
                       ListFooterComponent={listFooterComponent}
                       ItemSeparatorComponent={listSeprator}
                       ListHeaderComponent={listHeader}
-            />
+            />*/}
         </SafeAreaView>
     )
 }

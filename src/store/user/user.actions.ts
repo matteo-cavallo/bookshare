@@ -1,15 +1,15 @@
 import {createAction, createAsyncThunk} from "@reduxjs/toolkit";
-import {UserModel} from "../../model/user.model";
+import {User} from "src/model/user.model";
 import {FBAuth, FBFirestore, userConverter} from "../../firebase/firebase.config";
 import {FBCollections} from "../../firebase/collections";
-import {BookSharePosition} from "../../model/position";
+import {BookSharePosition} from "src/model/bookSharePosition.model";
 
 const prefix = "user/"
 
 const FETCH_USER = prefix + "fetchUser"
 const UPDATE_USER = prefix + "updateUser"
 
-const fetchUser = createAsyncThunk<UserModel,void>(FETCH_USER, async (args)=>{
+const fetchUser = createAsyncThunk<User,void>(FETCH_USER, async (args)=>{
 
     const userId = FBAuth.currentUser?.uid
 
@@ -37,7 +37,7 @@ const fetchUser = createAsyncThunk<UserModel,void>(FETCH_USER, async (args)=>{
         })
 })
 
-const updateUser = createAsyncThunk<void,UserModel>(UPDATE_USER, async (draftUser)=>{
+const updateUser = createAsyncThunk<void,User>(UPDATE_USER, async (draftUser)=>{
 
     const userId = FBAuth.currentUser?.uid
 

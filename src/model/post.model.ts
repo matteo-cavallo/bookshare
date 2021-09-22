@@ -1,9 +1,9 @@
 
 // Listed Book
-import { PhoneNumber} from './newBook.model';
-import {BookSharePosition} from "./position";
+import { PhoneNumber} from './book.model';
+import {BookSharePosition} from "./bookSharePosition.model";
 
-export interface BookPost {
+export interface Post {
     // Id
     uid?: string
     owner: string

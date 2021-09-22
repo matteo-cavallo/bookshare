@@ -1,7 +1,7 @@
-import {BookSharePosition} from "./position";
-import {PhoneNumber} from "./newBook.model";
+import {BookSharePosition} from "./bookSharePosition.model";
+import {PhoneNumber} from "./book.model";
 
-export interface UserModel {
+export interface User {
     uid?: string;
     email: string;
 

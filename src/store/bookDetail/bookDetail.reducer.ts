@@ -1,13 +1,13 @@
 import {createReducer} from '@reduxjs/toolkit';
-import {BookPost} from '../../model/bookPost.model';
+import {Post} from 'model/post.model';
 import {BookDetailActions} from './bookDetail.actions';
-import {UserModel} from '../../model/user.model';
+import {User} from 'model/user.model';
 
 interface BookDetailState {
     isLoading: boolean
     isError: boolean
-    book?: BookPost
-    user?: UserModel
+    post?: Post
+    user?: User
 }
 
 const initialState: BookDetailState = {
@@ -17,18 +17,18 @@ const initialState: BookDetailState = {
 
 export const bookDetailReducer = createReducer(initialState, builder => {
 
-    builder.addCase(BookDetailActions.fetchBook.pending, state => {
+    builder.addCase(BookDetailActions.fetchPost.pending, state => {
         state.isLoading = true
         state.isError = false
     })
-    builder.addCase(BookDetailActions.fetchBook.rejected, state => {
+    builder.addCase(BookDetailActions.fetchPost.rejected, state => {
         state.isLoading = false
         state.isError = true
     })
-    builder.addCase(BookDetailActions.fetchBook.fulfilled, (state, action)=> {
+    builder.addCase(BookDetailActions.fetchPost.fulfilled, (state, action)=> {
         state.isLoading = false
         state.isError = false
-        state.book = action.payload
+        state.post = action.payload
     })
 
     builder.addCase(BookDetailActions.fetchUser.pending, state => {

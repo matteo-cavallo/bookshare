@@ -3,13 +3,16 @@ import React from 'react';
 import {ProfileScreen} from '../screens/tabs/profile/profile.screen';
 import {SettingsScreen} from "../screens/tabs/profile/settings/settings.screen";
 import {AccountScreen} from "../screens/tabs/profile/settings/account/account.screen";
-import {PositionScreen} from "../screens/tabs/profile/settings/account/position/position.screen";
-import {BookSharePosition} from "../model/position";
 
 export type ProfileScreens = {
     Profile: undefined;
     Settings: undefined;
     Account: undefined;
+}
+export enum ProfileScreensNames {
+    profile ="Profile",
+    settings ="Settings",
+    account ="Account",
 }
 
 export const ProfileNavigator = () => {
@@ -18,9 +21,9 @@ export const ProfileNavigator = () => {
 
     return (
         <ProfileStack.Navigator>
-            <ProfileStack.Screen name={"Profile"} options={profileScreenOptions}  component={ProfileScreen} />
-            <ProfileStack.Screen name={"Settings"} options={settingsScreenOptions} component={SettingsScreen} />
-            <ProfileStack.Screen name={"Account"} options={accountScreenOptions} component={AccountScreen} />
+            <ProfileStack.Screen name={ProfileScreensNames.profile} options={profileScreenOptions}  component={ProfileScreen} />
+            <ProfileStack.Screen name={ProfileScreensNames.settings} options={settingsScreenOptions} component={SettingsScreen} />
+            <ProfileStack.Screen name={ProfileScreensNames.account} options={accountScreenOptions} component={AccountScreen} />
         </ProfileStack.Navigator>
     )
 }

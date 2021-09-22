@@ -25,12 +25,12 @@ import {PickerSelector} from "../../../components/pickerSelector.component";
 import 'react-native-get-random-values';
 import {useAppDispatch, useAppSelector} from '../../../store/store.config';
 import {PostNewBookActions} from '../../../store/postBook/postBook.actions';
-import {BookConditions, NewBookModel} from '../../../model/newBook.model';
+import {BookConditions, Book} from 'model/book.model';
 import {ToggleComponent} from '../../../components/toggle.component';
 import {HomeActions} from '../../../store/home/home.actions';
 import {NavigationLinkComponent} from "../../../components/navigationLink.component";
 import {ON_APPLY_EVENT_EMITTER, OnApplyEventProps} from "../profile/settings/account/position/position.screen";
-import {BookSharePosition} from "../../../model/position";
+import {BookSharePosition} from "model/bookSharePosition.model";
 import {useNavigation} from "@react-navigation/native";
 import {UserActions} from "../../../store/user/user.actions";
 
@@ -124,7 +124,7 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
     const imageLinks = googleBookData?.volumeInfo.imageLinks
 
     function publishBook() {
-        const newBook: NewBookModel = {
+        const newBook: Book = {
             googleBookId: googleBookData?.id || null,
             isbn: isbn || null,
             title,

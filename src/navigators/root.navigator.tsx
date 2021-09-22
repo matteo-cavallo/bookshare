@@ -6,15 +6,22 @@ import {AuthenticationNavigator} from './authentication.navigator';
 import {PostBookScreen} from '../screens/tabs/postBook/postBook.screen';
 import {LightColors} from '../styles/colors';
 import {useAppSelector} from '../store/store.config';
-import {BookSharePosition} from "../model/position";
 import {PositionScreen} from "../screens/tabs/profile/settings/account/position/position.screen";
 
-type RootStackScreens = {
+export type RootStackScreens = {
     SplashScreen: undefined;
     TabsNavigator: undefined;
     LoginModal: undefined;
     NewBookModal: undefined;
     Position: undefined;
+}
+
+export enum rootScreensNames  {
+    splashScreen ="SplashScreen",
+    TabsNavigator ="TabsNavigator",
+    loginModal ="LoginModal",
+    newBookModal ="NewBookModal",
+    position ="Position",
 }
 
 declare global {
@@ -30,27 +37,27 @@ export const RootNavigator: FC = () => {
     const RootStack = createNativeStackNavigator<RootStackScreens>()
 
     return (
-        <RootStack.Navigator initialRouteName={'SplashScreen'}>
+        <RootStack.Navigator initialRouteName={rootScreensNames.splashScreen}>
             {
                 !user ?
                     <RootStack.Group screenOptions={{headerShown: false, stackAnimation: 'fade'}}>
-                        <RootStack.Screen name={'SplashScreen'} component={SplashScreen}/>
+                        <RootStack.Screen name={rootScreensNames.splashScreen} component={SplashScreen}/>
                     </RootStack.Group>
                     :
                     <RootStack.Group screenOptions={{headerShown: false}}>
-                        <RootStack.Screen name={"TabsNavigator"} component={TabsNavigator} />
+                        <RootStack.Screen name={rootScreensNames.TabsNavigator} component={TabsNavigator} />
                     </RootStack.Group>
             }
-            <RootStack.Screen name={"Position"} options={positionScreenOptions} component={PositionScreen} />
+            <RootStack.Screen name={rootScreensNames.position} options={positionScreenOptions} component={PositionScreen} />
 
 
-            <RootStack.Screen name={"NewBookModal"} component={PostBookScreen} options={{
+            <RootStack.Screen name={rootScreensNames.newBookModal} component={PostBookScreen} options={{
                 stackPresentation: 'fullScreenModal',
                 headerTintColor: LightColors.ACCENT,
             }} />
 
             <RootStack.Group screenOptions={{stackPresentation: "modal", title: "Login", headerShown: false}}>
-                <RootStack.Screen name={"LoginModal"} component={AuthenticationNavigator}/>
+                <RootStack.Screen name={rootScreensNames.loginModal} component={AuthenticationNavigator}/>
             </RootStack.Group>
 
 

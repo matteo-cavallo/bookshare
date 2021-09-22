@@ -17,15 +17,19 @@ import {NavigationLinkComponent} from "../../../../../components/navigationLink.
 import {Ionicons} from "@expo/vector-icons";
 import {useAppDispatch, useAppSelector} from "../../../../../store/store.config";
 import {NativeStackScreenProps} from "react-native-screens/native-stack";
-import {ProfileScreens} from "../../../../../navigators/profile.navigator";
-import {UserModel} from "../../../../../model/user.model";
+import {
+    ProfileScreens,
+    ProfileScreensNames
+} from '../../../../../navigators/profile.navigator';
+import {User} from "model/user.model";
 import {UserActions} from "../../../../../store/user/user.actions";
 import {Center} from "../../../../../components/center.component";
 import {useIsFocused} from "@react-navigation/native";
-import {BookSharePosition} from "../../../../../model/position";
+import {BookSharePosition} from "model/bookSharePosition.model";
 import {ON_APPLY_EVENT_EMITTER, OnApplyEventProps} from "./position/position.screen";
+import {rootScreensNames, RootStackScreens} from 'navigators/root.navigator';
 
-type Props = NativeStackScreenProps<ProfileScreens, "Account">
+type Props = NativeStackScreenProps<ProfileScreens & RootStackScreens , ProfileScreensNames.account>
 
 export const AccountScreen:FC<Props> = ({navigation}) => {
 
@@ -36,7 +40,7 @@ export const AccountScreen:FC<Props> = ({navigation}) => {
     const isLoading = useAppSelector(state => state.user.isLoading)
 
     const [canSubmit,setCanSubmit] = useState(false)
-    const [draftAccount, setDraftAccount] = useState<UserModel>(null)
+    const [draftAccount, setDraftAccount] = useState<User | null>(null)
 
     useEffect(()=>{
         if(!draftAccount){
@@ -166,12 +170,14 @@ export const AccountScreen:FC<Props> = ({navigation}) => {
     }
 
 
+    // @ts-ignore
+    // @ts-ignore
     return (
         <ScrollView style={styles.container}>
             <View style={styles.section}>
                 <TextComponent style={styles.sectionHeader}>Dati Personali</TextComponent>
                 <TextInputComponent
-                    onChangeText={(value)=>setDraftAccount({...draftAccount,firstName:value})}
+                    onChangeText={(value)=>setDraftAccount(draftAccount &&{...draftAccount,firstName:value})}
                     value={draftAccount?.firstName}
                     style={styles.sectionItem}
                     containerStyle={styles.sectionStartItem}
@@ -179,7 +185,7 @@ export const AccountScreen:FC<Props> = ({navigation}) => {
                     <TextComponent style={styles.sectionTextItem}>Nome</TextComponent>
                 }/>
                 <TextInputComponent
-                    onChangeText={(value)=>setDraftAccount({...draftAccount,lastName:value})}
+                    onChangeText={(value)=>setDraftAccount(draftAccount &&{...draftAccount,lastName:value})}
                     value={draftAccount?.lastName}
                     style={styles.sectionItem}
                     containerStyle={styles.sectionMiddleItem}
@@ -187,7 +193,7 @@ export const AccountScreen:FC<Props> = ({navigation}) => {
                         <TextComponent style={styles.sectionTextItem}>Cognome</TextComponent>
                 }/>
                 <TextInputComponent
-                    onChangeText={(value)=>setDraftAccount({...draftAccount,birthday:value})}
+                    onChangeText={(value)=>setDraftAccount(draftAccount &&{...draftAccount,birthday:value})}
                     value={draftAccount?.birthday}
                     style={styles.sectionItem}
                     containerStyle={styles.sectionEndItem}
@@ -207,7 +213,7 @@ export const AccountScreen:FC<Props> = ({navigation}) => {
                         <TextComponent style={styles.sectionTextItem}>Email</TextComponent>
                     }/>
                 <TextInputComponent
-                    onChangeText={(value)=>setDraftAccount({...draftAccount,phoneNumber:{...draftAccount.phoneNumber,number:value}})}
+                    onChangeText={(value)=>{}/*setDraftAccount()*/}
                     value={draftAccount?.phoneNumber?.number}
                     style={[styles.sectionItem,{color: theme.colors.PRIMARY}]}
                     containerStyle={styles.sectionEndItem}
@@ -219,14 +225,13 @@ export const AccountScreen:FC<Props> = ({navigation}) => {
             <View style={styles.section}>
                 <TextComponent style={styles.sectionHeader} >Posizione</TextComponent>
                 <NavigationLinkComponent
-                    onPress={()=>navigation.navigate("Position")}
+                    onPress={()=>navigation.navigate(rootScreensNames.position)}
                     startItem={
                     <Ionicons name={"navigate-circle-outline"} size={theme.icons.XS}/>
                 } >{profile?.defaultPosition ? `Posizione: ${profile.defaultPosition.address} - ${profile.defaultPosition.radius}km`:"Gestisci posizione" } </NavigationLinkComponent>
             </View>
 
             <NavigationLinkComponent
-                style={{color:theme.colors.DANGER}}
                 endItem={
                 <Ionicons name={"trash-outline"} size={theme.icons.XS} color={theme.colors.DANGER}/>
             }

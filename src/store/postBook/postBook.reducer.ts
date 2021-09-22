@@ -1,9 +1,9 @@
 import {createReducer} from '@reduxjs/toolkit';
-import {BookPost} from '../../model/bookPost.model';
+import {Post} from 'model/post.model';
 import {PostNewBookActions} from './postBook.actions';
 
 interface PostNewBookState {
-    book?: BookPost
+    book?: Post
     googleBook: GoogleAPIBookVolume | null
     isLoading: boolean
 }

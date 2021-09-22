@@ -1,14 +1,11 @@
 import React, {FC} from 'react';
 import {BottomTabNavigationOptions, createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {HomeScreen} from '../screens/tabs/home/home.screen';
 import {Ionicons} from '@expo/vector-icons';
-import {ProfileScreen} from '../screens/tabs/profile/profile.screen';
 import {withAuthentication} from '../highOrderComponents/withAuthentication';
 import {ProfileNavigator} from './profile.navigator';
 import {Center} from '../components/center.component';
 import {PostBookScreen} from '../screens/tabs/postBook/postBook.screen';
-import {Button, Pressable, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {TextInputComponent} from '../components/textInput.component';
+import {TouchableOpacity, View} from 'react-native';
 import {LightColors} from '../styles/colors';
 import {useNavigation} from '@react-navigation/native';
 import {HomeNavigator} from './home/home.navigator';
@@ -19,6 +16,11 @@ export type TabsScreens = {
     PostBook: undefined;
 }
 
+export enum TabsScreenNames {
+    homeNavigator= 'HomeNavigator',
+    profileNavigator= 'PostBook',
+    postBook= 'ProfileNavigator'
+}
 
 export const TabsNavigator: FC = () => {
     const Tabs = createBottomTabNavigator<TabsScreens>()
@@ -27,14 +29,14 @@ export const TabsNavigator: FC = () => {
         <Tabs.Navigator screenOptions={tabsNavigatorOptions}>
             {/* Public tabs */}
             <Tabs.Group>
-                <Tabs.Screen name={"HomeNavigator"} component={HomeNavigator} options={homeScreenOptions} />
+                <Tabs.Screen name={TabsScreenNames.homeNavigator} component={HomeNavigator} options={homeScreenOptions} />
             </Tabs.Group>
 
             {/* Private tabs*/}
             <Tabs.Group>
-                <Tabs.Screen name={"PostBook"} component={withAuthentication(PostBookScreen)}
+                <Tabs.Screen name={TabsScreenNames.postBook} component={withAuthentication(PostBookScreen)}
                              options={sellBookOptions}/>
-                <Tabs.Screen name={"ProfileNavigator"} component={withAuthentication(ProfileNavigator)}
+                <Tabs.Screen name={TabsScreenNames.profileNavigator} component={withAuthentication(ProfileNavigator)}
                              options={profileScreenOptions}/>
             </Tabs.Group>
         </Tabs.Navigator>

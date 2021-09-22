@@ -1,16 +1,13 @@
 import {Image, StyleSheet, TouchableOpacity, View} from 'react-native';
 import React, {FC, useContext} from 'react';
-import {BookPost} from '../../../../model/bookPost.model';
+import {Post} from 'model/post.model';
 import {TextComponent} from '../../../../components/text.component';
 import {ThemeContext} from '../../../../providers/theme.provider';
 import {Center} from '../../../../components/center.component';
-import {NativeStackScreenProps} from 'react-native-screens/native-stack';
-import {HomeStackParams} from '../../../../navigators/home/home.navigator';
-import {useNavigation} from '@react-navigation/native';
 
 
 interface Props {
-    post: BookPost
+    post: Post
     navigateTo: (uid: string) => void
 }
 

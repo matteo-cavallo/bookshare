@@ -1,25 +1,16 @@
-import React, {FC, useContext, useEffect, useState} from 'react';
-import {Center} from '../../components/center.component';
+import React, {FC, useContext, useEffect} from 'react';
 import {TextComponent} from '../../components/text.component';
 import {
     Alert,
     Button,
-    NativeSyntheticEvent,
-    StyleSheet, Text,
-    TextInput,
-    TextInputSubmitEditingEventData,
+    StyleSheet,
     useColorScheme,
     View
 } from 'react-native';
-import {UIActions} from '../../store/uiStore/uistore.actions';
-import {useDispatch} from 'react-redux';
-import {useNavigation} from '@react-navigation/native';
-import {TextInputComponent} from '../../components/textInput.component';
 import {ThemeContext} from '../../providers/theme.provider';
 import {ButtonComponent} from '../../components/button.component';
 import {
     NativeStackNavigationOptions,
-    NativeStackNavigationProp,
     NativeStackScreenProps
 } from 'react-native-screens/native-stack';
 import {AuthenticationNavigatorScreens} from '../../navigators/authentication.navigator';

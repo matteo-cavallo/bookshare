@@ -4,7 +4,7 @@ import {
     Keyboard,
     KeyboardAvoidingView,
     Platform,
-    StyleSheet, Text, TextInput,
+    StyleSheet, Text,
     TouchableWithoutFeedback,
     View
 } from 'react-native';
@@ -14,7 +14,6 @@ import {TextInputComponent} from '../../components/textInput.component';
 import {ThemeContext} from '../../providers/theme.provider';
 import {TextComponent} from '../../components/text.component';
 import {ButtonComponent} from '../../components/button.component';
-import {AuthContext} from '../../providers/authentication.provider';
 import {useNavigation} from '@react-navigation/native';
 import {useAppDispatch, useAppSelector} from '../../store/store.config';
 import {AuthenticationActions} from '../../store/auth/authentication.actions';

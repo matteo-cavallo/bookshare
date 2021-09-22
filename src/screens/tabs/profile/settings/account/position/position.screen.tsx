@@ -18,7 +18,7 @@ import {ButtonComponent} from "../../../../../../components/button.component";
 import * as Location from 'expo-location';
 import {LocationAccuracy} from 'expo-location';
 import {GoogleMapsAPI} from "../../../../../../services/googleMapsAPI.service";
-import {BookSharePosition} from "../../../../../../model/position";
+import {BookSharePosition} from "src/model/bookSharePosition.model";
 import {useAppDispatch, useAppSelector} from "../../../../../../store/store.config";
 import {UserActions} from "../../../../../../store/user/user.actions";
 import {NativeStackScreenProps} from "react-native-screens/native-stack";

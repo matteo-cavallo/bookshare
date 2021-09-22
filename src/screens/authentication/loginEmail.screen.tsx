@@ -1,6 +1,6 @@
 import React, {FC, useContext, useState} from 'react';
 import {
-    ActivityIndicator, Alert,
+    Alert,
     Keyboard,
     KeyboardAvoidingView,
     Platform,
@@ -14,12 +14,10 @@ import {TextInputComponent} from '../../components/textInput.component';
 import {ThemeContext} from '../../providers/theme.provider';
 import {TextComponent} from '../../components/text.component';
 import {ButtonComponent} from '../../components/button.component';
-import {AuthContext} from '../../providers/authentication.provider';
 import {useNavigation} from '@react-navigation/native';
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
 import {AuthenticationActions} from '../../store/auth/authentication.actions';
-import {unwrapResult} from '@reduxjs/toolkit';
-import {AppDispatch, useAppDispatch, useAppSelector} from '../../store/store.config';
+import { useAppDispatch, useAppSelector} from '../../store/store.config';
 
 type Props = NativeStackScreenProps<AuthenticationNavigatorScreens, "LoginEmail">
 

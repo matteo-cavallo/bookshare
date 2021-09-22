@@ -1,4 +1,4 @@
-import {BookConditions} from '../../model/newBook.model';
+import {BookConditions} from 'model/book.model';
 
 export const conditionMapper = (key?: string): string => {
 

@@ -26,7 +26,6 @@
     "expo-device": "~3.3.0",
     "expo-location": "~12.1.2",
     "expo-status-bar": "~1.0.4",
-    "firebase": "^8.2.3",
     "ngeohash": "^0.6.3",
     "react": "16.13.1",
     "react-dom": "16.13.1",

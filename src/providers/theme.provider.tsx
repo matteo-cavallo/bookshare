@@ -1,6 +1,6 @@
 import React, {createContext, FC, useEffect, useState} from 'react';
 import {DarkTheme, LightTheme} from '../styles/theme';
-import {ColorSchemeName, StatusBar, useColorScheme} from 'react-native';
+import { StatusBar, useColorScheme} from 'react-native';
 
 interface ThemeParams {
     theme: typeof LightTheme;

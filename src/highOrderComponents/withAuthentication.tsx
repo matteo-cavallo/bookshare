@@ -1,13 +1,9 @@
-import React, {ComponentType, FC, useContext, useEffect} from 'react';
-import {AuthContext} from '../providers/authentication.provider';
+import React, {ComponentType, useContext} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {Image, View} from 'react-native';
-import {Center} from '../components/center.component';
 import {TextComponent} from '../components/text.component';
-import {AuthenticationScreen} from '../screens/authentication/authentication.screen';
 import {ButtonComponent} from '../components/button.component';
 import {ThemeContext} from '../providers/theme.provider';
-import {useDispatch, useSelector} from 'react-redux';
 import {useAppSelector} from '../store/store.config';
 
 export const withAuthentication = (WrappedComponent: ComponentType<any>) => {
@@ -34,7 +30,7 @@ export const withAuthentication = (WrappedComponent: ComponentType<any>) => {
         )
     }
 
-    if (!auth || auth.isAnonymous) {
+    if (!auth) {
         return Component
     } else {
         return WrappedComponent

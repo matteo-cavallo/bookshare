@@ -1,11 +1,8 @@
 import React, {FC, useContext, useEffect, useState} from 'react';
-import {Button, Text, View, StyleSheet, Alert} from 'react-native'
-import {BarCodeEvent, BarCodeScannedCallback, BarCodeScanner, PermissionStatus} from "expo-barcode-scanner";
-import {Ionicons} from "@expo/vector-icons";
+import {Button, Text, StyleSheet, Alert} from 'react-native'
+import {BarCodeEvent, BarCodeScanner, PermissionStatus} from "expo-barcode-scanner";
 import {ThemeContext} from "../providers/theme.provider";
-import {TextComponent} from "./text.component";
 import {Center} from "./center.component";
-import {DeviceType} from 'expo-device';
 import * as Device from 'expo-device';
 type IsbnScannerProps = {
     setIsbnModal : (value:boolean)=>void
@@ -83,7 +80,5 @@ const IsbnScanner:FC<IsbnScannerProps> = ({setIsbnModal,onIsbnScanned}) => {
 
     );
 };
-
-//{scanned && <Button title={'Tap to Scan Again'} onPress={() => } />}
 
 export default IsbnScanner;

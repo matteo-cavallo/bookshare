@@ -11,7 +11,6 @@ import {TextComponent} from '../../../components/text.component';
 import {ThemeContext} from '../../../providers/theme.provider';
 import {Ionicons} from '@expo/vector-icons';
 import {RootState, useAppDispatch, useAppSelector} from '../../../store/store.config';
-import {FBAuth} from '../../../firebase/firebase.config';
 import {NativeStackScreenProps} from 'react-native-screens/native-stack';
 import {ProfileScreens} from '../../../navigators/profile.navigator';
 import {UserActions} from "../../../store/user/user.actions";
@@ -35,9 +34,7 @@ export const ProfileScreen: FC<Props> = ({navigation}) => {
     },[])
 
     function handleLogout(){
-        FBAuth.signOut().then(() => {
-            console.log("User is signed out.")
-        })
+        //TODO:Add sign-out
     }
 
     const styles = StyleSheet.create({

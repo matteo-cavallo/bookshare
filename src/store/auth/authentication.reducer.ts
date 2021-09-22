@@ -1,9 +1,9 @@
 import {createReducer} from '@reduxjs/toolkit';
 import {AuthenticationActions} from './authentication.actions';
-import {FirebaseUser} from '../../firebase/firebase.config';
+import {User} from 'model/user.model';
 
 interface AutenticationState {
-    user: FirebaseUser | null
+    user: User | null
     isLoading: boolean
 }
 

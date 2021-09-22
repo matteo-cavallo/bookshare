@@ -1,13 +1,11 @@
 import React, {FC, useContext} from 'react';
 import {
     ActivityIndicator,
-    ButtonProps,
     StyleProp,
-    StyleSheet, Text,
-    TextProps, TextStyle,
+    StyleSheet,
+    TextStyle,
     TouchableOpacity,
     TouchableOpacityProps,
-    View
 } from 'react-native';
 import {TextComponent} from './text.component';
 import {ThemeContext} from '../providers/theme.provider';

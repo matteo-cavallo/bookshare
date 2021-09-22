@@ -1,13 +1,13 @@
 import {createReducer} from '@reduxjs/toolkit';
-import {BookPost} from '../../model/bookPost.model';
 import {HomeActions} from './home.actions';
+import {Post} from 'model/post.model';
 
 interface HomeState {
     isLoading: boolean
     isError: boolean
 
     isLoadingMoreData: boolean,
-    feed: BookPost[]
+    feed: Post[]
     lastDocRef: string | null
 }
 

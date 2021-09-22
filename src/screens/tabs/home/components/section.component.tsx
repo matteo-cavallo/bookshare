@@ -1,14 +1,13 @@
-import React, {FC, useContext, useEffect} from 'react';
-import {BookPost} from '../../../../model/bookPost.model';
-import {ActivityIndicator, Image, StyleSheet, Text, View} from 'react-native';
+import React, {FC, useContext, } from 'react';
+import {Post} from 'model/post.model';
+import {StyleSheet, View} from 'react-native';
 import {TextComponent} from '../../../../components/text.component';
 import {ThemeContext} from '../../../../providers/theme.provider';
 import {PostItemComponent} from './postItem.component';
-import {useAppSelector} from '../../../../store/store.config';
 
 interface Props {
     title: string
-    items: BookPost[]
+    items: Post[]
 }
 
 export const SectionComponent: FC<Props> = (props) => {
@@ -36,7 +35,7 @@ export const SectionComponent: FC<Props> = (props) => {
             </View>
             <View style={styles.body}>
                 {
-                    items.map(post => <PostItemComponent key={post.uid} post={post}/>)
+                    items.map(post => <PostItemComponent key={post.uid} post={post} navigateTo={()=>{}}/>)
                 }
             </View>
         </View>

@@ -1,9 +1,9 @@
 import {createReducer} from '@reduxjs/toolkit';
-import {UserModel} from '../../model/user.model';
+import {User} from 'src/model/user.model';
 import {UserActions} from "./user.actions";
 
 interface UserState {
-    user?: UserModel;
+    user?: User;
     isLoading: boolean;
     isError: boolean;
 }
