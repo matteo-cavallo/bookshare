@@ -87,7 +87,7 @@ export const AccountScreen:FC<Props> = ({navigation}) => {
         console.log(draftAccount)
 
         if(draftAccount){
-            dispatch(ProfileActions.updateProfile({profile:draftAccount}))
+            dispatch(ProfileActions.updateProfile(draftAccount))
                 .unwrap()
                 .then(() => {
                     dispatch(ProfileActions.fetchProfile())
@@ -135,7 +135,7 @@ export const AccountScreen:FC<Props> = ({navigation}) => {
     const handleOnApplyPositionScreen = (position:BookSharePosition,goBack:()=>void) =>{
         //Dispatch to the reducer the position
         if(position){
-            dispatch(ProfileActions.updateProfile({profile:{defaultPosition:position}}))
+            dispatch(ProfileActions.updateProfile({defaultPosition:position}))
                 .unwrap()
                 .then(result => {
                     console.log("User default position updated successfully.")
@@ -216,7 +216,7 @@ export const AccountScreen:FC<Props> = ({navigation}) => {
                     }/>
                 <TextInputComponent
                     onChangeText={(value)=>{}/*setDraftAccount()*/}
-                    value={draftAccount?.phoneNumber?.number}
+                    value={draftAccount?.phoneNumber}
                     style={[styles.sectionItem,{color: theme.colors.PRIMARY}]}
                     containerStyle={styles.sectionEndItem}
                     startItem={

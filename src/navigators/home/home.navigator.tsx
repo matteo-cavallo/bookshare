@@ -3,19 +3,26 @@ import React from 'react';
 import {HomeScreen} from 'screens/tabs/home/home.screen';
 import {BookDetail} from 'screens/tabs/home/detail/bookDetail.screen';
 
-export type HomeStackParams = {
+export type HomeStack = {
     Home: undefined;
     BookDetail: {uid: string};
 }
 
+export enum HomeScreensNames {
+    home ="Home",
+    bookDetail ="BookDetail",
+    //root
+    profile ="Profile",
+}
+
 export const HomeNavigator = () => {
 
-    const Stack = createNativeStackNavigator<HomeStackParams>()
+    const Stack = createNativeStackNavigator<HomeStack>()
 
     return (
         <Stack.Navigator>
-            <Stack.Screen name={"Home"} component={HomeScreen} options={homeScreenOptions}/>
-            <Stack.Screen name={"BookDetail"} component={BookDetail} options={detailPostOptions}/>
+            <Stack.Screen name={HomeScreensNames.home} component={HomeScreen} options={homeScreenOptions}/>
+            <Stack.Screen name={HomeScreensNames.bookDetail} component={BookDetail} options={detailPostOptions}/>
         </Stack.Navigator>
     )
 }

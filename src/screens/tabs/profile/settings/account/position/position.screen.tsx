@@ -12,7 +12,7 @@ import {
 import {ThemeContext} from 'providers/theme.provider';
 import {TextInputComponent} from 'components/textInput.component';
 import {Ionicons} from "@expo/vector-icons";
-import MapView, {Circle} from 'react-native-maps';
+import MapView, {Circle, Marker, Region} from 'react-native-maps';
 import {TextComponent} from 'components/text.component';
 import {ButtonComponent} from 'components/button.component';
 import * as Location from 'expo-location';
@@ -20,10 +20,11 @@ import {LocationAccuracy} from 'expo-location';
 import {GoogleMapsAPI} from 'services/googleMapsAPI.service';
 import {useAppDispatch, useAppSelector} from 'store/store.config';
 import {NativeStackScreenProps} from "react-native-screens/native-stack";
-import {HomeStackParams} from 'navigators/home/home.navigator';
+import {HomeScreensNames, HomeStack} from 'navigators/home/home.navigator';
 import {BookSharePosition} from 'model/bookSharePosition.model';
+import {ProfileScreens} from 'navigators/profile.navigator';
 
-type Props = NativeStackScreenProps<HomeStackParams, "Profile">
+type Props = NativeStackScreenProps<HomeStack & ProfileScreens, HomeScreensNames.profile>
 
 export const ON_APPLY_EVENT_EMITTER = "positionScreen.onApply"
 
@@ -37,7 +38,7 @@ export const PositionScreen: FC<Props> = ({navigation, route}) => {
     const {theme} = useContext(ThemeContext)
 
     //MAIN POSITION
-    const [position, setPosition] = useState<BookSharePosition>(null)
+    const [position, setPosition] = useState<BookSharePosition | null>(null)
     //Slider
     const [positionRadius, setPositionRadius] = useState(50)
     //Searchbar
@@ -129,8 +130,8 @@ export const PositionScreen: FC<Props> = ({navigation, route}) => {
         animateMapToRegion(newPosition.lat, newPosition.lng)
     }
 
-    //Handler for retriving user location
-    const handleFetchLocation = async (): void => {
+    //Handler for retrieving user location
+    const handleFetchLocation = async ():Promise<void> => {
         //ask location permission
         let {status} = await Location.requestForegroundPermissionsAsync();
         if (status !== 'granted') {
@@ -138,7 +139,6 @@ export const PositionScreen: FC<Props> = ({navigation, route}) => {
                 {text: "Concedi", onPress: () => handleFetchLocation()},
                 {text: "Annulla", style: "destructive"}
             ])
-            return;
         }
 
         //Get user coordinates
@@ -159,6 +159,8 @@ export const PositionScreen: FC<Props> = ({navigation, route}) => {
         mapRef.current?.animateToRegion({
             latitude: lat,
             longitude: lng,
+            latitudeDelta: 0,
+            longitudeDelta: 0
         })
     }
 
@@ -176,9 +178,18 @@ export const PositionScreen: FC<Props> = ({navigation, route}) => {
     //Slider handler for setting the radius
     const handleRadiusChange = (newRadius: number) => {
         setPositionRadius(newRadius)
-        setPosition({...position, radius: newRadius})
+        if(position){
+            setPosition({...position, radius: newRadius})
+        }
     }
 
+    const handleMapRef = (ref:MapView | null) =>{
+        if(ref){
+            mapRef.current = ref
+        }
+    }
+
+    // @ts-ignore
     return (
         <SafeAreaView style={{flex: 1}}>
 
@@ -209,7 +220,7 @@ export const PositionScreen: FC<Props> = ({navigation, route}) => {
                 <MapView
                     showsUserLocation={true}
                     style={styles.map}
-                    ref={mapRef}
+                    ref={handleMapRef}
                     onMapReady={() => {
                         if (!userDefaultPosition) {
                             handleFetchLocation()
@@ -227,7 +238,7 @@ export const PositionScreen: FC<Props> = ({navigation, route}) => {
                         strokeColor="#3399ff"
                         fillColor="rgba(129,178,251,0.5)"
                     />
-                    <MapView.Marker
+                    <Marker
                         coordinate={choosePosition()}
                         title={"Selected Position"}
                     />

@@ -2,7 +2,7 @@ import React, {FC, useContext, useEffect} from 'react';
 import {ActivityIndicator, Image, SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {TextComponent} from '../../../../components/text.component';
 import {NativeStackScreenProps} from 'react-native-screens/native-stack';
-import {HomeStackParams} from '../../../../navigators/home/home.navigator';
+import {HomeStack} from '../../../../navigators/home/home.navigator';
 import {useAppDispatch, useAppSelector} from '../../../../store/store.config';
 import {Center} from '../../../../components/center.component';
 import {BookDetailActions} from '../../../../store/bookDetail/bookDetail.actions';
@@ -11,7 +11,7 @@ import {Ionicons} from '@expo/vector-icons';
 import {ButtonComponent} from '../../../../components/button.component';
 import {conditionMapper} from '../../../../utils/mappers/condition.mapper';
 
-type Props = NativeStackScreenProps<HomeStackParams, "BookDetail">
+type Props = NativeStackScreenProps<HomeStack, "BookDetail">
 
 export const BookDetail: FC<Props> = ({navigation, route}) => {
 

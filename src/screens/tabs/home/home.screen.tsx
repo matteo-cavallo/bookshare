@@ -19,11 +19,11 @@ import {SectionComponent} from './components/section.component';
 import {Post} from 'model/post.model';
 import {PostItemComponent} from './components/postItem.component';
 import {NativeStackScreenProps} from 'react-native-screens/native-stack';
-import {HomeStackParams} from '../../../navigators/home/home.navigator';
+import {HomeStack} from '../../../navigators/home/home.navigator';
 import {TextInputComponent} from '../../../components/textInput.component';
 import {Ionicons} from '@expo/vector-icons';
 
-type Props = NativeStackScreenProps<HomeStackParams, "Home">
+type Props = NativeStackScreenProps<HomeStack, "Home">
 
 export const HomeScreen: FC<Props> = ({navigation}) => {
 
