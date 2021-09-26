@@ -1,9 +1,9 @@
 import React, {FC, } from 'react';
 import {StyleSheet, View} from 'react-native';
-import {Center} from '../../components/center.component';
-import { LightColors} from '../../styles/colors';
-import {LightTheme} from '../../styles/theme';
-import {TextComponent} from '../../components/text.component';
+import {Center} from 'components/center.component';
+import { LightColors} from 'styles/colors';
+import {LightTheme} from 'styles/theme';
+import {TextComponent} from 'components/text.component';
 
 export const SplashScreen: FC = () => {
 

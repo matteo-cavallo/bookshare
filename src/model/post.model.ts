@@ -1,30 +1,24 @@
-
-// Listed Book
-import { PhoneNumber} from './book.model';
+import {Book} from './book.model';
 import {BookSharePosition} from "./bookSharePosition.model";
+import {Profile} from 'model/profile.model';
 
 export interface Post {
     // Id
     uid?: string
-    owner: string
-    googleBookId: string | null
+    owner?: Profile
 
     // Contents
     title: string
     description: string
     price: number
-    condition: string
     position: BookSharePosition | null
-    phoneNumber: PhoneNumber | null
+    phoneNumber: string | null
     mainImage: string | null
     images?: string[]
+    books: Book[]
 
     // Status
     active: boolean
-    sold: boolean
+    creationDate?: Date
 
-    // Metadata
-    creationDate: string
-    lastEdit: string
-    saves?: number
 }

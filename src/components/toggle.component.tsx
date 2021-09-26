@@ -1,7 +1,7 @@
 import React, {FC, useContext} from 'react';
 import {StyleSheet, Switch, SwitchProps, View} from 'react-native';
 import {TextComponent} from './text.component';
-import {ThemeContext} from '../providers/theme.provider';
+import {ThemeContext} from 'providers/theme.provider';
 
 
 interface Props extends SwitchProps {

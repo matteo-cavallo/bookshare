@@ -2,9 +2,9 @@ import React, {FC} from 'react';
 import {
     createNativeStackNavigator,
 } from 'react-native-screens/native-stack';
-import {AuthenticationScreen} from '../screens/authentication/authentication.screen';
-import {LoginEmailScreen} from '../screens/authentication/loginEmail.screen';
-import {SignUpEmailScreen} from '../screens/authentication/signUpEmail.screen';
+import {AuthenticationScreen} from 'screens/authentication/authentication.screen';
+import {LoginEmailScreen} from 'screens/authentication/loginEmail.screen';
+import {SignUpEmailScreen} from 'screens/authentication/signUpEmail.screen';
 
 export type AuthenticationNavigatorScreens = {
     LandingPage: undefined;

@@ -7,14 +7,14 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
-import {TextComponent} from '../../../components/text.component';
-import {ThemeContext} from '../../../providers/theme.provider';
+import {TextComponent} from 'components/text.component';
+import {ThemeContext} from 'providers/theme.provider';
 import {Ionicons} from '@expo/vector-icons';
-import {RootState, useAppDispatch, useAppSelector} from '../../../store/store.config';
+import {RootState, useAppDispatch, useAppSelector} from 'store/store.config';
 import {NativeStackScreenProps} from 'react-native-screens/native-stack';
-import {ProfileScreens} from '../../../navigators/profile.navigator';
-import {UserActions} from "../../../store/user/user.actions";
-import {Center} from '../../../components/center.component';
+import {ProfileScreens} from 'navigators/profile.navigator';
+import {ProfileActions} from "store/profile/profile.actions";
+import {Center} from 'components/center.component';
 
 type Props = NativeStackScreenProps<ProfileScreens, "Profile">
 
@@ -26,11 +26,11 @@ export const ProfileScreen: FC<Props> = ({navigation}) => {
     const dispatch = useAppDispatch()
 
     // Selectors
-    const auth = useAppSelector(state => state.auth.user)
+    const auth = useAppSelector(state => state.auth.profile)
     const profile = useAppSelector(state => state.user.user)
 
     useEffect(()=>{
-        dispatch(UserActions.fetchUser())
+        dispatch(ProfileActions.fetchProfile())
     },[])
 
     function handleLogout(){

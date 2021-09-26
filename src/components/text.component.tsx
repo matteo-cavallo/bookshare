@@ -1,6 +1,6 @@
 import React, {FC, useContext} from 'react';
 import {StyleSheet, Text, TextProps} from 'react-native';
-import {ThemeContext} from '../providers/theme.provider';
+import {ThemeContext} from 'providers/theme.provider';
 
 /**
  * This is our custom TextComponent.

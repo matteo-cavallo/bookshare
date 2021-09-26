@@ -10,24 +10,23 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
-import {TextComponent} from "../../../../../components/text.component";
-import {ThemeContext} from "../../../../../providers/theme.provider";
-import {TextInputComponent} from "../../../../../components/textInput.component";
-import {NavigationLinkComponent} from "../../../../../components/navigationLink.component";
+import {TextComponent} from "components/text.component";
+import {ThemeContext} from "providers/theme.provider";
+import {TextInputComponent} from "components/textInput.component";
+import {NavigationLinkComponent} from "components/navigationLink.component";
 import {Ionicons} from "@expo/vector-icons";
-import {useAppDispatch, useAppSelector} from "../../../../../store/store.config";
+import {useAppDispatch, useAppSelector} from "store/store.config";
 import {NativeStackScreenProps} from "react-native-screens/native-stack";
 import {
     ProfileScreens,
     ProfileScreensNames
-} from '../../../../../navigators/profile.navigator';
-import {User} from "model/user.model";
-import {UserActions} from "../../../../../store/user/user.actions";
-import {Center} from "../../../../../components/center.component";
-import {useIsFocused} from "@react-navigation/native";
-import {BookSharePosition} from "model/bookSharePosition.model";
+} from 'navigators/profile.navigator';
+import {ProfileActions} from "store/profile/profile.actions";
+import {Center} from "components/center.component";
 import {ON_APPLY_EVENT_EMITTER, OnApplyEventProps} from "./position/position.screen";
-import {rootScreensNames, RootStackScreens} from 'navigators/root.navigator';
+import {Profile} from 'model/profile.model';
+import {BookSharePosition} from 'model/bookSharePosition.model';
+import {rootScreensNames, RootStackScreens} from 'navigators/types';
 
 type Props = NativeStackScreenProps<ProfileScreens & RootStackScreens , ProfileScreensNames.account>
 
@@ -40,7 +39,7 @@ export const AccountScreen:FC<Props> = ({navigation}) => {
     const isLoading = useAppSelector(state => state.user.isLoading)
 
     const [canSubmit,setCanSubmit] = useState(false)
-    const [draftAccount, setDraftAccount] = useState<User | null>(null)
+    const [draftAccount, setDraftAccount] = useState<Profile | undefined>(undefined)
 
     useEffect(()=>{
         if(!draftAccount){
@@ -87,18 +86,21 @@ export const AccountScreen:FC<Props> = ({navigation}) => {
     const handleUpdateUser = () =>{
         console.log(draftAccount)
 
-        dispatch(UserActions.updateUser(draftAccount))
-            .unwrap()
-            .then(() => {
-                dispatch(UserActions.fetchUser())
-                    .then(() => {
-                        setDraftAccount(null)
-                        setCanSubmit(false)
-                    })
-            })
-            .catch(e => {
-                Alert.alert("Attenzione", e.message)
-            })
+        if(draftAccount){
+            dispatch(ProfileActions.updateProfile({profile:draftAccount}))
+                .unwrap()
+                .then(() => {
+                    dispatch(ProfileActions.fetchProfile())
+                        .then(() => {
+                            setDraftAccount(undefined)
+                            setCanSubmit(false)
+                        })
+                })
+                .catch(e => {
+                    Alert.alert("Attenzione", e.message)
+                })
+        }
+
     }
 
     const styles = StyleSheet.create({
@@ -133,14 +135,14 @@ export const AccountScreen:FC<Props> = ({navigation}) => {
     const handleOnApplyPositionScreen = (position:BookSharePosition,goBack:()=>void) =>{
         //Dispatch to the reducer the position
         if(position){
-            dispatch(UserActions.updateUser({defaultPosition:position}))
+            dispatch(ProfileActions.updateProfile({profile:{defaultPosition:position}}))
                 .unwrap()
                 .then(result => {
                     console.log("User default position updated successfully.")
-                    dispatch(UserActions.fetchUser()).unwrap()
+                    dispatch(ProfileActions.fetchProfile()).unwrap()
                         .then(result=>{
                             //go back to account screen from positionScreen
-                            setDraftAccount(null)
+                            setDraftAccount(undefined)
                             goBack()
                         })
                         .catch(e=>{

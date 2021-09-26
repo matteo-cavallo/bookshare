@@ -9,20 +9,19 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
-import {ThemeContext} from "../../../../../../providers/theme.provider";
-import {TextInputComponent} from "../../../../../../components/textInput.component";
+import {ThemeContext} from 'providers/theme.provider';
+import {TextInputComponent} from 'components/textInput.component';
 import {Ionicons} from "@expo/vector-icons";
 import MapView, {Circle} from 'react-native-maps';
-import {TextComponent} from "../../../../../../components/text.component";
-import {ButtonComponent} from "../../../../../../components/button.component";
+import {TextComponent} from 'components/text.component';
+import {ButtonComponent} from 'components/button.component';
 import * as Location from 'expo-location';
 import {LocationAccuracy} from 'expo-location';
-import {GoogleMapsAPI} from "../../../../../../services/googleMapsAPI.service";
-import {BookSharePosition} from "src/model/bookSharePosition.model";
-import {useAppDispatch, useAppSelector} from "../../../../../../store/store.config";
-import {UserActions} from "../../../../../../store/user/user.actions";
+import {GoogleMapsAPI} from 'services/googleMapsAPI.service';
+import {useAppDispatch, useAppSelector} from 'store/store.config';
 import {NativeStackScreenProps} from "react-native-screens/native-stack";
-import {HomeStackParams} from "../../../../../../navigators/home/home.navigator";
+import {HomeStackParams} from 'navigators/home/home.navigator';
+import {BookSharePosition} from 'model/bookSharePosition.model';
 
 type Props = NativeStackScreenProps<HomeStackParams, "Profile">
 

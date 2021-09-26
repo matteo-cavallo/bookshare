@@ -1,12 +1,12 @@
 import React, {FC} from 'react';
 import {BottomTabNavigationOptions, createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Ionicons} from '@expo/vector-icons';
-import {withAuthentication} from '../highOrderComponents/withAuthentication';
+import {withAuthentication} from 'highOrderComponents/withAuthentication';
 import {ProfileNavigator} from './profile.navigator';
-import {Center} from '../components/center.component';
-import {PostBookScreen} from '../screens/tabs/postBook/postBook.screen';
+import {Center} from 'components/center.component';
+import {PostBookScreen} from 'screens/tabs/postBook/postBook.screen';
 import {TouchableOpacity, View} from 'react-native';
-import {LightColors} from '../styles/colors';
+import {LightColors} from 'styles/colors';
 import {useNavigation} from '@react-navigation/native';
 import {HomeNavigator} from './home/home.navigator';
 

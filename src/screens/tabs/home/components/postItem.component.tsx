@@ -1,9 +1,9 @@
 import {Image, StyleSheet, TouchableOpacity, View} from 'react-native';
 import React, {FC, useContext} from 'react';
 import {Post} from 'model/post.model';
-import {TextComponent} from '../../../../components/text.component';
-import {ThemeContext} from '../../../../providers/theme.provider';
-import {Center} from '../../../../components/center.component';
+import {TextComponent} from 'components/text.component';
+import {ThemeContext} from 'providers/theme.provider';
+import {Center} from 'components/center.component';
 
 
 interface Props {

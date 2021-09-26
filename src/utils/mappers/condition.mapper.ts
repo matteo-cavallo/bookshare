@@ -1,15 +1,15 @@
-import {BookConditions} from 'model/book.model';
+import {BookCondition} from 'model/book.model';
 
 export const conditionMapper = (key?: string): string => {
 
-    switch (key as BookConditions) {
-        case BookConditions.AS_NEW:
+    switch (key as BookCondition) {
+        case BookCondition.AS_NEW:
             return "Nuovo"
-        case BookConditions.NEW:
+        case BookCondition.NEW:
             return "Ottime condizioni"
-        case BookConditions.USED:
+        case BookCondition.USED:
             return "Con qualche segno di usura"
-        case BookConditions.RUINED:
+        case BookCondition.RUINED:
             return "Usurato"
         default:
             return "Non riportato"

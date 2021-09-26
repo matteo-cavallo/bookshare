@@ -8,7 +8,7 @@ import {
     TouchableOpacityProps,
 } from 'react-native';
 import {TextComponent} from './text.component';
-import {ThemeContext} from '../providers/theme.provider';
+import {ThemeContext} from 'providers/theme.provider';
 
 interface Props extends TouchableOpacityProps {
     textStyle?: StyleProp<TextStyle>

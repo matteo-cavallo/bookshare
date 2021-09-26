@@ -1,13 +1,14 @@
-import React, {createContext, FC, useEffect, useState} from 'react';
+import React, {createContext, FC, useEffect} from 'react';
 import {useDispatch} from 'react-redux';
+import {AuthenticationActions} from 'store/auth/authentication.actions';
 
 export const AuthContext = createContext(null)
 
 export const AuthenticationProvider: FC = ({children}) => {
     const dispatch = useDispatch()
 
-    useEffect(() => {
-
+    useEffect( () => {
+        dispatch(AuthenticationActions.loginWithPersistence())
     }, [])
 
     return (

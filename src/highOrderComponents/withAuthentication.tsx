@@ -1,14 +1,15 @@
 import React, {ComponentType, useContext} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {Image, View} from 'react-native';
-import {TextComponent} from '../components/text.component';
-import {ButtonComponent} from '../components/button.component';
-import {ThemeContext} from '../providers/theme.provider';
-import {useAppSelector} from '../store/store.config';
+import {TextComponent} from 'components/text.component';
+import {ButtonComponent} from 'components/button.component';
+import {ThemeContext} from 'providers/theme.provider';
+import {useAppSelector} from 'store/store.config';
 
 export const withAuthentication = (WrappedComponent: ComponentType<any>) => {
 
-    const auth = useAppSelector(state => state.auth.user)
+    const profile = useAppSelector(state => state.auth.profile)
+    const token = useAppSelector(state => state.auth.token)
 
     const rootNavigation = useNavigation()
     const {theme} = useContext(ThemeContext)
@@ -30,10 +31,9 @@ export const withAuthentication = (WrappedComponent: ComponentType<any>) => {
         )
     }
 
-    if (!auth) {
-        return Component
-    } else {
+    if (profile && token) {
         return WrappedComponent
     }
+    return Component
 
 }

@@ -5,7 +5,7 @@ import {
     TouchableOpacityProps,
     View
 } from 'react-native';
-import {ThemeContext} from '../providers/theme.provider';
+import {ThemeContext} from 'providers/theme.provider';
 import {TextComponent} from "./text.component";
 import {Ionicons} from "@expo/vector-icons";
 

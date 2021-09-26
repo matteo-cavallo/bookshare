@@ -1,7 +1,7 @@
 import React, {FC, useContext} from 'react';
-import {StyleProp, StyleSheet, Text, TextStyle, TouchableOpacity, View, ViewStyle} from 'react-native';
+import {StyleProp, TextStyle, ViewStyle} from 'react-native';
 import RNPickerSelect, {PickerSelectProps, PickerStyle} from "react-native-picker-select";
-import {ThemeContext} from "../providers/theme.provider";
+import {ThemeContext} from "providers/theme.provider";
 import {Ionicons} from "@expo/vector-icons";
 
 export const PickerSelector: FC<PickerSelectProps> = (props) => {

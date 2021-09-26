@@ -1,5 +1,5 @@
 import React, {createContext, FC, useEffect, useState} from 'react';
-import {DarkTheme, LightTheme} from '../styles/theme';
+import {DarkTheme, LightTheme} from 'styles/theme';
 import { StatusBar, useColorScheme} from 'react-native';
 
 interface ThemeParams {

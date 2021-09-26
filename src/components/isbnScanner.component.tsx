@@ -1,7 +1,7 @@
 import React, {FC, useContext, useEffect, useState} from 'react';
 import {Button, Text, StyleSheet, Alert} from 'react-native'
 import {BarCodeEvent, BarCodeScanner, PermissionStatus} from "expo-barcode-scanner";
-import {ThemeContext} from "../providers/theme.provider";
+import {ThemeContext} from "providers/theme.provider";
 import {Center} from "./center.component";
 import * as Device from 'expo-device';
 type IsbnScannerProps = {

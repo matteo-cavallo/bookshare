@@ -1,6 +1,6 @@
 import React, {FC, useContext} from 'react';
 import {StyleSheet, TextInput, TextInputProps, View, ViewStyle} from 'react-native';
-import {ThemeContext} from '../providers/theme.provider';
+import {ThemeContext} from 'providers/theme.provider';
 
 interface TextInputComponentProps extends TextInputProps {
     endItem?: JSX.Element,

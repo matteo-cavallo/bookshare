@@ -6,7 +6,7 @@ import {
     Reducer
 } from '@reduxjs/toolkit';
 import thunk from 'redux-thunk';
-import {userReducer} from './user/user.reducer';
+import {profileReducer} from 'store/profile/profile.reducer';
 import {authenticationReducer} from './auth/authentication.reducer';
 import {TypedUseSelectorHook, useDispatch, useSelector} from 'react-redux';
 import {postNewBookReducer} from './postBook/postBook.reducer';
@@ -15,7 +15,7 @@ import {bookDetailReducer} from './bookDetail/bookDetail.reducer';
 
 export const store = configureStore({
     reducer: {
-        user: userReducer,
+        user: profileReducer,
         auth: authenticationReducer,
         newBook: postNewBookReducer,
         home: homeReducer,

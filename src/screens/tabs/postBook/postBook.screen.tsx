@@ -12,27 +12,28 @@ import {
     TouchableWithoutFeedback,
     View,
 } from 'react-native';
-import {Center} from '../../../components/center.component';
-import {TextComponent} from '../../../components/text.component';
-import {TextInputComponent} from '../../../components/textInput.component';
-import {ThemeContext} from '../../../providers/theme.provider';
+import {Center} from 'components/center.component';
+import {TextComponent} from 'components/text.component';
+import {TextInputComponent} from 'components/textInput.component';
+import {ThemeContext} from 'providers/theme.provider';
 import {NativeStackScreenProps} from 'react-native-screens/native-stack';
-import {TabsScreens} from '../../../navigators/tabs.navigator';
-import {ButtonComponent} from '../../../components/button.component';
+import {TabsScreens} from 'navigators/tabs.navigator';
+import {ButtonComponent} from 'components/button.component';
 import {Ionicons} from '@expo/vector-icons';
 import IsbnScanner from "../../../components/isbnScanner.component";
-import {PickerSelector} from "../../../components/pickerSelector.component";
+import {PickerSelector} from 'components/pickerSelector.component';
 import 'react-native-get-random-values';
-import {useAppDispatch, useAppSelector} from '../../../store/store.config';
-import {PostNewBookActions} from '../../../store/postBook/postBook.actions';
-import {BookConditions, Book} from 'model/book.model';
-import {ToggleComponent} from '../../../components/toggle.component';
-import {HomeActions} from '../../../store/home/home.actions';
-import {NavigationLinkComponent} from "../../../components/navigationLink.component";
+import {useAppDispatch, useAppSelector} from 'store/store.config';
+import {PostNewBookActions} from 'store/postBook/postBook.actions';
+import {ToggleComponent} from 'components/toggle.component';
+import {HomeActions} from 'store/home/home.actions';
+import {NavigationLinkComponent} from 'components/navigationLink.component';
 import {ON_APPLY_EVENT_EMITTER, OnApplyEventProps} from "../profile/settings/account/position/position.screen";
-import {BookSharePosition} from "model/bookSharePosition.model";
 import {useNavigation} from "@react-navigation/native";
-import {UserActions} from "../../../store/user/user.actions";
+import {ProfileActions} from "store/profile/profile.actions";
+import {Book, BookCondition} from 'model/book.model';
+import {BookSharePosition} from 'model/bookSharePosition.model';
+import {Post} from 'model/post.model';
 
 type Props = NativeStackScreenProps<TabsScreens, "PostBook">
 
@@ -58,7 +59,7 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
     const [title, setTitle] = useState("")
     const [author, setAuthor] = useState("")
     const [description, setDescription] = useState("")
-    const [conditions, setConditions] = useState<BookConditions>()
+    const [conditions, setConditions] = useState<BookCondition>()
     const [price, setPrice] = useState("0")
     const [position, setPosition] = useState<BookSharePosition | null>(null)
     const [phone, setPhone] = useState("")
@@ -76,7 +77,7 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
     }, [])
 
     useEffect(()=>{
-        dispatch(UserActions.fetchUser())
+        dispatch(ProfileActions.fetchProfile())
     },[])
 
     useEffect(()=>{
@@ -123,6 +124,7 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
     // Images links
     const imageLinks = googleBookData?.volumeInfo.imageLinks
 
+    //TODO: FIX
     function publishBook() {
         const newBook: Book = {
             googleBookId: googleBookData?.id || null,
@@ -132,11 +134,20 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
             price: Number(price) || 0,
             position: position,
             authors: author.split(",") || [],
-            condition: conditions || BookConditions.NEW,
-            phoneNumber: {
-                countryCode: '39',
-                number: phone
-            },
+            condition: conditions || BookCondition.NEW,
+            phoneNumber: phone,
+            sold:false,
+
+        }
+        const newPost: Post = {
+            title: title,
+            description:description,
+            price: Number(price) || 0,
+            active: true,
+            position : position,
+            images: [],
+            phoneNumber: phone,
+            books:[newBook],
             mainImage: imageLinks?.smallThumbnail || imageLinks?.thumbnail || imageLinks?.small || imageLinks?.medium || imageLinks?.large || imageLinks?.extraLarge || null
         }
 
@@ -369,10 +380,10 @@ export const PostBookScreen: FC<Props> = ({navigation}) => {
                                     inputLabel: "Condizione"
                                 }}
                                 items={[
-                                    {label: 'Nuovo', value: BookConditions.NEW},
-                                    {label: 'Usato come nuovo', value: BookConditions.AS_NEW},
-                                    {label: 'Usato', value: BookConditions.USED},
-                                    {label: 'Molto rovinato', value: BookConditions.RUINED},
+                                    {label: 'Nuovo', value: BookCondition.NEW},
+                                    {label: 'Usato come nuovo', value: BookCondition.AS_NEW},
+                                    {label: 'Usato', value: BookCondition.USED},
+                                    {label: 'Molto rovinato', value: BookCondition.RUINED},
                                 ]}
                             />
                             <TextInputComponent

@@ -1,13 +1,13 @@
 import {createReducer} from '@reduxjs/toolkit';
 import {Post} from 'model/post.model';
 import {BookDetailActions} from './bookDetail.actions';
-import {User} from 'model/user.model';
+import {Profile} from 'model/profile.model';
 
 interface BookDetailState {
     isLoading: boolean
     isError: boolean
     post?: Post
-    user?: User
+    user?: Profile
 }
 
 const initialState: BookDetailState = {

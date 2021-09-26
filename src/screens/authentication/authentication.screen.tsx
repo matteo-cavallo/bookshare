@@ -1,5 +1,5 @@
 import React, {FC, useContext, useEffect} from 'react';
-import {TextComponent} from '../../components/text.component';
+import {TextComponent} from 'components/text.component';
 import {
     Alert,
     Button,
@@ -7,13 +7,13 @@ import {
     useColorScheme,
     View
 } from 'react-native';
-import {ThemeContext} from '../../providers/theme.provider';
-import {ButtonComponent} from '../../components/button.component';
+import {ThemeContext} from 'providers/theme.provider';
+import {ButtonComponent} from 'components/button.component';
 import {
     NativeStackNavigationOptions,
     NativeStackScreenProps
 } from 'react-native-screens/native-stack';
-import {AuthenticationNavigatorScreens} from '../../navigators/authentication.navigator';
+import {AuthenticationNavigatorScreens} from 'navigators/authentication.navigator';
 
 type Props = NativeStackScreenProps<AuthenticationNavigatorScreens,"LandingPage" >
 export const AuthenticationScreen: FC<Props> = ({navigation}) => {

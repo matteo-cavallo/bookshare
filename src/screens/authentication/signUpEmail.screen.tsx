@@ -9,14 +9,14 @@ import {
     View
 } from 'react-native';
 import {NativeStackScreenProps} from 'react-native-screens/native-stack';
-import {AuthenticationNavigatorScreens} from '../../navigators/authentication.navigator';
-import {TextInputComponent} from '../../components/textInput.component';
-import {ThemeContext} from '../../providers/theme.provider';
-import {TextComponent} from '../../components/text.component';
-import {ButtonComponent} from '../../components/button.component';
+import {AuthenticationNavigatorScreens} from 'navigators/authentication.navigator';
+import {TextInputComponent} from 'components/textInput.component';
+import {ThemeContext} from 'providers/theme.provider';
+import {TextComponent} from 'components/text.component';
+import {ButtonComponent} from 'components/button.component';
 import {useNavigation} from '@react-navigation/native';
-import {useAppDispatch, useAppSelector} from '../../store/store.config';
-import {AuthenticationActions} from '../../store/auth/authentication.actions';
+import {useAppDispatch, useAppSelector} from 'store/store.config';
+import {AuthenticationActions} from 'store/auth/authentication.actions';
 
 type Props = NativeStackScreenProps<AuthenticationNavigatorScreens, "LoginEmail">
 

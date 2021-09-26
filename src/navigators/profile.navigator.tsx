@@ -1,8 +1,8 @@
 import {createNativeStackNavigator, NativeStackNavigationOptions} from 'react-native-screens/native-stack';
 import React from 'react';
-import {ProfileScreen} from '../screens/tabs/profile/profile.screen';
-import {SettingsScreen} from "../screens/tabs/profile/settings/settings.screen";
-import {AccountScreen} from "../screens/tabs/profile/settings/account/account.screen";
+import {ProfileScreen} from 'screens/tabs/profile/profile.screen';
+import {SettingsScreen} from "screens/tabs/profile/settings/settings.screen";
+import {AccountScreen} from "screens/tabs/profile/settings/account/account.screen";
 
 export type ProfileScreens = {
     Profile: undefined;

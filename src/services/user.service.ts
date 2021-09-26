@@ -1,11 +1,11 @@
-import {User} from 'model/user.model';
+import {Profile} from 'model/profile.model';
 
 const fetchUser = async () =>{
-    return new Promise<User>((resolve, reject) =>{
+    return new Promise<Profile>((resolve, reject) =>{
         const timer = setTimeout(()=>{
 
         },1000)
-        resolve({} as User)
+        resolve({} as Profile)
     })
 }
 

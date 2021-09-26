@@ -1,6 +1,6 @@
 import {createAsyncThunk} from '@reduxjs/toolkit';
-import {Post} from 'model/post.model';
 import {postService} from 'services/post.service';
+import {Post} from 'model/post.model';
 
 const prefix = "home/"
 

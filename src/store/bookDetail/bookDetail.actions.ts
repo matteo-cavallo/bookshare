@@ -1,8 +1,8 @@
 import {createAsyncThunk} from '@reduxjs/toolkit';
-import {Post} from 'model/post.model';
-import {User} from 'model/user.model';
 import {postService} from 'services/post.service';
 import {userService} from 'services/user.service';
+import {Profile} from 'model/profile.model';
+import {Post} from 'model/post.model';
 
 const prefix = "bookDetails/"
 
@@ -16,7 +16,7 @@ const savePost = createAsyncThunk<void, { postId: string, save: boolean }>(BOOK_
     await postService.savePost()
 })
 
-const fetchUser = createAsyncThunk<User, { uid?: string }>(BOOK_DETAILS_ACTIONS.fetchUser, async arg => {
+const fetchUser = createAsyncThunk<Profile, { uid?: string }>(BOOK_DETAILS_ACTIONS.fetchUser, async arg => {
     return userService.fetchUser()
 })
 

@@ -1,4 +1,5 @@
 import {BookSharePosition} from "./bookSharePosition.model";
+import {Post} from 'model/post.model';
 
 export interface Book {
     googleBookId: string | null
@@ -7,19 +8,14 @@ export interface Book {
     authors: string[]
     description: string
     price: number
-    condition: BookConditions
+    condition: BookCondition
     position: BookSharePosition | null
-    phoneNumber: PhoneNumber
-    mainImage: string | null
-    images?: string[]
+    phoneNumber: string
+    sold:boolean
+    sellingPost?: Post
 }
 
-export interface PhoneNumber {
-    countryCode: string
-    number: string
-}
-
-export const enum BookConditions {
+export const enum BookCondition {
     NEW = "NEW",
     AS_NEW = "AS_NEW",
     USED = "USED",

@@ -1,6 +1,6 @@
 import {createReducer} from '@reduxjs/toolkit';
-import {User} from 'src/model/user.model';
-import {UserActions} from "./user.actions";
+import {User} from 'model/profile.model';
+import {ProfileActions} from "store/profile/profile.actions";
 
 interface UserState {
     user?: User;
@@ -13,34 +13,34 @@ const initialState: UserState = {
     isError: false,
 }
 
-export const userReducer = createReducer(
+export const profileReducer = createReducer(
     initialState,
     builder => {
-        builder.addCase(UserActions.fetchUser.pending,state => {
+        builder.addCase(ProfileActions.fetchProfile.pending, state => {
             state.isLoading = true
             state.isError = false
         })
-        builder.addCase(UserActions.fetchUser.rejected,(state,action) => {
+        builder.addCase(ProfileActions.fetchProfile.rejected,(state, action) => {
             state.isError = true
             state.isLoading = false
         })
-        builder.addCase(UserActions.fetchUser.fulfilled, (state,action) => {
+        builder.addCase(ProfileActions.fetchProfile.fulfilled, (state, action) => {
             state.isLoading = false
             state.isError = false
             state.user = action.payload
         })
         //Update User
-        builder.addCase(UserActions.updateUser.pending,state => {
+        builder.addCase(ProfileActions.updateProfile.pending, state => {
             console.log("load")
             state.isLoading = true
             state.isError = false
         })
-        builder.addCase(UserActions.updateUser.rejected,(state,action) => {
+        builder.addCase(ProfileActions.updateProfile.rejected,(state, action) => {
             console.log("rej")
             state.isError = true
             state.isLoading = false
         })
-        builder.addCase(UserActions.updateUser.fulfilled, (state,action) => {
+        builder.addCase(ProfileActions.updateProfile.fulfilled, (state, action) => {
             console.log("full")
             state.isLoading = false
             state.isError = false
